@@ -1,0 +1,74 @@
+[{
+	"model": "rankings.dancer",
+	"pk": 1,
+	"fields": {
+		"name_first": "Tara",
+		"name_middle": "",
+		"name_last": "Langhorne",
+		"dancer_type": "PAS"
+	}
+}, {
+	"model": "rankings.dancer",
+	"pk": 2,
+	"fields": {
+		"name_first": "Primo",
+		"name_middle": "",
+		"name_last": "Garcia",
+		"dancer_type": "PRO"
+	}
+}, {
+	"model": "rankings.dancer",
+	"pk": 3,
+	"fields": {
+		"name_first": "Tanya",
+		"name_middle": "",
+		"name_last": "Shirer",
+		"dancer_type": "PAS"
+	}
+}, {
+	"model": "rankings.dancer",
+	"pk": 4,
+	"fields": {
+		"name_first": "Travis",
+		"name_middle": "",
+		"name_last": "Tuft",
+		"dancer_type": "PRO"
+	}
+}, {
+	"model": "rankings.dancer",
+	"pk": 5,
+	"fields": {
+		"name_first": "Jaimee",
+		"name_middle": "",
+		"name_last": "Tuft",
+		"dancer_type": "PRO"
+	}
+}, {
+	"model": "rankings.dancer",
+	"pk": 6,
+	"fields": {
+		"name_first": "Justin",
+		"name_middle": "",
+		"name_last": "Lujan",
+		"dancer_type": "JAM"
+	}
+}, {
+	"model": "rankings.dancer",
+	"pk": 7,
+	"fields": {
+		"name_first": "Julia",
+		"name_middle": "Talore",
+		"name_last": "Zilman",
+		"dancer_type": "JAM"
+	}
+}, 
+{
+	"model": "rankings.couple",
+	"pk": 1,
+	"fields": {
+		"dancer_1": 1,
+		"dancer_2": 2,
+		"couple_type": "PAC"
+	}
+}
+]

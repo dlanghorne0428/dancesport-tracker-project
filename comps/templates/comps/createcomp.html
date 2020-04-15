@@ -1,0 +1,20 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="columns is-centered">
+  <div class="column is-narrow">
+  <h2 class="subtitle has-text-centered">Competitions</h2>
+  <p>{{ error}}</p>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="control">
+      <button class="button is-link">Create</button>
+    </div>
+  </form>
+  </div>
+  </div>
+</section>
+
+{% endblock %}

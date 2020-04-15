@@ -1,0 +1,42 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+
+<container class="container has-text-centered">
+  <h1 class="subtitle">Create Dancer</h1>
+
+  <div class="columns is-centered">
+    <h2>{{ error }}</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="field">
+        <label class="label">First Name</label>
+        <div class="control">
+          {{ form.name_first}}
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Middle Name</label>
+        <div class="control">
+          {{ form.name_middle}}
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Last Name</label>
+        <div class="control">
+          {{ form.name_last}}
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Type</label>
+        <div class="control">
+          {{ form.dancer_type}}
+        </div>
+      </div>
+      <button type="submit">Create</button>
+    </div>
+  </form>
+</container>
+
+{% endblock %}

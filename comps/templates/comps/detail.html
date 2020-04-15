@@ -1,0 +1,26 @@
+
+{% extends "rankings/base.html" %}
+
+{% block content %}
+<section class="section is-centered">
+  <container class="container has-text-centered">
+  {% if comp.logo != "" %}
+    <div>
+        <img src="{{ comp.logo.url }}" height="240" />
+    </div>
+  {% endif %}
+
+  <h1 class="title">{{ comp.title }}</h1>
+  <h2 class="subtitle">{{ comp.location }}</h2>
+  <h3 class="subtitle is-6">{{ comp.start_date }} to {{ comp.end_date }}</h3>
+  {% if comp.heatsheet_url %}
+    <form method="GET" action="{% url 'comps:process_heatlists' comp.id %}">
+      {% csrf_token %}
+      <button type="submit" class="button is-primary is-rounded">Process Heatlists</button>
+    </form>
+  {% endif %}
+
+  </container>
+</section>
+
+{% endblock %}
