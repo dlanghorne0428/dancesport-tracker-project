@@ -9,7 +9,7 @@ def home(request):
     return render(request, "rankings/home.html")
 
 
-def all_dancers(request, start_index=0):
+def all_dancers(request):
     dancers = Dancer.objects.order_by('name_last')
     paginator = Paginator(dancers, 10)
     page_number = request.GET.get('page')

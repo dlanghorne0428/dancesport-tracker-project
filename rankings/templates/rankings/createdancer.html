@@ -2,41 +2,32 @@
 
 {% block content %}
 
-<container class="container has-text-centered">
-  <h1 class="subtitle">Create Dancer</h1>
+  <div class="row">
+    <div class="col-4 offset-md-4">
+      <h3 class="text-center">Create Dancer</h3>
+      <p>{{ error }}</p>
 
-  <div class="columns is-centered">
-    <h2>{{ error }}</h2>
-
-    <form method="POST">
-      {% csrf_token %}
-      <div class="field">
-        <label class="label">First Name</label>
-        <div class="control">
-          {{ form.name_first}}
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>First Name</label>
+            {{ form.name_first}}
         </div>
-      </div>
-      <div class="field">
-        <label class="label">Middle Name</label>
-        <div class="control">
-          {{ form.name_middle}}
+        <div class="form-group">
+          <label class="label">Middle Name</label>
+            {{ form.name_middle}}
         </div>
-      </div>
-      <div class="field">
-        <label class="label">Last Name</label>
-        <div class="control">
-          {{ form.name_last}}
+        <div class="form-group">
+          <label class="label">Last Name</label>
+            {{ form.name_last}}
         </div>
-      </div>
-      <div class="field">
-        <label class="label">Type</label>
-        <div class="control">
-          {{ form.dancer_type}}
+        <div class="form-group">
+          <label class="label">Type</label>
+            {{ form.dancer_type}}
         </div>
-      </div>
-      <button type="submit">Create</button>
+        <button class="btn btn-primary" type="submit">Create</button>
+      </form>
     </div>
-  </form>
-</container>
+  </div>
 
 {% endblock %}

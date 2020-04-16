@@ -2,14 +2,18 @@
 
 {% block content %}
 
-  <h1>Edit Dancer</h1>
+<div class="row">
+  <div class="col-4 offset-md-4">
+    <h2 class="text-centered">Edit Couple</h2>
 
-  <h2>{{ error }}</h2>
+    <h4 class="text-centered">{{ error }}</h4>
 
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-  </form>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+  </div>
+</div>
 
 {% endblock %}
