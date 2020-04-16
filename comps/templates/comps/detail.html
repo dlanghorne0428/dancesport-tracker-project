@@ -2,25 +2,32 @@
 {% extends "rankings/base.html" %}
 
 {% block content %}
-<section class="section is-centered">
-  <container class="container has-text-centered">
+<div class="row">
+
   {% if comp.logo != "" %}
-    <div>
-        <img src="{{ comp.logo.url }}" height="240" />
+    <div class="col-8 offset-md-2 text-center">
+        <img src="{{ comp.logo.url }}"" />
     </div>
   {% endif %}
+</div>
 
-  <h1 class="title">{{ comp.title }}</h1>
-  <h2 class="subtitle">{{ comp.location }}</h2>
-  <h3 class="subtitle is-6">{{ comp.start_date }} to {{ comp.end_date }}</h3>
-  {% if comp.heatsheet_url %}
-    <form method="GET" action="{% url 'comps:process_heatlists' comp.id %}">
-      {% csrf_token %}
-      <button type="submit" class="button is-primary is-rounded">Process Heatlists</button>
-    </form>
-  {% endif %}
+<div class="row">
+  <div class="col-8 offset-md-2">
+    <h2 class="text-center">{{ comp.title }}</h2>
+    <h3 class="text-center"{{ comp.location }}</h3>
+    <h4 class="text-center">{{ comp.start_date }} to {{ comp.end_date }}</h4>
+  </div>
+</div>
 
-  </container>
-</section>
+<div class="row">
+  <div class="col-2 offset-md-5">
+    {% if comp.heatsheet_url %}
+      <form method="GET" action="{% url 'comps:process_heatlists' comp.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-rounded">Process Heatlists</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
 
 {% endblock %}
