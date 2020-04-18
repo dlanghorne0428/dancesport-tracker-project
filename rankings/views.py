@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Dancer, Couple
 from .forms import DancerForm, CoupleForm
+from .filters import DancerFilter
 
 # Create your views here.
 def home(request):
@@ -10,11 +11,12 @@ def home(request):
 
 
 def all_dancers(request):
-    dancers = Dancer.objects.order_by('name_last')
-    paginator = Paginator(dancers, 16)
+    #dancers = Dancer.objects.order_by('name_last')
+    f = DancerFilter(request.GET, queryset=Dancer.objects.all())
+    paginator = Paginator(f.qs, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'rankings/all_dancers.html', {'page_obj': page_obj})
+    return render(request, 'rankings/all_dancers.html', {'page_obj': page_obj, 'filter': f})
 
 def createdancer(request):
     if request.method == "GET":
