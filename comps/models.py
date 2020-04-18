@@ -1,5 +1,8 @@
+import time
+from datetime import date, datetime, timezone, timedelta
 from django.db import models
 from rankings.models import Couple
+from .calc_points import pro_heat_level, non_pro_heat_level
 
 def comp_logo_path(instance, filename):
     return "comps/{0}/{1}".format(instance.title, filename)
@@ -93,20 +96,117 @@ class Heat(models.Model):
     # value increases if preliminary rounds are danced
     base_value = models.IntegerField(blank=True)
 
+    def set_level(self):
+        if self.category == "PH":
+            self.base_value = pro_heat_level(self.info)
+        else:
+            self.base_value = non_pro_heat_level(self.info, self.multi_dance())
 
-    class HeatResult(models.Model):
-        ''' Store result information for a single couple.'''
-        couple: models.ForeignKey("Couple", on_delete=models.SET_NULL, null=True)
-        heat: models.ForeignKey("Heat", on_delete=models.CASCADE)
+    def multi_dance(self):
+        '''This function returns True if the description indicates a multi-dance heat.'''
+        s = self.info
+        left_pos = s.find('(')
+        right_pos = s.find(')')
+        if left_pos == -1 or right_pos == -1:
+            return False
+        elif "Mixed" in s or "Solo Star" in s or "NP" in s:
+            return False
+        elif "/" in s[left_pos:right_pos] or "," in s[left_pos:right_pos]:
+            return True
+        else:
+            return False
 
-        # store the shirt number of this couple in this heat. Used for looking up results.
-        shirt_number = models.CharField(max_length=10, blank=True)
+    def set_dance_style(self):
+        '''This function determines the dance style based on the heat description.'''
+        s = self.info
+        if "Smooth" in s:
+            self.style = Heat.SMOOTH
+        elif "Rhythm" in s:
+            self.style = Heat.RHYTHM
+        elif "Latin" in s:
+            self.style = Heat.LATIN
+        elif "Standard" in s or "Ballroom" in s or "Balroom" in s or "Ballrom" in s:
+            self.style = Heat.STANDARD
+        elif "Nightclub" in s or "Night Club" in s or "NightClub" in s or "Niteclub" in s or "Nite Club" in s or "Caribbean" in s:
+            self.style = Heat.NIGHTCLUB
+        elif "Country" in s:
+            self.style = Heat.COUNTRY
+        elif "Cabaret" in s or "Theatre" in s or "Theater" in s or "Exhibition" in s:
+            self.style = Heat.CABARET
+        else:
+            #TODO: ask user?
+            #print("Unknown style for heat", s)
+            self.style = Heat.UNKNOWN
 
-        # store the heatsheet code for which dancer?. Used for looking up results
-        code = models.CharField(max_length=10, blank=True)
+    def set_time(self, time_str, day_of_week_str):
+        comp_start_date = self.comp.start_date.isocalendar()
+        days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        isoweekday = days_of_week.index(day_of_week_str) + 1
+        heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
+        time_of_day = time.strptime(time_str, "%I:%M%p")
+        tz = timezone(offset=timedelta(hours=0))  # avoid warnings about naive time, treat all times as UTC
+                                                 # could try to get smarter about where comp was located, but why?
+        self.time = datetime(heat_date.year, heat_date.month, heat_date.day,
+                             time_of_day.tm_hour, time_of_day.tm_min, tzinfo=tz)
 
-        # store the result placement, could be a digit 1 - 9, or a string indicating the prelim round
-        result = models.CharField(max_length=10, blank=True)
+    def __lt__(self, h):
+        ''' override < operator to sort heats by various fields.'''
+        # if session numbers are the same, sort by time
+        if self.session == h.session:
+            return self.time < h.time
+        else: # use the session numbers to determine order
+            return self.session < h.session
 
-        # store the point value earned by this couple in this heatsheet
-        points = models.FloatField(blank=True)
+
+    def __eq__(self, h):
+        ''' override == operator to compare category and number'''
+        return (self.category == h.category) and (self.heat_number == h.heat_number)
+
+    def __str__(self):
+        return self.comp.title + " " + self.category + " " + self.heat_number.__str__()
+
+
+class HeatResult(models.Model):
+    ''' Store result information for a single couple.'''
+    couple: models.ForeignKey("Couple", on_delete=models.SET_NULL, null=True)
+    heat: models.ForeignKey("Heat", on_delete=models.CASCADE)
+
+    # store the shirt number of this couple in this heat. Used for looking up results.
+    shirt_number = models.CharField(max_length=10, blank=True)
+
+    # store the heatsheet code for which dancer?. Used for looking up results
+    code = models.CharField(max_length=10, blank=True)
+
+    # store the result placement, could be a digit 1 - 9, or a string indicating the prelim round
+    result = models.CharField(max_length=10, blank=True)
+
+    # store the point value earned by this couple in this heatsheet
+    points = models.FloatField(blank=True)
+
+    def __init__(self, heat_obj, dancer_name, partner_name, scoresheet_code, shirt_number="???"):
+        # a reference to the heat information
+        self.heat = heat_obj
+
+        # one member of the couple will have a shirt number
+        # TODO: need to find couple
+        #self.couple = dancer_name + " and " + partner_name
+        self.shirt_number = shirt_number
+
+        # the code is a string associated with the dancer, which can be used to
+        # look up results from a scoresheet.
+        # TODO: for which dancer?
+        self.code = scoresheet_code
+
+        # the result indicates the place that this dancer finished in this heat.
+        # if they made the finals, the result will be an integer digit.
+        # if they were eliminated in an earlier round, the result will be a string
+        self.result = None
+
+        # this field indicates the number of points earned by the couple in this heat
+        self.points = None
+
+    def __lt__(self, h):
+        return self.heat < h.heat
+
+    def __eq__(self, h):
+        return self.heat == h.heat and self.couple == h.couple
