@@ -11,7 +11,7 @@ def home(request):
 
 def all_dancers(request):
     dancers = Dancer.objects.order_by('name_last')
-    paginator = Paginator(dancers, 10)
+    paginator = Paginator(dancers, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'rankings/all_dancers.html', {'page_obj': page_obj})
@@ -43,7 +43,7 @@ def viewdancer(request, dancer_pk):
 
 def all_couples(request):
     couples = Couple.objects.order_by("dancer_1__name_last")
-    paginator = Paginator(couples, 10)
+    paginator = Paginator(couples, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'rankings/all_couples.html', {'page_obj': page_obj})
