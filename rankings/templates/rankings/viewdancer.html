@@ -4,7 +4,7 @@
 
 
 <div class="row">
-  <div class="col-2 offset-md-1">
+  <div class="col-2 offset-md-1 border border-dark">
     <h3 class="text-center">Edit Dancer</h3>
     <p>{{ error }}</p>
 
@@ -30,9 +30,9 @@
     </form>
   </div>
 
-  <div class="col-7 offset-md-1">
+  <div class="col-7 offset-md-1 border border-dark">
     <h3 class="text-center">Dancer's Current Couples</h3>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-sm">
       <tr>
         <th>Dancer 1</th>
         <th></th>
@@ -46,7 +46,7 @@
         <td>{{ couple.dancer_1 }}</td>
         <td>and</td>
         <td>{{ couple.dancer_2 }}</td>
-        <td><a href="{% url 'viewcouple' couple.id %}"">{{ couple.get_couple_type_display }}</a></td>
+        <td><a href="{% url 'viewcouple' couple.id %}">{{ couple.get_couple_type_display }}</a></td>
       </tr>
       {% endfor %}
     </table>
