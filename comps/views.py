@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404
-from .models import Comp
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Comp, Heat, HeatResult
 from .forms import CompForm
 from .comp_mngr_heatlist import CompMngrHeatlist
 
@@ -27,10 +27,22 @@ def createcomp(request):
             return render(request, 'comps/createcomp.html', {'form':CompForm(), 'error': "Invalid data submitted."})
 
 
+def view_heats(request, comp_id):
+    comp = get_object_or_404(Comp, pk=comp_id)
+    heats_from_comp = Heat.objects.filter(comp=comp).order_by('time')
+    paginator = Paginator(heats_from_comp, 16)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "comps/view_heats.html", {'comp': comp, 'page_obj': page_obj})
+
+def heat_results(request, heat_id):
+    heat = get_object_or_404(Heat, pk=heat_id)
+    results = HeatResult.objects.filter(heat=heat)
+    return render(request, "comps/heat_results.html", {'comp_title': heat.comp.title, 'heat': heat, 'results': results})
+
 def process_heatlists(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
-    print(comp.title)
-    print(comp.heatsheet_url)
+    heats_to_delete = Heat.objects.filter(comp=comp).delete()
 
     heatlist = CompMngrHeatlist()
     heatlist.open(comp.heatsheet_url)
@@ -38,7 +50,6 @@ def process_heatlists(request, comp_id):
 
     for index in range(len(heatlist.dancers)):
         the_name = heatlist.get_next_dancer(index, comp)
-        #print(the_name)
     heatlist.complete_processing()
 
-    return render(request, "comps/process_heatlists.html", {'comp':comp})
+    return redirect('comps:view_heats', comp_id)
