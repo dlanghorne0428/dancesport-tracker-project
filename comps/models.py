@@ -135,7 +135,8 @@ class Heat(models.Model):
             self.style = Heat.CABARET
         else:
             #TODO: ask user?
-            #print("Unknown style for heat", s)
+            if self.multi_dance():
+                print("Unknown style for heat", s)
             self.style = Heat.UNKNOWN
 
     def set_time(self, time_str, day_of_week_str):
@@ -157,10 +158,10 @@ class Heat(models.Model):
         else: # use the session numbers to determine order
             return self.session < h.session
 
-
-    def __eq__(self, h):
-        ''' override == operator to compare category and number'''
-        return (self.category == h.category) and (self.heat_number == h.heat_number)
+    #
+    # def __eq__(self, h):
+    #     ''' override == operator to compare category and number'''
+    #     return (self.category == h.category) and (self.heat_number == h.heat_number)
 
     def __str__(self):
         return self.comp.title + " " + self.category + " " + self.heat_number.__str__()
@@ -168,8 +169,8 @@ class Heat(models.Model):
 
 class HeatResult(models.Model):
     ''' Store result information for a single couple.'''
-    couple: models.ForeignKey("Couple", on_delete=models.SET_NULL, null=True)
-    heat: models.ForeignKey("Heat", on_delete=models.CASCADE)
+    couple = models.ForeignKey("rankings.Couple", on_delete=models.SET_NULL, null=True)
+    heat = models.ForeignKey("Heat", on_delete=models.CASCADE, null=True)
 
     # store the shirt number of this couple in this heat. Used for looking up results.
     shirt_number = models.CharField(max_length=10, blank=True)
@@ -181,11 +182,12 @@ class HeatResult(models.Model):
     result = models.CharField(max_length=10, blank=True)
 
     # store the point value earned by this couple in this heatsheet
-    points = models.FloatField(blank=True)
+    points = models.FloatField(null=True)
 
-    def __init__(self, heat_obj, dancer_name, partner_name, scoresheet_code, shirt_number="???"):
+    def populate(self, heat_obj, couple_obj, scoresheet_code, shirt_number="???"):
         # a reference to the heat information
         self.heat = heat_obj
+        self.couple = couple_obj
 
         # one member of the couple will have a shirt number
         # TODO: need to find couple
@@ -197,16 +199,11 @@ class HeatResult(models.Model):
         # TODO: for which dancer?
         self.code = scoresheet_code
 
-        # the result indicates the place that this dancer finished in this heat.
-        # if they made the finals, the result will be an integer digit.
-        # if they were eliminated in an earlier round, the result will be a string
-        self.result = None
+        self.result = ""
 
-        # this field indicates the number of points earned by the couple in this heat
-        self.points = None
 
     def __lt__(self, h):
         return self.heat < h.heat
 
-    def __eq__(self, h):
-        return self.heat == h.heat and self.couple == h.couple
+    # def __eq__(self, h):
+    #     return self.heat == h.heat and self.couple == h.couple
