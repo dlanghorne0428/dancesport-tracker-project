@@ -25,6 +25,9 @@
       <form method="GET" action="{% url 'comps:process_heatlists' comp.pk %}">
         <button type="submit" class="btn btn-primary btn-rounded">Process Heatlists</button>
       </form>
+      <form method="GET" action="{% url 'comps:view_heats' comp.pk %}">
+        <button type="submit" class="btn btn-primary btn-rounded">View Heats</button>
+      </form>
     {% endif %}
   </div>
 </div>
