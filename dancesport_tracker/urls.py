@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -24,6 +24,7 @@ app_name = 'rankings'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path(r'^celery-progress/', include('celery_progress.urls')),  # the endpoint is configurabl
     path('', views.home, name="home"),
     path('dancers/', views.all_dancers, name="all_dancers"),
     path('dancers/<int:start_index>', views.all_dancers, name="all_dancers"),
