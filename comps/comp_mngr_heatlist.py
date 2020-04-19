@@ -246,14 +246,16 @@ class CompMngrHeatlist(Heatlist):
                             h = heats_in_database[0]
                         else:
                             h = pro_heat
-                            h.save()   # save the heat into the database
+                            # Don't save for right now
+                            #h.save()   # save the heat into the database
                         shirt_number = line.split("<td>")[2].split("</td>")[0]
                         couple = find_couple(dancer_name, partner_name)
                         if couple is not None:
                             heat_res_obj = HeatResult()
                             #TODO; is this the right dancer code?
                             heat_res_obj.populate(h, couple, dancer.code, shirt_number)
-                            heat_res_obj.save()
+                            # Don't save for right now
+                            #heat_res_obj.save()
 
             # look for lines with heat number information
             # elif "Heat " in line:
