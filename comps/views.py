@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Comp, Heat, HeatResult
 from .forms import CompForm
+from .tasks import my_task
 from .comp_mngr_heatlist import CompMngrHeatlist
 
 def all_comps(request):
@@ -42,7 +43,7 @@ def heat_results(request, heat_id):
 
 def process_heatlists(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
-    heats_to_delete = Heat.objects.filter(comp=comp).delete()
+    #heats_to_delete = Heat.objects.filter(comp=comp).delete()
 
     heatlist = CompMngrHeatlist()
     heatlist.open(comp.heatsheet_url)
@@ -53,3 +54,7 @@ def process_heatlists(request, comp_id):
     heatlist.complete_processing()
 
     return redirect('comps:view_heats', comp_id)
+
+def celerytest(request):
+    result = my_task.delay(10)
+    return render(request, 'comps/celery_test.html', context={'task_id': result.task_id})
