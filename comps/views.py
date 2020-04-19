@@ -58,7 +58,3 @@ def process_heatlists(request, comp_id):
     # heatlist.complete_processing()
     #
     # return redirect('comps:view_heats', comp_id)
-
-def celerytest(request):
-    result = my_task.delay(10)
-    return render(request, 'comps/celery_test.html', context={'task_id': result.task_id})

@@ -10,5 +10,4 @@ urlpatterns = [
     path('heat_results/<int:heat_id>/', views.heat_results, name="heat_results"),
     path('create/', views.createcomp, name='createcomp'),
     path('process_heatlists/<int:comp_id>/', views.process_heatlists, name="process_heatlists"),
-    path('celerytest/', views.celerytest, name='celerytest'),
 ]
