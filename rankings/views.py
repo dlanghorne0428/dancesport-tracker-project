@@ -12,7 +12,7 @@ def home(request):
 
 def all_dancers(request):
     #dancers = Dancer.objects.order_by('name_last')
-    f = DancerFilter(request.GET, queryset=Dancer.objects.all())
+    f = DancerFilter(request.GET, queryset=Dancer.objects.order_by('name_last'))
     paginator = Paginator(f.qs, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
