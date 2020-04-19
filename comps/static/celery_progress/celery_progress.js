@@ -1,5 +1,3 @@
-console.log('Dave is confused');
-
 var CeleryProgressBar = (function () {
     function onSuccessDefault(progressBarElement, progressBarMessageElement) {
         progressBarElement.style.backgroundColor = '#76ce60';
