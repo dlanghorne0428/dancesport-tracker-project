@@ -30,6 +30,6 @@ def process_heatlist_task(self, comp_data):
         for index in range(num_dancers):
             the_name = heatlist.get_next_dancer(index, comp)
             result += 1
-            progress_recorder.set_progress(index, num_dancers)
+            progress_recorder.set_progress(index, num_dancers, description=the_name)
         heatlist.complete_processing()
     return result

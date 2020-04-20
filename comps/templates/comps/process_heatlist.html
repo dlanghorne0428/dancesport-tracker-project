@@ -31,7 +31,8 @@ var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
 function customProgress(progressBarElement, progressBarMessageElement, progress) {
     progressBarElement.style.backgroundColor = '#68a9ef';
     progressBarElement.style.width = progress.percent + "%";
-    progressBarMessageElement.innerHTML = 'Processing dancer ' + progress.current + ' of ' + progress.total;
+    var description = progress.description || "";
+    progressBarMessageElement.innerHTML = 'Processing: ' + description + ' - dancer ' + progress.current + ' of ' + progress.total;
   }
 
 function customResult(resultElement, result) {
