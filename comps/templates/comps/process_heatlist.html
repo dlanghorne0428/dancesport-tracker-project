@@ -9,14 +9,43 @@
 <div id="progress-bar-message">Waiting for progress to start...</div>
 
 <div id="celery-result"></div>
+{% endblock %}
 
+{% block extra_js %}
 <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
 <script>
-  // vanilla JS version
-  document.addEventListener("DOMContentLoaded", function () {
-    var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
-    CeleryProgressBar.initProgressBar(progressUrl);
-  });
+  // // vanilla JS version
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+  //   CeleryProgressBar.initProgressBar(progressUrl);
+  // });
+
+  // JQuery
+// $(function () {
+//   var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+//   CeleryProgressBar.initProgressBar(progressUrl)
+// });
+
+var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+function customProgress(progressBarElement, progressBarMessageElement, progress) {
+    progressBarElement.style.backgroundColor = '#68a9ef';
+    progressBarElement.style.width = progress.percent + "%";
+    progressBarMessageElement.innerHTML = 'Processing dancer ' + progress.current + ' of ' + progress.total;
+  }
+
+function customResult(resultElement, result) {
+  $( resultElement ).append(
+    $('<p>').text('Processed a total of ' + result + ' dancers.')
+  );
+}
+
+$(function () {
+  CeleryProgressBar.initProgressBar(progressUrl, {
+    onProgress: customProgress,
+    onResult: customResult,
+  })
+});
 </script>
 
 {% endblock %}
