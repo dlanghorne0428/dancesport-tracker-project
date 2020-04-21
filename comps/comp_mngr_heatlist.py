@@ -23,9 +23,9 @@ def split_name(name):
             return (name_fields[0], first_fields[0], first_fields[1])
 
 # TODO: this may move to the couple models
-def find_couple(dancer_name, partner_name):
-    dancer_last, dancer_first, dancer_middle = split_name(dancer_name)
-    partner_last, partner_first, partner_middle = split_name(partner_name)
+def find_couple(dancer, partner):
+    dancer_last, dancer_first, dancer_middle = split_name(dancer.name)
+    partner_last, partner_first, partner_middle = split_name(partner.name)
     couples_1 = list()
     couples_2 = list()
     couples_3 = list()
@@ -44,6 +44,7 @@ def find_couple(dancer_name, partner_name):
         for c in couples_2:
             for p in partners:
                 if c.dancer_1 == p:
+                    dancer.code = partner.code
                     if c not in matching_couples:
                         matching_couples.append(c)
     for p in partners:
@@ -51,6 +52,7 @@ def find_couple(dancer_name, partner_name):
         for c in couples_3:
             for d in dancers:
                 if c.dancer_2 == d:
+                    dancer.code = partner.code
                     if c not in matching_couples:
                         matching_couples.append(c)
         couples_4 = Couple.objects.filter(dancer_2=p)
@@ -61,21 +63,21 @@ def find_couple(dancer_name, partner_name):
                         matching_couples.append(c)
 
     if len(matching_couples) == 0:
-        print("No match for", dancer_name, "and", partner_name)
-        for c in couples_1:
-            print("\t", c, c.couple_type)
-        for c in couples_2:
-            print("\t", c, c.couple_type)
-        for c in couples_3:
-            print("\t", c, c.couple_type)
-        for c in couples_4:
-            print("\t", c, c.couple_type)
+        #print("No match for", dancer.name, "and", partner.name)
+        #for c in couples_1:
+            #print("\t", c, c.couple_type)
+        #for c in couples_2:
+            #print("\t", c, c.couple_type)
+        #for c in couples_3:
+            #print("\t", c, c.couple_type)
+        #for c in couples_4:
+            #print("\t", c, c.couple_type)
         return None
     elif len(matching_couples) == 1:
         #print("Matched", dancer_name, "and", partner_name)
         return matching_couples[0]
     else:
-        print("Multiple matches for", dancer_name, "and", partner_name)
+        print("Multiple matches for", dancer.name, "and", partner.name)
         for c in matching_couples:
             print("\t", c, c.couple_type)
         return None
@@ -200,6 +202,7 @@ class CompMngrHeatlist(Heatlist):
         response = requests.get(url)
         self.lines = response.text.splitlines()
         self.line_index = 0
+        self.unmatched_heats = 0
         while self.line_index < len(self.lines):
             line = self.lines[self.line_index]
             self.line_index += 1
@@ -219,7 +222,47 @@ class CompMngrHeatlist(Heatlist):
             if "/div" in line:
                 if found_last_dancer:
                     break;
-            # keep the file open
+
+
+    def find_dancer(self, dancer_name):
+        '''This method finds the dancer object from the list based on the name.'''
+        for d in self.dancers:
+            if d.name == dancer_name:
+                return d
+        else:
+            return None
+
+
+    def build_heat(self, category_str, line, comp_ref):
+        # turn that heat info into an object and add it to the database
+        heat = Heat()
+        load_heat(heat, category_str, line, comp_ref)
+        if heat.category == Heat.PRO_HEAT or heat.multi_dance():
+            heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number)
+            if len(heats_in_database) > 0:
+                h = heats_in_database[0]
+            else:
+                h = heat
+                # Don't save for right now
+                #h.save()   # save the heat into the database
+            return h
+        else:
+            return None
+
+
+    def build_heat_result(self, heat, dancer, partner, line):
+        '''This method builds a HeatResult object for the current dancer, partner,
+           and remaining heat information on the line.'''
+        shirt_number = line.split("<td>")[2].split("</td>")[0]
+        couple = find_couple(dancer, partner)
+        if couple is not None:
+            heat_res_obj = HeatResult()
+            #TODO; this works for matching couples - how to obtain code for non-matches
+            heat_res_obj.populate(heat, couple, dancer.code, shirt_number)
+            # Don't save for right now
+            #heat_res_obj.save()
+        else:
+            self.unmatched_heats += 1
 
 
     def get_next_dancer(self, dancer_index, comp_ref):
@@ -240,63 +283,33 @@ class CompMngrHeatlist(Heatlist):
                     dancer = self.dancers[dancer_index]
                     dancer_index += 1
                 else:  # if not, search for dancer object based on the name
-                    print("Searching for dancer")
-                    for d in self.dancers:
-                        if d.name == dancer_name:
-                            dancer = d
-                            break
+                    dancer = self.find_dancer(dancer_name)
             # A line with "With " indicates the start of a new partner for the current dancer
             elif "With " in line:
                 partner_name = self.get_dancer_name(line.strip(), line.find("With ") + 5)
                 if "/" in partner_name:
-                    partner_name = None
+                    partner = None
                 elif len(partner_name) == 0:
-                    partner_name = None
+                    partner = None
+                else:
+                    partner = self.find_dancer(partner_name)
 
             # look for lines with pro heat number information
             elif "Pro heat " in line:
-                if partner_name is not None:
+                if partner is not None:
                     if partner_name > dancer_name:
-                        # turn that heat info into an object and add it to the database
-                        pro_heat = Heat()
-                        load_heat(pro_heat, "Pro heat", line, comp_ref)
-                        heats_in_database = Heat.objects.filter(comp=comp_ref, category=pro_heat.category, heat_number=pro_heat.heat_number)
-                        if len(heats_in_database) > 0:
-                            h = heats_in_database[0]
-                        else:
-                            h = pro_heat
-                            # Don't save for right now
-                            #h.save()   # save the heat into the database
-                        shirt_number = line.split("<td>")[2].split("</td>")[0]
-                        couple = find_couple(dancer_name, partner_name)
-                        if couple is not None:
-                            heat_res_obj = HeatResult()
-                            #TODO; is this the right dancer code?
-                            heat_res_obj.populate(h, couple, dancer.code, shirt_number)
-                            # Don't save for right now
-                            #heat_res_obj.save()
+                        h = self.build_heat("Pro heat", line, comp_ref)
+                        if h is not None:
+                            self.build_heat_result(h, dancer, partner, line)
 
             # look for lines with heat number information
             elif "Heat " in line:
-                if partner_name is not None:
+                if partner is not None:
                     if partner_name > dancer_name:
                         # turn this line into a heat object and add it to the database
-                        heat_obj = Heat()
-                        load_heat(heat_obj, "Heat", line, comp_ref)
-                        if heat_obj.multi_dance():
-                            heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat_obj.category, heat_number=heat_obj.heat_number)
-                            if len(heats_in_database) > 0:
-                                h = heats_in_database[0]
-                            else:
-                                h = heat_obj
-                                # Don't save for right now
-                                #h.save()   # save the heat into the database
-                            shirt_number = line.split("<td>")[2].split("</td>")[0]
-                            couple = find_couple(dancer_name, partner_name)
-                            if couple is not None:
-                                heat_res_obj = HeatResult()
-                                #TODO; is this the right dancer code?
-                                heat_res_obj.populate(h, couple, dancer.code, shirt_number)
+                        h = self.build_heat("Heat", line, comp_ref)
+                        if h is not None:
+                            self.build_heat_result(h, dancer, partner, line)
 
             # if we see the closing </div> tag, we are done with this dancer.
             elif "/div" in line:
@@ -309,4 +322,4 @@ class CompMngrHeatlist(Heatlist):
     def complete_processing(self):
         '''This method completes the processing of the Comp Manager heatlist,
            by closing the file and sorting the lists.'''
-        pass
+        return self.unmatched_heats
