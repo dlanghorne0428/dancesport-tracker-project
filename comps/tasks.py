@@ -19,17 +19,17 @@ def my_task(self, seconds):
 @shared_task(bind=True)
 def process_heatlist_task(self, comp_data):
     for deserialized_object in serializers.deserialize("json", comp_data):
-    #do_something_with(obj)
         comp = deserialized_object.object
         progress_recorder = ProgressRecorder(self)
-        result = 0
+        #result = 0
         heatlist = CompMngrHeatlist()
         heatlist.open(comp.heatsheet_url)
         num_dancers = len(heatlist.dancers)
         progress_recorder.set_progress(0, num_dancers)
         for index in range(num_dancers):
             the_name = heatlist.get_next_dancer(index, comp)
-            result += 1
+            #result += 1
             progress_recorder.set_progress(index, num_dancers, description=the_name)
-        heatlist.complete_processing()
+        unmatched_heat_count = heatlist.complete_processing()
+        result = [num_dancers, unmatched_heat_count]
     return result
