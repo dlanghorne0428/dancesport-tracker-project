@@ -167,8 +167,8 @@ class Heat(models.Model):
         return self.comp.title + " " + self.category + " " + self.heat_number.__str__()
 
 
-class HeatResult(models.Model):
-    ''' Store result information for a single couple.'''
+class HeatEntry(models.Model):
+    ''' Store heat entry and result information for a single couple.'''
     couple = models.ForeignKey("rankings.Couple", on_delete=models.SET_NULL, null=True)
     heat = models.ForeignKey("Heat", on_delete=models.CASCADE, null=True)
 
