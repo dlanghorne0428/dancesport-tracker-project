@@ -1,7 +1,9 @@
+from django.core import serializers
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Comp, Heat, HeatResult
 from .forms import CompForm
+from .tasks import my_task, process_heatlist_task
 from .comp_mngr_heatlist import CompMngrHeatlist
 
 def all_comps(request):
@@ -27,29 +29,32 @@ def createcomp(request):
             return render(request, 'comps/createcomp.html', {'form':CompForm(), 'error': "Invalid data submitted."})
 
 
-def view_heats(request, comp_id):
+def heats(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_from_comp = Heat.objects.filter(comp=comp).order_by('time')
     paginator = Paginator(heats_from_comp, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, "comps/view_heats.html", {'comp': comp, 'page_obj': page_obj})
+    return render(request, "comps/heats.html", {'comp': comp, 'page_obj': page_obj})
 
-def heat_results(request, heat_id):
+def heat_entries(request, heat_id):
     heat = get_object_or_404(Heat, pk=heat_id)
     results = HeatResult.objects.filter(heat=heat)
-    return render(request, "comps/heat_results.html", {'comp_title': heat.comp.title, 'heat': heat, 'results': results})
+    return render(request, "comps/heat_entries.html", {'comp_title': heat.comp.title, 'heat': heat, 'results': results})
+
+
+def resolve_mismatches(request, comp_id):
+    comp = get_object_or_404(Comp, pk=comp_id)
+    return render(request, "comps/resolve_mismatches.html", {'comp':comp})
+
 
 def process_heatlists(request, comp_id):
-    comp = get_object_or_404(Comp, pk=comp_id)
-    heats_to_delete = Heat.objects.filter(comp=comp).delete()
+    #comp = get_object_or_404(Comp, pk=comp_id)
+    comp_objects = Comp.objects.filter(pk=comp_id)
+    if len(comp_objects) == 1:
+        comp=comp_objects[0]
+    comp_data = serializers.serialize("json", comp_objects)
+    #heats_to_delete = Heat.objects.filter(comp=comp).delete()
 
-    heatlist = CompMngrHeatlist()
-    heatlist.open(comp.heatsheet_url)
-    print(heatlist.comp_name)
-
-    for index in range(len(heatlist.dancers)):
-        the_name = heatlist.get_next_dancer(index, comp)
-    heatlist.complete_processing()
-
-    return redirect('comps:view_heats', comp_id)
+    result = process_heatlist_task.delay(comp_data)
+    return render(request, 'comps/process_heatlist.html', context={'task_id': result.task_id, 'comp': comp})

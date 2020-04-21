@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'celery',
+    'celery_progress',
     'rankings',
     'comps',
 ]
@@ -125,3 +127,6 @@ STATIC_URL = '/static/'
 # Media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CELERY_BROKER_URL = 'redis://localhost'
+CELERY_RESULT_BACKEND = 'redis://localhost/0'
