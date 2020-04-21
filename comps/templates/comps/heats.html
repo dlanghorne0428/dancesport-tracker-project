@@ -26,7 +26,7 @@
         <td>{{ heat.get_category_display }}</td>
         <td class="text-center">{{ heat.heat_number }}</td>
         <td>{{ heat.time }}</td>
-        <td><a href="{% url 'comps:heat_results' heat.id %}">{{ heat.info}}</a></td>
+        <td><a href="{% url 'comps:heat_entries' heat.id %}">{{ heat.info}}</a></td>
       </tr>
       {% endfor %}
     </tbody>
