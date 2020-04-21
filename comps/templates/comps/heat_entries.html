@@ -5,7 +5,7 @@
 <div class="row">
   <div class="col-8 offset-md-2">
     <h2 class="text-center">{{ comp_title }}</h2>
-    <h3 class="text-center">Results - {{ heat.get_category_display }} {{ heat.heat_number}}</h3>
+    <h3 class="text-center">Heat Entries - {{ heat.get_category_display }} {{ heat.heat_number}}</h3>
   </div>
 </div>
 
@@ -23,13 +23,13 @@
       </tr>
     </thead>
     <tbody>
-      {% for result in results %}
+      {% for entry in entries %}
       <tr>
-        <td>{{ result.couple.dancer_1 }}</td>
+        <td>{{ entry.couple.dancer_1 }}</td>
         <td>and</td>
-        <td>{{ result.couple.dancer_2 }}</td>
-        <td class="text-center">{{ result.shirt_number }}</td>
-        <td>{{ result.result }}</td>
+        <td>{{ entry.couple.dancer_2 }}</td>
+        <td class="text-center">{{ entry.shirt_number }}</td>
+        <td>{{ entry.result }}</td>
         <!-- <td>{{ result.points}}</td> -->
       </tr>
       {% endfor %}

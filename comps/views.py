@@ -1,7 +1,7 @@
 from django.core import serializers
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Comp, Heat, HeatResult
+from .models import Comp, Heat, HeatEntry
 from .forms import CompForm
 from .tasks import my_task, process_heatlist_task
 from .comp_mngr_heatlist import CompMngrHeatlist
@@ -39,8 +39,8 @@ def heats(request, comp_id):
 
 def heat_entries(request, heat_id):
     heat = get_object_or_404(Heat, pk=heat_id)
-    results = HeatResult.objects.filter(heat=heat)
-    return render(request, "comps/heat_entries.html", {'comp_title': heat.comp.title, 'heat': heat, 'results': results})
+    entries = HeatEntry.objects.filter(heat=heat)
+    return render(request, "comps/heat_entries.html", {'comp_title': heat.comp.title, 'heat': heat, 'entries': entries})
 
 
 def resolve_mismatches(request, comp_id):

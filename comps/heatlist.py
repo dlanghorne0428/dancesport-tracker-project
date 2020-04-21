@@ -15,7 +15,7 @@ class Heatlist():
         self.dancers = list()               # store a list of the individual dancers competing
         self.couples = list()               # store a list of the couples competing
         self.heats = list()
-        self.heat_results = list()
+        self.heat_entries = list()
 
 
     ############### DANCER / COUPLE ROUTINES  ###########################################
