@@ -4,8 +4,8 @@
 {% block content %}
 <div class="row">
   <div class="col-8 offset-md-2">
-    <h2 class="text-center">{{ comp_title }}</h2>
-    <h3 class="text-center">Heat Entries - {{ heat.get_category_display }} {{ heat.heat_number}}</h3>
+    <h2 class="text-center">{{ comp_title }} - Heat Entries</h2>
+    <h3 class="text-center">{{ heat.get_category_display }} {{ heat.heat_number}} {{ heat.info }}</h3>
   </div>
 </div>
 
@@ -14,12 +14,10 @@
   <table class="table table-bordered table-sm">
     <thead class="thead-dark">
       <tr>
-        <th>Couple</th>
-        <th>        </th>
-        <th>        </th>
-        <th>Shirt Number</th>
-        <th>Result</th>
-        <th>Points</th>
+        <th colspan="3" class="text-center">Couple</th>
+        <th class="text-center">Shirt Number</th>
+        <th class="text-center">Result</th>
+        <th class="text-center">Points</th>
       </tr>
     </thead>
     <tbody>
@@ -30,7 +28,9 @@
         <td>{{ entry.couple.dancer_2 }}</td>
         <td class="text-center">{{ entry.shirt_number }}</td>
         <td>{{ entry.result }}</td>
-        <!-- <td>{{ result.points}}</td> -->
+        {% if entry.points %}
+          <td>{{ entry.points}}</td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
@@ -55,5 +55,12 @@
     {% endif %}
   </ul>
 </nav> -->
+
+<div class="row">
+  <div class="col-4 offset-md-4">
+      <a id="view_heats_button" class="btn btn-primary" role="button" href="{% url 'comps:resolve_mismatches' comp_id %}">Resolve Mismatches</a>
+      <a id="view_heats_button" class="btn btn-primary" role="button" href="{% url 'comps:heats' comp_id %}">View Heats</a>
+  </div>
+</div>
 
 {% endblock %}

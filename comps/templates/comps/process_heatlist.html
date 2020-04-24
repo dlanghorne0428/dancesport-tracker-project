@@ -11,11 +11,9 @@
 <div id="celery-result"></div>
 
 <div class="row">
-  <div class="col-2 offset-md-5">
-    <ul>
-      <li><a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Unmatched Heats</a></li>
-      <li><a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:heats' comp.id %}">View Heats</a></li>
-    </ul>
+  <div class="col-4 offset-md-4">
+      <a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Unmatched Heats</a>
+      <a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:heats' comp.id %}">View Heats</a>
   </div>
 </div>
 

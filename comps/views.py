@@ -1,7 +1,7 @@
 from django.core import serializers
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Comp, Heat, HeatEntry
+from .models import Comp, Heat, HeatEntry, UnmatchedHeatEntry, HeatlistDancer
 from .forms import CompForm
 from .tasks import my_task, process_heatlist_task
 from .comp_mngr_heatlist import CompMngrHeatlist
@@ -39,13 +39,41 @@ def heats(request, comp_id):
 
 def heat_entries(request, heat_id):
     heat = get_object_or_404(Heat, pk=heat_id)
-    entries = HeatEntry.objects.filter(heat=heat)
-    return render(request, "comps/heat_entries.html", {'comp_title': heat.comp.title, 'heat': heat, 'entries': entries})
+    entries = HeatEntry.objects.filter(heat=heat).order_by('shirt_number')
+    return render(request, "comps/heat_entries.html", {'comp_title': heat.comp.title, 'comp_id': heat.comp.id, 'heat': heat, 'entries': entries})
 
 
 def resolve_mismatches(request, comp_id):
-    comp = get_object_or_404(Comp, pk=comp_id)
-    return render(request, "comps/resolve_mismatches.html", {'comp':comp})
+    if request.method == "GET":
+        comp = get_object_or_404(Comp, pk=comp_id)
+        unmatched_entries = UnmatchedHeatEntry.objects.all().order_by('entry')
+        if unmatched_entries.count() == 0:
+            # all unmatched entries resolved, delete heatlist_dancer entries from database
+            heatlist_dancers = HeatlistDancer.objects.all().delete()
+            return redirect("comps:heats", comp_id)
+        else:
+            first_unmatched = unmatched_entries.first()
+            first_set = unmatched_entries.filter(entry=first_unmatched.entry)
+            return render(request, "comps/resolve_mismatches.html", {'comp':comp, 'first_entry': first_unmatched, 'unmatched_entries': first_set})
+    else: # POST
+        submit = request.POST.get("submit")
+        if submit == "Submit":
+            couple = request.POST.get("couple")
+            first_entry = UnmatchedHeatEntry.objects.first()
+            first_set = UnmatchedHeatEntry.objects.filter(dancer=first_entry.dancer, partner=first_entry.partner)
+            for e in first_set:
+                if str(e.couple) == couple:
+                    # update the heat entry with the selected couple
+                    e.entry.couple = e.couple
+                    e.entry.code = e.code
+                    #print("Heat Entry", e.entry, e.entry.heat.category, e.entry.heat.heat_number, "being set to", couple, "with code", e.entry.code)
+                    e.entry.save()
+                # delete the heat entries that have been resolved
+                #print("deleting unmatched entry", e.couple)
+                e.delete()
+            return redirect("comps:heat_entries", first_entry.entry.heat.id)
+        else:
+            return redirect('comps:heats', comp_id)
 
 
 def process_heatlists(request, comp_id):

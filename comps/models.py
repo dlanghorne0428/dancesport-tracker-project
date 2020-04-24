@@ -184,10 +184,11 @@ class HeatEntry(models.Model):
     # store the point value earned by this couple in this heatsheet
     points = models.FloatField(null=True)
 
-    def populate(self, heat_obj, couple_obj, scoresheet_code, shirt_number="???"):
+    def populate(self, heat_obj, couple_obj=None, scoresheet_code=None, shirt_number="???"):
         # a reference to the heat information
         self.heat = heat_obj
-        self.couple = couple_obj
+        if couple_obj is not None:
+            self.couple = couple_obj
 
         # one member of the couple will have a shirt number
         # TODO: need to find couple
@@ -196,8 +197,8 @@ class HeatEntry(models.Model):
 
         # the code is a string associated with the dancer, which can be used to
         # look up results from a scoresheet.
-        # TODO: for which dancer?
-        self.code = scoresheet_code
+        if scoresheet_code is not None:
+            self.code = scoresheet_code
 
         self.result = ""
 
@@ -207,3 +208,75 @@ class HeatEntry(models.Model):
 
     # def __eq__(self, h):
     #     return self.heat == h.heat and self.couple == h.couple
+
+
+class HeatlistDancer(models.Model):
+    '''Define minimal info about a dancer read in from a heatlist.'''
+
+    # the name field is in last, first middle format
+    name = models.CharField(max_length=100, blank=True)
+
+    # the code field is used to obtain scoresheet results for this dancer
+    code = models.CharField(max_length = 20)
+
+
+    def load_from_comp_mngr(self, line):
+        '''This method populates the object from a line of text from a CompMngr heatlist.'''
+        # get the name
+        start_pos = 8
+        end_pos = line.find("</td>")
+        self.name = line[start_pos:end_pos]
+        # find the code
+        start_pos = line.find("TABLE_CODE_") + len("TABLE_CODE_")
+        end_pos = line.find("'", start_pos)
+        self.code = line[start_pos:end_pos]
+
+
+    def load_from_comp_org(self, line):
+        '''This method populates the object from a line of text from a heatlist in CompOrganizer format.'''
+        # find the ID code for this dancer
+        start_pos = line.find('"id":"') + len('"id":"')
+        end_pos = line.find('"', start_pos)
+        self.code = line[start_pos:end_pos]
+
+        if self.code != "0":
+            # find the dancer's name
+            start_pos = line.find('"name":"') + len('"name":"')
+            end_pos = line.find('"', start_pos)
+            #self.name = Dancer.format_name(line[start_pos:end_pos]]
+            self.name = line[start_pos:end_pos]
+
+    def load_from_ndca_premier(self, line):
+        '''This method populates the object from a line of text from a heatlist in NDCA Premier format.'''
+        # find the dancer's name
+        fields = line.split(">")
+        self.name = fields[1]
+
+        # find the ID code for this dancer
+        pos = fields[0].find("competitor=") + len("competitor=")
+        self.code = fields[0][pos+1:-1]
+
+
+class UnmatchedHeatEntry(models.Model):
+    '''Hold information about a possible matching couple for a HeatEntry.'''
+
+    # identify a heat entry
+    entry = models.ForeignKey('HeatEntry', on_delete = models.CASCADE)
+
+    # identify the Dancer and Partner as specified by the heatsheet
+    dancer = models.ForeignKey('HeatlistDancer', on_delete = models.CASCADE, related_name="dancer_1")
+    partner = models.ForeignKey('HeatlistDancer', on_delete = models.CASCADE, related_name="dancer_2")
+
+    # identify the potential couple, as stored in the heats_in_database
+    couple = models.ForeignKey('rankings.Couple', on_delete = models.CASCADE)
+
+    # identify which scoresheet code to use if this couple ends up being matched
+    code = models.CharField(max_length = 20, blank=True, default='')
+
+    def populate(self, heat_entry_obj, heatlist_dancer, heatlist_partner, couple, code):
+        # a reference to the heat information
+        self.entry = heat_entry_obj
+        self.dancer = heatlist_dancer
+        self.partner = heatlist_partner
+        self.couple = couple
+        self.code = code
