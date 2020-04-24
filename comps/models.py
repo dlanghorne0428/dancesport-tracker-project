@@ -102,6 +102,17 @@ class Heat(models.Model):
         else:
             self.base_value = non_pro_heat_level(self.info, self.multi_dance())
 
+    def remove_info_prefix(self):
+        if self.info.startswith("L-"):
+            self.info = self.info[2:]
+        elif self.info.startswith("G-"):
+            self.info = self.info[2:]
+        elif self.info.startswith("AP-"):
+            self.info = self.info[3:]
+        elif self.info.startswith("PA-"):
+            self.info = self.info[3:]
+
+
     def multi_dance(self):
         '''This function returns True if the description indicates a multi-dance heat.'''
         s = self.info
@@ -139,6 +150,7 @@ class Heat(models.Model):
                 print("Unknown style for heat", s)
             self.style = Heat.UNKNOWN
 
+
     def set_time(self, time_str, day_of_week_str):
         comp_start_date = self.comp.start_date.isocalendar()
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -149,6 +161,49 @@ class Heat(models.Model):
                                                  # could try to get smarter about where comp was located, but why?
         self.time = datetime(heat_date.year, heat_date.month, heat_date.day,
                              time_of_day.tm_hour, time_of_day.tm_min, tzinfo=tz)
+
+
+    def amateur_heat(self):
+        '''This function returns True if the description indicates an amateur heat.'''
+        s = self.info
+        if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s:
+            return True
+        else:
+            return False
+
+
+    def junior_heat(self):
+        '''This function returns True if the description indicates a junior or youth heat.'''
+        s = self.info
+        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or \
+           "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or \
+           "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or \
+           "High School" in s or "Elementary School" in s or \
+           "-TB" in s or "Teddy Bear" in s:
+
+           # Under 21 heats are sometimes listed as youth, but should not be treated as juniors
+           if "U21" in s or "Under 21" in s:
+                return False
+           else:
+               return True
+        else:
+            return False
+
+
+    def couple_type(self):
+        if self.category == Heat.PRO_HEAT:
+            return Couple.PRO_COUPLE
+        elif self.amateur_heat():
+            if self.junior_heat():
+                return Couple.JR_AMATEUR_COUPLE
+            else:
+                return Couple.AMATEUR_COUPLE
+        else:
+            if self.junior_heat():
+                return Couple.JR_PRO_AM_COUPLE
+            else:
+                return Couple.PRO_AM_COUPLE
+
 
     def __lt__(self, h):
         ''' override < operator to sort heats by various fields.'''
@@ -220,6 +275,20 @@ class HeatlistDancer(models.Model):
     code = models.CharField(max_length = 20)
 
 
+    def format_name(orig_name, split_on=1):
+        '''This static function converts a name into last, first format.'''
+        name = ""
+        fields = orig_name.split()
+        for f in range(split_on, len(fields)):
+            if f > split_on:
+                name += " "
+            name += fields[f]
+        name += ","
+        for f in range(0, split_on):
+            name += " " + fields[f]
+        return name
+
+
     def load_from_comp_mngr(self, line):
         '''This method populates the object from a line of text from a CompMngr heatlist.'''
         # get the name
@@ -243,8 +312,8 @@ class HeatlistDancer(models.Model):
             # find the dancer's name
             start_pos = line.find('"name":"') + len('"name":"')
             end_pos = line.find('"', start_pos)
-            #self.name = Dancer.format_name(line[start_pos:end_pos]]
-            self.name = line[start_pos:end_pos]
+            self.name = HeatlistDancer.format_name(line[start_pos:end_pos])
+
 
     def load_from_ndca_premier(self, line):
         '''This method populates the object from a line of text from a heatlist in NDCA Premier format.'''
