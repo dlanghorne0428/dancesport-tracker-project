@@ -270,9 +270,13 @@ class UnmatchedHeatEntry(models.Model):
     # identify the potential couple, as stored in the heats_in_database
     couple = models.ForeignKey('rankings.Couple', on_delete = models.CASCADE)
 
-    def populate(self, heat_entry_obj, heatlist_dancer, heatlist_partner, couple):
+    # identify which scoresheet code to use if this couple ends up being matched
+    code = models.CharField(max_length = 20, blank=True, default='')
+
+    def populate(self, heat_entry_obj, heatlist_dancer, heatlist_partner, couple, code):
         # a reference to the heat information
         self.entry = heat_entry_obj
         self.dancer = heatlist_dancer
         self.partner = heatlist_partner
         self.couple = couple
+        self.code = code

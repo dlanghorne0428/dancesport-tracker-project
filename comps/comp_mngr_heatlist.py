@@ -29,41 +29,41 @@ def find_couple_exact_match(heatlist_dancer, heatlist_partner):
     try:
         dancer = Dancer.objects.get(name_last = dancer_last, name_first = dancer_first, name_middle = dancer_middle)
     except:
-        return None
+        return (None, None)
     try:
         partner = Dancer.objects.get(name_last = partner_last, name_first = partner_first, name_middle = partner_middle)
     except:
-        return None
+        return (None, None)
 
     couples = Couple.objects.filter(dancer_1 = dancer, dancer_2 = partner)
     matches = couples.count()
     if matches > 1:
         print("Error: multiple matches for", heatlist_dancer.name, "and", heatlist_partner.name)
-        return None
+        return (None, None)
     elif matches == 1:
-        return couples.first()
+        return (couples.first(), heatlist_dancer.code)
     else:
         couples = Couple.objects.filter(dancer_2 = dancer, dancer_1 = partner)
         matches = couples.count()
         if matches > 1:
             print("Error: multiple matches for", heatlist_dancer.name, "and", heatlist_partner.name)
-            return None
+            return (None, None)
         elif matches == 1:
-            heatlist_dancer.code = heatlist_partner.code # copy dancer 1's code
-            return couples.first()
+            return (couples.first(), heatlist_partner.code)
         else:
-            return None
+            print("No match for", heatlist_dancer.name, "and", heatlist_partner.name)
+            return (None, None)
 
-def find_last_name_matches(dancers):
+def find_last_name_matches(dancers, dancer_1_code, dancer_2_code):
     partial_matches = list()
     for d in dancers:
         couples = Couple.objects.filter(dancer_1 = d)
         for c in couples:
-            partial_matches.append(c)
+            partial_matches.append((c, dancer_1_code))
         couples = Couple.objects.filter(dancer_2 = d)
         for c in couples:
-            partial_matches.append(c)
-    return(partial_matches)
+            partial_matches.append((c, dancer_2_code))
+    return partial_matches
 
 
 def find_couple_partial_match(dancer, partner):
@@ -72,17 +72,18 @@ def find_couple_partial_match(dancer, partner):
     partial_matching_couples = list()
 
     dancers = Dancer.objects.filter(name_last = dancer_last)
-    partial_matches = find_last_name_matches(dancers)
+    partial_matches = find_last_name_matches(dancers, dancer.code, partner.code)
     for p in partial_matches:
         if p not in partial_matching_couples:
             partial_matching_couples.append(p)
 
-    partners = Dancer.objects.filter(name_last = partner_last)
-    partial_matches = find_last_name_matches(partners)
-    for p in partial_matches:
-        if p not in partial_matching_couples:
-            partial_matching_couples.append(p)
-    print(partial_matching_couples)
+    if partner_last != dancer_last:
+        partners = Dancer.objects.filter(name_last = partner_last)
+        partial_matches = find_last_name_matches(partners, partner.code, dancer.code)
+        for p in partial_matches:
+            if p not in partial_matching_couples:
+                partial_matching_couples.append(p)
+
     return partial_matching_couples
 
 
@@ -116,7 +117,6 @@ def load_heat(h, category, line="", comp_ref="", number=0):
             h.set_time(time_string, day_of_week)
         else:
             print("Invalid time format")
-
 
         # get the heat info
         h.info = fields[4].split("</td>")[0]
@@ -224,55 +224,72 @@ class CompMngrHeatlist(Heatlist):
         heat = Heat()
         load_heat(heat, category_str, line, comp_ref)
         if heat.category == Heat.PRO_HEAT or heat.multi_dance():
-            heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number)
-            if len(heats_in_database) > 0:
-                h = heats_in_database[0]
+            heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number, info=heat.info)
+            if heats_in_database.count() > 0:
+                h = heats_in_database.first()
+                #print("Found matching heat")
             else:
                 h = heat
-                # Don't save for right now
-                #h.save()   # save the heat into the database
+                h.save()   # save the heat into the database
             return h
         else:
             return None
 
-    def build_unmatched_heat_entry(self, heat_entry, heatlist_dancer, heatlist_partner, couple):
+    def build_unmatched_heat_entry(self, heat_entry, heatlist_dancer, heatlist_partner, couple, code):
         # first save the dancer and partner, if necessary
         dancer_in_database = HeatlistDancer.objects.filter(name = heatlist_dancer.name)
         if dancer_in_database.count() == 0:
-            print("Saving", heatlist_dancer.name, "to database")
+            #print("Saving", heatlist_dancer.name, "to database")
             heatlist_dancer.save()
             d = heatlist_dancer
         else:
             d = dancer_in_database.first()
         partner_in_database = HeatlistDancer.objects.filter(name = heatlist_partner.name)
         if partner_in_database.count() == 0:
-            print("Saving", heatlist_partner.name, "to database")
+            #print("Saving", heatlist_partner.name, "to database")
             heatlist_partner.save()
             p = heatlist_partner
         else:
             p = partner_in_database.first()
-        unmatched_entry = UnmatchedHeatEntry()
-        unmatched_entry.populate(heat_entry, d, p, couple)
-        unmatched_entry.save()
+        mismatch = UnmatchedHeatEntry()
+        mismatch.populate(heat_entry, d, p, couple, code)
+        return mismatch
 
 
     def build_heat_entry(self, heat, dancer, partner, line):
         '''This method builds a HeatEntry object for the current dancer, partner,
            and remaining heat information on the line.'''
         shirt_number = line.split("<td>")[2].split("</td>")[0]
-        couple = find_couple_exact_match(dancer, partner)
+        couple, code = find_couple_exact_match(dancer, partner)
         heat_entry_obj = HeatEntry()
         if couple is not None:
-            #TODO; this works for matching couples - how to obtain code for non-matches
-            heat_entry_obj.populate(heat, couple, dancer.code, shirt_number)
-            # Don't save for right now
-            #heat_res_obj.save()
+            #TODO: does this pick the right code?
+            heat_entry_obj.populate(heat, couple, code, shirt_number)
+            entries_in_database = HeatEntry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
+            if entries_in_database.count() == 0:
+                #print(heat_entry_obj.heat, heat_entry_obj.couple, heat_entry_obj.code)
+                heat_entry_obj.save()
+            # else:
+            #     print("Heat Entry exists")
         else:
             heat_entry_obj.populate(heat, shirt_number=shirt_number)
-            heat_entry_obj.save()
+            mismatches_in_database = HeatEntry.objects.filter(heat=heat, shirt_number=shirt_number)
+            if mismatches_in_database.count() == 0:
+                #print(heat_entry_obj.heat, heat_entry_obj.shirt_number)
+                heat_entry_obj.save()
+                he = heat_entry_obj
+            else:
+                he = mismatches_in_database.first()
+                print("Unmatched Heat Entry exists")
             partial_matches = find_couple_partial_match(dancer, partner)
-            for p in partial_matches:
-                self.build_unmatched_heat_entry(heat_entry_obj, dancer, partner, p)
+            for couple, code in partial_matches:
+                mismatch = self.build_unmatched_heat_entry(he, dancer, partner, couple, code)
+                #print(mismatch.dancer.name, mismatch.partner.name, mismatch.code, mismatch.couple)
+                mismatches_in_database = UnmatchedHeatEntry.objects.filter(entry=he, dancer=dancer, partner=partner, couple=couple)
+                if mismatches_in_database.count() == 0:
+                    mismatch.save()
+                else:
+                    print("Mismatch exists")
             self.unmatched_heats += 1
 
 
@@ -306,21 +323,21 @@ class CompMngrHeatlist(Heatlist):
                     partner = self.find_dancer(partner_name)
 
             # look for lines with pro heat number information
-            elif "Pro heat " in line:
-                if partner is not None:
-                    if partner_name > dancer_name:
-                        h = self.build_heat("Pro heat", line, comp_ref)
-                        if h is not None:
-                            self.build_heat_entry(h, dancer, partner, line)
-
-            # look for lines with heat number information
-            # elif "Heat " in line:
+            # elif "Pro heat " in line:
             #     if partner is not None:
             #         if partner_name > dancer_name:
-            #             # turn this line into a heat object and add it to the database
-            #             h = self.build_heat("Heat", line, comp_ref)
+            #             h = self.build_heat("Pro heat", line, comp_ref)
             #             if h is not None:
             #                 self.build_heat_entry(h, dancer, partner, line)
+
+            # look for lines with heat number information
+            elif "Heat " in line:
+                if partner is not None:
+                    if partner_name > dancer_name:
+                        # turn this line into a heat object and add it to the database
+                        h = self.build_heat("Heat", line, comp_ref)
+                        if h is not None:
+                            self.build_heat_entry(h, dancer, partner, line)
 
             # if we see the closing </div> tag, we are done with this dancer.
             elif "/div" in line:
