@@ -12,7 +12,7 @@
 
 <div class="row">
   <div class="col-4 offset-md-4">
-      <a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Unmatched Heats</a>
+      <a id="resolve_mismatches_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Unmatched Heats</a>
       <a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:heats' comp.id %}">View Heats</a>
   </div>
 </div>
@@ -35,7 +35,11 @@
     $( resultElement ).append(
       $('<p>').text('Processed ' + result[0] + " dancers. " + result[1] + " heats did not find a matching couple")
     );
-    $( '#view_heats_button').removeClass( "disabled" );
+    if (result[1] == 0) {
+      $( '#view_heats_button' ).removeClass( "disabled" );
+    } else {
+      $( '#resolve_mismatches_button' ).removeClass( "disabled" );
+    }
   }
 
   $(function () {

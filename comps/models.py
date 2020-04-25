@@ -102,6 +102,17 @@ class Heat(models.Model):
         else:
             self.base_value = non_pro_heat_level(self.info, self.multi_dance())
 
+    def remove_info_prefix(self):
+        if self.info.startswith("L-"):
+            self.info = self.info[2:]
+        elif self.info.startswith("G-"):
+            self.info = self.info[2:]
+        elif self.info.startswith("AP-"):
+            self.info = self.info[3:]
+        elif self.info.startswith("PA-"):
+            self.info = self.info[3:]
+
+
     def multi_dance(self):
         '''This function returns True if the description indicates a multi-dance heat.'''
         s = self.info
@@ -109,7 +120,7 @@ class Heat(models.Model):
         right_pos = s.find(')')
         if left_pos == -1 or right_pos == -1:
             return False
-        elif "Mixed" in s or "Solo Star" in s or "NP" in s:
+        elif "Mixed" in s or "-ML" in s or "Solo Star" in s or "NP" in s:
             return False
         elif "/" in s[left_pos:right_pos] or "," in s[left_pos:right_pos]:
             return True
@@ -139,6 +150,7 @@ class Heat(models.Model):
                 print("Unknown style for heat", s)
             self.style = Heat.UNKNOWN
 
+
     def set_time(self, time_str, day_of_week_str):
         comp_start_date = self.comp.start_date.isocalendar()
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -149,6 +161,49 @@ class Heat(models.Model):
                                                  # could try to get smarter about where comp was located, but why?
         self.time = datetime(heat_date.year, heat_date.month, heat_date.day,
                              time_of_day.tm_hour, time_of_day.tm_min, tzinfo=tz)
+
+
+    def amateur_heat(self):
+        '''This function returns True if the description indicates an amateur heat.'''
+        s = self.info
+        if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s:
+            return True
+        else:
+            return False
+
+
+    def junior_heat(self):
+        '''This function returns True if the description indicates a junior or youth heat.'''
+        s = self.info
+        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or \
+           "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or \
+           "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or \
+           "High School" in s or "Elementary School" in s or \
+           "-TB" in s or "Teddy Bear" in s:
+
+           # Under 21 heats are sometimes listed as youth, but should not be treated as juniors
+           if "U21" in s or "Under 21" in s:
+                return False
+           else:
+               return True
+        else:
+            return False
+
+
+    def couple_type(self):
+        if self.category == Heat.PRO_HEAT:
+            return Couple.PRO_COUPLE
+        elif self.amateur_heat():
+            if self.junior_heat():
+                return Couple.JR_AMATEUR_COUPLE
+            else:
+                return Couple.AMATEUR_COUPLE
+        else:
+            if self.junior_heat():
+                return Couple.JR_PRO_AM_COUPLE
+            else:
+                return Couple.PRO_AM_COUPLE
+
 
     def __lt__(self, h):
         ''' override < operator to sort heats by various fields.'''
@@ -219,6 +274,33 @@ class HeatlistDancer(models.Model):
     # the code field is used to obtain scoresheet results for this dancer
     code = models.CharField(max_length = 20)
 
+    # flag to indicate if the name needs additional formatting by the user
+    formatting_needed = models.BooleanField(default=False)
+
+    def format_name(self, orig_name, simple=True, split_on=1):
+        '''This method converts a name into last, first format.
+           If simple is true, the method will not attempt to format names with three or more fields.
+           If simple is false, the split_on field will determine where to put the comma'''
+
+        fields = orig_name.split()
+        if simple:
+            if len(fields) == 2:
+                return fields[1] + ', '  + fields[0]
+            else:
+                print("format needed:", orig_name)
+                self.formatting_needed = True
+                return None
+        else:
+            name = ""
+            for f in range(split_on, len(fields)):
+                if f > split_on:
+                    name += " "
+                name += fields[f]
+            name += ","
+            for f in range(0, split_on):
+                name += " " + fields[f]
+            return name
+
 
     def load_from_comp_mngr(self, line):
         '''This method populates the object from a line of text from a CompMngr heatlist.'''
@@ -243,8 +325,15 @@ class HeatlistDancer(models.Model):
             # find the dancer's name
             start_pos = line.find('"name":"') + len('"name":"')
             end_pos = line.find('"', start_pos)
-            #self.name = Dancer.format_name(line[start_pos:end_pos]]
-            self.name = line[start_pos:end_pos]
+            orig_name = line[start_pos:end_pos]
+            new_name = self.format_name(orig_name)
+            if new_name is None:
+                self.name = orig_name
+            else:
+                self.name = new_name
+        else:
+            print("Error - invalid code")
+
 
     def load_from_ndca_premier(self, line):
         '''This method populates the object from a line of text from a heatlist in NDCA Premier format.'''
@@ -255,6 +344,9 @@ class HeatlistDancer(models.Model):
         # find the ID code for this dancer
         pos = fields[0].find("competitor=") + len("competitor=")
         self.code = fields[0][pos+1:-1]
+
+    def __str__(self):
+        return self.name
 
 
 class UnmatchedHeatEntry(models.Model):
