@@ -15,21 +15,25 @@
   <div class="col-8 offset-md-2">
     <h2 class="text-center">{{ comp.title }}</h2>
     <h3 class="text-center"{{ comp.location }}</h3>
-    <h4 class="text-center">{{ comp.start_date }} to {{ comp.end_date }}</h4>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-4 offset-md-4">
-    {% if comp.heatsheet_url %}
-      <form method="GET" action="{% url 'comps:process_heatlists' comp.pk %}">
-        <button type="submit" class="btn btn-primary btn-rounded">Process Heatlists</button>
-      </form>
-      <form method="GET" action="{% url 'comps:heats' comp.pk %}">
-        <button type="submit" class="btn btn-primary btn-rounded">View Heats</button>
-      </form>
+    {% if comp.start_date == comp.end_date %}
+      <h4 class="text-center">{{ comp.start_date }}</h4>
+    {% else %}
+      <h4 class="text-center">{{ comp.start_date }} to {{ comp.end_date }}</h4>
     {% endif %}
   </div>
 </div>
+
+
+{% if comp.heatsheet_url %}
+<div class="row">
+  <div class="col-6 offset-md-3">
+      <a id="load_heats_button" class="btn btn-primary" role="button" href="{% url 'comps:load_dancers' comp.id %}">Load Dancers</a>
+      <a id="load_dancers_button" class="btn btn-primary" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
+      <a id="resolve_mismatches_button" class="btn btn-secondary" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Mismatches</a>
+      <a id="view_heats_button" class="btn btn-secondary" role="button" href="{% url 'comps:heats' comp.id %}">View Heats</a>
+  </div>
+</div>
+{% endif %}
+
 
 {% endblock %}
