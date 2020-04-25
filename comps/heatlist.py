@@ -1,8 +1,9 @@
 import json
 from operator import itemgetter
 
-from .models import Heat
 from rankings.models import Couple, Dancer
+from .models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+
 
 age_div_prefix_list = ("L-", "G-", "AC-", "Pro ", "AC-", "Professional", "AM/AM", "Amateur", "Youth", "MF-", "M/F")
 
@@ -14,9 +15,6 @@ class Heatlist():
         self.comp_name = "--Click Open to load a Heat Sheet File--"
         self.unmatched_heats = 0
         self.dancers = list()               # store a list of the individual dancers competing
-        #self.couples = list()               # store a list of the couples competing
-        #self.heats = list()
-        #self.heat_entries = list()
 
 
     def split_name(self, name):
@@ -133,3 +131,63 @@ class Heatlist():
             return h
         else: # not a heat that we care about
             return None
+
+
+    def build_unmatched_heat_entry(self, heat_entry, heatlist_dancer, heatlist_partner, couple, code):
+        # first save the dancer and partner, if necessary
+        dancer_in_database = HeatlistDancer.objects.filter(name = heatlist_dancer.name)
+        if dancer_in_database.count() == 0:
+            #print("Saving", heatlist_dancer.name, "to database")
+            heatlist_dancer.save()
+            d = heatlist_dancer
+        else:
+            d = dancer_in_database.first()
+        partner_in_database = HeatlistDancer.objects.filter(name = heatlist_partner.name)
+        if partner_in_database.count() == 0:
+            #print("Saving", heatlist_partner.name, "to database")
+            heatlist_partner.save()
+            p = heatlist_partner
+        else:
+            p = partner_in_database.first()
+        mismatch = UnmatchedHeatEntry()
+        mismatch.populate(heat_entry, d, p, couple, code)
+        return mismatch
+
+
+    def build_heat_entry(self, heat, dancer, partner, shirt_number):
+        '''This method builds a HeatEntry object for the current dancer, partner, and shirt number.'''
+
+        couple_type = heat.couple_type()
+        couple, code = self.find_couple_exact_match(dancer, partner, couple_type)
+        heat_entry_obj = HeatEntry()
+        # populate and save matching heat entry
+        if couple is not None:
+            heat_entry_obj.populate(heat, couple, code, shirt_number)
+            entries_in_database = HeatEntry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
+            if entries_in_database.count() == 0:
+                #print(heat_entry_obj.heat.category, heat_entry_obj.heat.heat_number, heat_entry_obj.couple, "Shirt #", heat_entry_obj.shirt_number)
+                heat_entry_obj.save()
+            # else:
+            #     print("Heat Entry exists")
+        else:
+            # populate and save partially completed heat entry
+            heat_entry_obj.populate(heat, shirt_number=shirt_number)
+            entries_in_database = HeatEntry.objects.filter(heat=heat, shirt_number=shirt_number)
+            if entries_in_database.count() == 0:
+                heat_entry_obj.save()
+                he = heat_entry_obj
+            else:
+                he = entries_in_database.first()
+                #print("Unmatched Heat Entry exists")
+
+            # build list of possible matches for this heat entry and save them
+            partial_matches = self.find_couple_partial_match(dancer, partner)
+            for couple, code in partial_matches:
+                mismatch = self.build_unmatched_heat_entry(he, dancer, partner, couple, code)
+                #print(mismatch.dancer.name, mismatch.partner.name, mismatch.code, mismatch.couple)
+                mismatches_in_database = UnmatchedHeatEntry.objects.filter(entry=he, dancer=dancer, partner=partner, couple=couple)
+                if mismatches_in_database.count() == 0:
+                    mismatch.save()
+                # else:
+                #     print("Mismatch exists")
+            self.unmatched_heats += 1

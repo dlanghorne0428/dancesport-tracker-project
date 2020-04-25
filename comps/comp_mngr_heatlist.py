@@ -70,12 +70,6 @@ class CompMngrHeatlist(Heatlist):
     ############### EXTRACTION ROUTINES  #################################################
     # the following methods extract specific data items from lines in the CompMngr file
     ######################################################################################
-    def get_age_division(self, line):
-        '''Look for an age division on the given line. Return it or None if no age division found.'''
-        prefixes = ("L-", "G-", "AC-", "Pro ")  # valid prefixes for division
-        return super().get_age_division(line, prefixes)
-
-
     def get_comp_name(self,line):
         '''This method extracts the name of the competition.
            It is found on the given line after a <strong> tag until the next HTML tag.'''
@@ -103,7 +97,6 @@ class CompMngrHeatlist(Heatlist):
         dancer = None       # variables for the current dancer
         found_last_dancer = False
 
-
         # open the file and loop through all the lines until last dancer is found
         #self.fhand = open(filename,encoding="utf-8")
         response = requests.get(url)
@@ -130,71 +123,34 @@ class CompMngrHeatlist(Heatlist):
                 if found_last_dancer:
                     break;
 
+    def load(self, url, heatlist_dancers):
+        for d in heatlist_dancers:
+            self.dancers.append(d)
+            print(d.name)
+
+        # open the file and skip all the lines until last dancer is found
+        response = requests.get(url)
+        self.lines = response.text.splitlines()
+        self.line_index = 0
+        found_last_dancer = False
+        while self.line_index < len(self.lines):
+            line = self.lines[self.line_index]
+            self.line_index += 1
+            # if we see the closing </table> tag, we have found all the dancers
+            if "/table" in line:
+                #print("Found", len(self.dancers), "dancers")
+                found_last_dancer = True
+            # once we have found the last dancer, stop after finding the closing </div> tag
+            if "/div" in line:
+                if found_last_dancer:
+                    break;
+
 
     def build_heat(self, category_str, line, comp_ref):
         # turn that heat info into an object and add it to the database
         heat = Heat()
         load_heat(heat, category_str, line, comp_ref)
         return self.add_heat_to_database(heat, comp_ref)
-
-
-    def build_unmatched_heat_entry(self, heat_entry, heatlist_dancer, heatlist_partner, couple, code):
-        # first save the dancer and partner, if necessary
-        dancer_in_database = HeatlistDancer.objects.filter(name = heatlist_dancer.name)
-        if dancer_in_database.count() == 0:
-            #print("Saving", heatlist_dancer.name, "to database")
-            heatlist_dancer.save()
-            d = heatlist_dancer
-        else:
-            d = dancer_in_database.first()
-        partner_in_database = HeatlistDancer.objects.filter(name = heatlist_partner.name)
-        if partner_in_database.count() == 0:
-            #print("Saving", heatlist_partner.name, "to database")
-            heatlist_partner.save()
-            p = heatlist_partner
-        else:
-            p = partner_in_database.first()
-        mismatch = UnmatchedHeatEntry()
-        mismatch.populate(heat_entry, d, p, couple, code)
-        return mismatch
-
-
-    def build_heat_entry(self, heat, dancer, partner, line):
-        '''This method builds a HeatEntry object for the current dancer, partner,
-           and remaining heat information on the line.'''
-        shirt_number = line.split("<td>")[2].split("</td>")[0]
-        couple_type = heat.couple_type()
-        couple, code = self.find_couple_exact_match(dancer, partner, couple_type)
-        heat_entry_obj = HeatEntry()
-        if couple is not None:
-            heat_entry_obj.populate(heat, couple, code, shirt_number)
-            entries_in_database = HeatEntry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
-            if entries_in_database.count() == 0:
-                #print(heat_entry_obj.heat, heat_entry_obj.couple, heat_entry_obj.code)
-                heat_entry_obj.save()
-            else:
-                print("Heat Entry exists")
-        else:
-            heat_entry_obj.populate(heat, shirt_number=shirt_number)
-            mismatches_in_database = HeatEntry.objects.filter(heat=heat, shirt_number=shirt_number)
-            if mismatches_in_database.count() == 0:
-                #print(heat_entry_obj.heat, heat_entry_obj.shirt_number)
-                heat_entry_obj.save()
-                he = heat_entry_obj
-            else:
-                he = mismatches_in_database.first()
-                print("Unmatched Heat Entry exists")
-
-            partial_matches = self.find_couple_partial_match(dancer, partner)
-            for couple, code in partial_matches:
-                mismatch = self.build_unmatched_heat_entry(he, dancer, partner, couple, code)
-                #print(mismatch.dancer.name, mismatch.partner.name, mismatch.code, mismatch.couple)
-                mismatches_in_database = UnmatchedHeatEntry.objects.filter(entry=he, dancer=dancer, partner=partner, couple=couple)
-                if mismatches_in_database.count() == 0:
-                    mismatch.save()
-                else:
-                    print("Mismatch exists")
-            self.unmatched_heats += 1
 
 
     def get_next_dancer(self, dancer_index, comp_ref):
@@ -232,7 +188,8 @@ class CompMngrHeatlist(Heatlist):
                     if partner_name > dancer_name:
                         h = self.build_heat("Pro heat", line, comp_ref)
                         if h is not None:
-                            self.build_heat_entry(h, dancer, partner, line)
+                            shirt_number = line.split("<td>")[2].split("</td>")[0]
+                            self.build_heat_entry(h, dancer, partner, shirt_number)
 
             # look for lines with heat number information
             elif "Heat " in line:
@@ -241,7 +198,8 @@ class CompMngrHeatlist(Heatlist):
                         # turn this line into a heat object and add it to the database
                         h = self.build_heat("Heat", line, comp_ref)
                         if h is not None:
-                            self.build_heat_entry(h, dancer, partner, line)
+                            shirt_number = line.split("<td>")[2].split("</td>")[0]
+                            self.build_heat_entry(h, dancer, partner, shirt_number)
 
             # if we see the closing </div> tag, we are done with this dancer.
             elif "/div" in line:

@@ -29,9 +29,9 @@ def load_heat(h, items, item_index, comp_ref):
         h.heat_number = -1  # indicate an error
         return None
     elif category_string == "Pro heat ":
-        h.category = "Pro heat"
+        h.category = Heat.PRO_HEAT
     elif category_string == "Heat ":
-        h.category = "Heat"
+        h.category = Heat.HEAT
 
     try:
         h.heat_number = int(number_string[index:])
@@ -94,16 +94,6 @@ class CompOrgHeatlist(Heatlist):
         else:
             return None
 
-    def build_heat_entry(self, heat, items, item_index, dancer, partner):
-        start_pos = items[item_index+4].find("-numb") + len("-numb") + 2
-        shirt_number = items[item_index+3][start_pos:]
-        couple_type = heat.couple_type()
-        couple, code = self.find_couple_exact_match(dancer, partner. couple_type)
-        heat_entry = HeatEntry()
-        if couple is not None:
-            heat_entry.populate(heat, couple, code, shirt_number)
-            print(heat_entry.heat, heat_entry.couple, heat_entry.code)
-
 
     def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
         '''This method extracts heat information from the heat_data.
@@ -129,12 +119,16 @@ class CompOrgHeatlist(Heatlist):
 
             # no partner, check if this item has the start of a new heat
             elif "heatlist-sess" in items[item_index]:
-                # build heat object, which takes up the next five items
-                heat = Heat()
-                load_heat(heat, items, item_index, comp_ref)
-                h = self.add_heat_to_database(heat, comp_ref)
-                if h is not None:
-                    self.build_heat_entry(h, items, item_index, dancer, partner)
+                if partner is not None:
+                    if partner.name > dancer.name:
+                        # build heat object, which takes up the next five items
+                        heat = Heat()
+                        load_heat(heat, items, item_index, comp_ref)
+                        h = self.add_heat_to_database(heat, comp_ref)
+                        if h is not None:
+                            start_pos = items[item_index+3].find("-numb") + len("-numb") + 2
+                            shirt_number = items[item_index+3][start_pos:]
+                            self.build_heat_entry(h, dancer, partner, shirt_number)
                 item_index += 5
 
             else:
@@ -177,6 +171,28 @@ class CompOrgHeatlist(Heatlist):
                     self.dancers.append(d)
             except:
                 print("Invalid competitor", d.name, d.code)
+
+
+    def load(self, url, heatlist_dancers):
+        # load the list of dancers found by open()
+        for d in heatlist_dancers:
+            self.dancers.append(d)
+
+        #extract comp name from URL
+        response = requests.get(url)
+        lines = response.text.splitlines()
+        for l in lines:
+            if "var cmid" in l:
+                # this line is in this format"
+                # var cmid = "beachbash2019";
+                # extract the name from between the quotes
+                self.comp_name = l.split('= "')[1][:-2]
+                break
+
+        # save this string for later use in URL access
+        end_pos = url.find("/pages")
+        self.base_url = url[:end_pos] + "/scripts/heatlist_scrape.php?comp=" + self.comp_name
+        print(self.base_url)
 
 
     def get_next_dancer(self, dancer_index, comp_ref):
