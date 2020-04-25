@@ -120,7 +120,7 @@ class Heat(models.Model):
         right_pos = s.find(')')
         if left_pos == -1 or right_pos == -1:
             return False
-        elif "Mixed" in s or "Solo Star" in s or "NP" in s:
+        elif "Mixed" in s or "-ML" in s or "Solo Star" in s or "NP" in s:
             return False
         elif "/" in s[left_pos:right_pos] or "," in s[left_pos:right_pos]:
             return True
@@ -274,19 +274,32 @@ class HeatlistDancer(models.Model):
     # the code field is used to obtain scoresheet results for this dancer
     code = models.CharField(max_length = 20)
 
+    # flag to indicate if the name needs additional formatting by the user
+    formatting_needed = models.BooleanField(default=False)
 
-    def format_name(orig_name, split_on=1):
-        '''This static function converts a name into last, first format.'''
-        name = ""
+    def format_name(self, orig_name, simple=True, split_on=1):
+        '''This method converts a name into last, first format.
+           If simple is true, the method will not attempt to format names with three or more fields.
+           If simple is false, the split_on field will determine where to put the comma'''
+
         fields = orig_name.split()
-        for f in range(split_on, len(fields)):
-            if f > split_on:
-                name += " "
-            name += fields[f]
-        name += ","
-        for f in range(0, split_on):
-            name += " " + fields[f]
-        return name
+        if simple:
+            if len(fields) == 2:
+                return fields[1] + ', '  + fields[0]
+            else:
+                print("format needed:", orig_name)
+                self.formatting_needed = True
+                return None
+        else:
+            name = ""
+            for f in range(split_on, len(fields)):
+                if f > split_on:
+                    name += " "
+                name += fields[f]
+            name += ","
+            for f in range(0, split_on):
+                name += " " + fields[f]
+            return name
 
 
     def load_from_comp_mngr(self, line):
@@ -312,7 +325,14 @@ class HeatlistDancer(models.Model):
             # find the dancer's name
             start_pos = line.find('"name":"') + len('"name":"')
             end_pos = line.find('"', start_pos)
-            self.name = HeatlistDancer.format_name(line[start_pos:end_pos])
+            orig_name = line[start_pos:end_pos]
+            new_name = self.format_name(orig_name)
+            if new_name is None:
+                self.name = orig_name
+            else:
+                self.name = new_name
+        else:
+            print("Error - invalid code")
 
 
     def load_from_ndca_premier(self, line):
@@ -324,6 +344,9 @@ class HeatlistDancer(models.Model):
         # find the ID code for this dancer
         pos = fields[0].find("competitor=") + len("competitor=")
         self.code = fields[0][pos+1:-1]
+
+    def __str__(self):
+        return self.name
 
 
 class UnmatchedHeatEntry(models.Model):
