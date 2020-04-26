@@ -30,8 +30,9 @@ class Comp(models.Model):
         default=COMP_MNGR,
     )
 
-    # URLs are optional, blank=True allows that
+    # URLs are optional, blank=True allows that, use heatlist_file if URL not available
     heatsheet_url = models.URLField(blank=True)
+    heatsheet_file = models.FileField(upload_to=comp_logo_path, blank=True)
     scoresheet_url = models.URLField(blank=True)
 
     def __str__(self):
@@ -345,10 +346,19 @@ class HeatlistDancer(models.Model):
             self.name = orig_name
         else:
             self.name = new_name
-            
+
         # find the ID code for this dancer
         pos = fields[0].find("competitor=") + len("competitor=")
         self.code = fields[0][pos+1:-1]
+
+
+    def load_from_file(self, line):
+        '''This method populates the object from a line of text from a heatlist in custom file format.'''
+        # find the dancer's name
+        fields = line.split(":")
+        self.name = fields[0]
+        self.code = fields[1]
+
 
     def __str__(self):
         return self.name

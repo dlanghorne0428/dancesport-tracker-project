@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Comp, Heat, HeatEntry, UnmatchedHeatEntry, HeatlistDancer
 from .forms import CompForm
 from .tasks import process_heatlist_task
+from .file_based_heatlist import FileBasedHeatlist
 from .comp_mngr_heatlist import CompMngrHeatlist
 from .comp_organizer_heatlist import CompOrgHeatlist
 from .ndca_prem_heatlist import NdcaPremHeatlist
@@ -138,14 +139,18 @@ def load_dancers(request, comp_id):
     if HeatlistDancer.objects.count() > 0:
         heatlist_dancers = HeatlistDancer.objects.all().delete()
 
-    if comp.url_data_format == Comp.COMP_MNGR:
-        heatlist = CompMngrHeatlist()
-    elif comp.url_data_format == Comp.NDCA_PREM:
-        heatlist = NdcaPremHeatlist()
-    else: # CompOrganizer for now
-        heatlist = CompOrgHeatlist()
+    if len(comp.heatsheet_file) > 0:
+        heatlist = FileBasedHeatlist()
+        heatlist.open(comp.heatsheet_file)
+    else:
+        if comp.url_data_format == Comp.COMP_MNGR:
+            heatlist = CompMngrHeatlist()
+        elif comp.url_data_format == Comp.NDCA_PREM:
+            heatlist = NdcaPremHeatlist()
+        else: # CompOrganizer for now
+            heatlist = CompOrgHeatlist()
 
-    heatlist.open(comp.heatsheet_url)
+        heatlist.open(comp.heatsheet_url)
 
     for d in heatlist.dancers:
         in_database = HeatlistDancer.objects.filter(name = d.name)

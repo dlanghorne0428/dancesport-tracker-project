@@ -26,7 +26,6 @@ class Heatlist():
                 # no middle name
                 return (name_fields[0], first_fields[0], "")
             else:
-                #print("Middle Name", name_fields[0], first_fields[0], first_fields[1])
                 # TODO: what if two middle names?
                 return (name_fields[0], first_fields[0], first_fields[1])
 
@@ -130,10 +129,8 @@ class Heatlist():
             heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number, info=heat.info)
             if heats_in_database.count() > 0:
                 h = heats_in_database.first()
-                #print("Found matching heat")
             else:
                 h = heat
-                #print("Saving", h)
                 h.save()   # save the heat into the database
             return h
         else: # not a heat that we care about
@@ -144,14 +141,12 @@ class Heatlist():
         # first save the dancer and partner, if necessary
         dancer_in_database = HeatlistDancer.objects.filter(name = heatlist_dancer.name)
         if dancer_in_database.count() == 0:
-            #print("Saving", heatlist_dancer.name, "to database")
             heatlist_dancer.save()
             d = heatlist_dancer
         else:
             d = dancer_in_database.first()
         partner_in_database = HeatlistDancer.objects.filter(name = heatlist_partner.name)
         if partner_in_database.count() == 0:
-            #print("Saving", heatlist_partner.name, "to database")
             heatlist_partner.save()
             p = heatlist_partner
         else:
@@ -172,30 +167,23 @@ class Heatlist():
             heat_entry_obj.populate(heat, couple, code, shirt_number)
             entries_in_database = HeatEntry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
             if entries_in_database.count() == 0:
-                #print(heat_entry_obj.heat.category, heat_entry_obj.heat.heat_number, heat_entry_obj.couple, "Shirt #", heat_entry_obj.shirt_number)
                 heat_entry_obj.save()
-            # else:
-            #     print("Heat Entry exists")
         else:
             # populate and save partially completed heat entry
             heat_entry_obj.populate(heat, shirt_number=shirt_number)
-            #print("Mismatch:", heat_entry_obj.heat.category, heat_entry_obj.heat.heat_number)
             entries_in_database = HeatEntry.objects.filter(heat=heat, shirt_number=shirt_number)
             if entries_in_database.count() == 0:
                 heat_entry_obj.save()
                 he = heat_entry_obj
             else:
                 he = entries_in_database.first()
-                #print("Unmatched Heat Entry exists")
 
             # build list of possible matches for this heat entry and save them
             partial_matches = self.find_couple_partial_match(dancer, partner)
             for couple, code in partial_matches:
                 mismatch = self.build_unmatched_heat_entry(he, dancer, partner, couple, code)
-                #print(mismatch.dancer.name, mismatch.partner.name, mismatch.code, mismatch.couple)
                 mismatches_in_database = UnmatchedHeatEntry.objects.filter(entry=he, dancer=dancer, partner=partner, couple=couple)
                 if mismatches_in_database.count() == 0:
                     mismatch.save()
-                # else:
-                #     print("Mismatch exists")
+
             self.unmatched_heats += 1
