@@ -3,9 +3,10 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Comp, Heat, HeatEntry, UnmatchedHeatEntry, HeatlistDancer
 from .forms import CompForm
-from .tasks import my_task, process_heatlist_task
+from .tasks import process_heatlist_task
 from .comp_mngr_heatlist import CompMngrHeatlist
 from .comp_organizer_heatlist import CompOrgHeatlist
+from .ndca_prem_heatlist import NdcaPremHeatlist
 
 def all_comps(request):
     comps = Comp.objects.order_by('start_date')
@@ -134,11 +135,13 @@ def load_dancers(request, comp_id):
     if len(comp_objects) == 1:
         comp=comp_objects[0]
 
-    #if HeatlistDancer.objects.count() > 0:
-    #    heatlist_dancers = HeatlistDancer.objects.all().delete()
+    if HeatlistDancer.objects.count() > 0:
+        heatlist_dancers = HeatlistDancer.objects.all().delete()
 
     if comp.url_data_format == Comp.COMP_MNGR:
         heatlist = CompMngrHeatlist()
+    elif comp.url_data_format == Comp.NDCA_PREM:
+        heatlist = NdcaPremHeatlist()
     else: # CompOrganizer for now
         heatlist = CompOrgHeatlist()
 

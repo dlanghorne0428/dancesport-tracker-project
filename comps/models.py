@@ -339,8 +339,13 @@ class HeatlistDancer(models.Model):
         '''This method populates the object from a line of text from a heatlist in NDCA Premier format.'''
         # find the dancer's name
         fields = line.split(">")
-        self.name = fields[1]
-
+        orig_name = fields[1]
+        new_name = self.format_name(orig_name)
+        if new_name is None:
+            self.name = orig_name
+        else:
+            self.name = new_name
+            
         # find the ID code for this dancer
         pos = fields[0].find("competitor=") + len("competitor=")
         self.code = fields[0][pos+1:-1]

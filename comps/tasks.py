@@ -3,19 +3,10 @@ from celery_progress.backend import ProgressRecorder
 from django.core import serializers
 from .comp_mngr_heatlist import CompMngrHeatlist
 from .comp_organizer_heatlist import CompOrgHeatlist
+from .ndca_prem_heatlist import NdcaPremHeatlist
 from .models import Comp
 import time
 
-@shared_task(bind=True)
-def my_task(self, seconds):
-    print(seconds)
-    progress_recorder = ProgressRecorder(self)
-    result = 0
-    for i in range(seconds):
-        time.sleep(1)
-        result += i
-        progress_recorder.set_progress(i + 1, seconds)
-    return result
 
 @shared_task(bind=True)
 def process_heatlist_task(self, comp_data, heatlist_data):
@@ -29,6 +20,8 @@ def process_heatlist_task(self, comp_data, heatlist_data):
     progress_recorder = ProgressRecorder(self)
     if comp.url_data_format == Comp.COMP_MNGR:
         heatlist = CompMngrHeatlist()
+    elif comp.url_data_format == Comp.NDCA_PREM:
+        heatlist = NdcaPremHeatlist()
     else: # Comp CompOrganizer
         heatlist = CompOrgHeatlist()
 

@@ -41,11 +41,18 @@ class Heatlist():
             l.append(d.name)
         return l
 
-    def find_dancer(self, dancer_name):
+    def find_dancer(self, dancer_name, format_needed = False):
         '''This method finds the dancer object from the list based on the name.'''
         for d in self.dancers:
-            if d.name == dancer_name:
-                return d
+            if format_needed:
+                name_fields = dancer_name.split()
+                for f in range(1, len(name_fields)):
+                    name_scramble = d.format_name(dancer_name, simple=False, split_on=f)
+                    if d.name == name_scramble:
+                        return d
+            else:
+                if d.name == dancer_name:
+                    return d
         else:
             return None
 
@@ -172,6 +179,7 @@ class Heatlist():
         else:
             # populate and save partially completed heat entry
             heat_entry_obj.populate(heat, shirt_number=shirt_number)
+            #print("Mismatch:", heat_entry_obj.heat.category, heat_entry_obj.heat.heat_number)
             entries_in_database = HeatEntry.objects.filter(heat=heat, shirt_number=shirt_number)
             if entries_in_database.count() == 0:
                 heat_entry_obj.save()
