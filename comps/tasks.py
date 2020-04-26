@@ -1,6 +1,7 @@
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 from django.core import serializers
+from .file_based_heatlist import FileBasedHeatlist
 from .comp_mngr_heatlist import CompMngrHeatlist
 from .comp_organizer_heatlist import CompOrgHeatlist
 from .ndca_prem_heatlist import NdcaPremHeatlist
@@ -18,19 +19,27 @@ def process_heatlist_task(self, comp_data, heatlist_data):
     num_dancers = len(heatlist_dancers)
 
     progress_recorder = ProgressRecorder(self)
-    if comp.url_data_format == Comp.COMP_MNGR:
-        heatlist = CompMngrHeatlist()
-    elif comp.url_data_format == Comp.NDCA_PREM:
-        heatlist = NdcaPremHeatlist()
-    else: # Comp CompOrganizer
-        heatlist = CompOrgHeatlist()
 
-    heatlist.load(comp.heatsheet_url, heatlist_dancers)
+    if len(comp.heatsheet_file) > 0:
+        heatlist = FileBasedHeatlist()
+        heatlist.load(comp.heatsheet_file, heatlist_dancers)
+    else:
+        if comp.url_data_format == Comp.COMP_MNGR:
+            heatlist = CompMngrHeatlist()
+        elif comp.url_data_format == Comp.NDCA_PREM:
+            heatlist = NdcaPremHeatlist()
+        else: # Comp CompOrganizer
+            heatlist = CompOrgHeatlist()
+
+        heatlist.load(comp.heatsheet_url, heatlist_dancers)
 
     progress_recorder.set_progress(0, num_dancers)
     for index in range(num_dancers):
         the_name = heatlist.get_next_dancer(index, comp)
+        if the_name is None:
+            break
         progress_recorder.set_progress(index, num_dancers, description=the_name)
+        
     unmatched_heat_count = heatlist.complete_processing()
-    result = [num_dancers, unmatched_heat_count]
+    result = [index, unmatched_heat_count]
     return result
