@@ -27,7 +27,6 @@ urlpatterns = [
     re_path(r'^celery-progress/', include('celery_progress.urls')),  # the endpoint is configurabl
     path('', views.home, name="home"),
     path('dancers/', views.all_dancers, name="all_dancers"),
-    path('dancers/<int:start_index>', views.all_dancers, name="all_dancers"),
     path('dancers/edit/<int:dancer_pk>', views.viewdancer, name='viewdancer'),
     path('dancers/create/', views.createdancer, name='createdancer'),
     path('couples/', views.all_couples, name="all_couples"),
