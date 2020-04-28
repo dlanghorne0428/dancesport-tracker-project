@@ -2,12 +2,13 @@ from django.core import serializers
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Comp, Heat, HeatEntry, UnmatchedHeatEntry, HeatlistDancer
-from .forms import CompForm
+from .forms import CompForm, HeatForm
 from .tasks import process_heatlist_task
 from .file_based_heatlist import FileBasedHeatlist
 from .comp_mngr_heatlist import CompMngrHeatlist
 from .comp_organizer_heatlist import CompOrgHeatlist
 from .ndca_prem_heatlist import NdcaPremHeatlist
+from .filters import HeatFilter
 
 def all_comps(request):
     comps = Comp.objects.order_by('start_date')
@@ -32,18 +33,29 @@ def createcomp(request):
             return render(request, 'comps/createcomp.html', {'form':CompForm(), 'error': "Invalid data submitted."})
 
 
-def heats(request, comp_id):
+def comp_heats(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
-    heats_from_comp = Heat.objects.filter(comp=comp).order_by('time')
-    paginator = Paginator(heats_from_comp, 16)
+    f = HeatFilter(request.GET, queryset=Heat.objects.filter(comp=comp).order_by('time'))
+    paginator = Paginator(f.qs, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, "comps/heats.html", {'comp': comp, 'page_obj': page_obj})
+    return render(request, "comps/comp_heats.html", {'comp': comp, 'page_obj': page_obj, 'filter': f})
 
-def heat_entries(request, heat_id):
+
+def heat(request, heat_id):
     heat = get_object_or_404(Heat, pk=heat_id)
     entries = HeatEntry.objects.filter(heat=heat).order_by('shirt_number')
-    return render(request, "comps/heat_entries.html", {'comp_title': heat.comp.title, 'comp_id': heat.comp.id, 'heat': heat, 'entries': entries})
+    comp_id = heat.comp_id
+    if request.method == "GET":
+        form = HeatForm(instance=heat)
+        return render(request, 'comps/heat.html', {'heat': heat, 'form': form, 'entries': entries})
+    else:
+        try:
+            form = HeatForm(request.POST, instance=heat)
+            form.save()
+            return redirect('comps:comp_heats', comp_id)
+        except ValueError:
+            return render(request, 'comps/heat.html', {'heat': heat, 'form': form, 'error': "Invalid data submitted."})
 
 
 def resolve_mismatches(request, comp_id):
