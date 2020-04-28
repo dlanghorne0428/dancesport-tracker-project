@@ -8,52 +8,54 @@
     </div>
   </div>
 
-    <div class="row align-items-start">
+  <div class="row align-items-start">
 
-      <div class="col border border-dark">
-        <table class="table table-bordered table-sm">
-          <thead class="thead-dark">
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for dancer in page_obj %}
-            <tr>
-              <td>
-                <a href="{% url 'viewdancer' dancer.id %}">
-                  {% if dancer.name_middle %}
-                    {{ dancer.name_last }}, {{ dancer.name_first }} {{ dancer.name_middle }}
-                  {% else %}
-                    {{ dancer.name_last }}, {{ dancer.name_first }}
-                  {% endif %}
-                </a>
-              </td>
-              <td>
-                {{ dancer.get_dancer_type_display }}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-      <div class="col border border-dark">
-        <h4 class="text-center">Filter</h4>
-        <form method="get">
-          {{ filter.form.as_p }}
-        <button class="btn btn-primary" type="submit">Submit</button>
-        </form>
-      </div>
-
+    <div class="col border border-dark">
+      <table class="table table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dancer in page_obj %}
+          <tr>
+            <td>
+              <a href="{% url 'viewdancer' dancer.id %}">
+                {% if dancer.name_middle %}
+                  {{ dancer.name_last }}, {{ dancer.name_first }} {{ dancer.name_middle }}
+                {% else %}
+                  {{ dancer.name_last }}, {{ dancer.name_first }}
+                {% endif %}
+              </a>
+            </td>
+            <td>
+              {{ dancer.get_dancer_type_display }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+
+    <div class="col border border-dark">
+      <h4 class="text-center">Filter</h4>
+      <form method="get">
+        {{ filter.form.as_p }}
+      <button class="btn btn-primary" type="submit">Submit</button>
+      </form>
+    </div>
+
+  </div>
+
+  {% load my_tags %}
 
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       {% if page_obj.has_previous %}
-      <li class="page-item"><a class="page-link" href="?page=1" aria-label="Goto page 1">1</a></li>
-      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+      <li class="page-item"><a class="page-link" href="?{% param_replace page=1 %}"" aria-label="Goto page 1">1</a></li>
+      <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a></li>
       {% endif %}
       <li class="page-item active" aria-current="page">
         <span class="page-link">{{ page_obj.number }}
@@ -61,8 +63,8 @@
         </span>
       </li>
       {% if page_obj.has_next %}
-      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
-      <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Goto last page">{{ page_obj.paginator.num_pages }}</a></li>
+      <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a></li>
+      <li class="page-item"><a class="page-link" href="?{% param_replace page=page_obj.paginator.num_pages %}" aria-label="Goto last page">{{ page_obj.paginator.num_pages }}</a></li>
       {% endif %}
     </ul>
   </nav>
