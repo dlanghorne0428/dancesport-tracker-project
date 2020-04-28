@@ -48,9 +48,10 @@ def non_pro_heat_level(info, multi_dance=True):
         return 25
     else:
         if multi_dance:
-            #TODO: Query user? 
             print("Unknown level for heat", info)
-        return 15
+        # zero values can be found with a filter and fixed
+        return 0
+        #return 15
 
 
 def calc_points(level, placement, num_competitors = 6, rounds = "F", accum = 0):
