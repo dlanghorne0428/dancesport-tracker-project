@@ -30,7 +30,7 @@
       <a id="load_heats_button" class="btn btn-primary" role="button" href="{% url 'comps:load_dancers' comp.id %}">Load Dancers</a>
       <a id="load_dancers_button" class="btn btn-primary" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
       <a id="resolve_mismatches_button" class="btn btn-secondary" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Mismatches</a>
-      <a id="view_heats_button" class="btn btn-secondary" role="button" href="{% url 'comps:heats' comp.id %}">View Heats</a>
+      <a id="view_heats_button" class="btn btn-secondary" role="button" href="{% url 'comps:comp_heats' comp.id %}">View Heats</a>
   </div>
 </div>
 {% endif %}
