@@ -2,10 +2,12 @@
 
 {% block content %}
 
+<h2 class='text-center'>{{ dancer }}</h2>
+<br />
 
 <div class="row">
   <div class="col-2 offset-md-1 border border-dark">
-    <h3 class="text-center">Edit Dancer</h3>
+    <h3 class="text-center">Edit Profile</h3>
     <p>{{ error }}</p>
 
     <form method="POST">
@@ -42,7 +44,6 @@
 
       {% for couple in couples %}
       <tr>
-
         <td>{{ couple.dancer_1 }}</td>
         <td>and</td>
         <td>{{ couple.dancer_2 }}</td>
@@ -50,8 +51,10 @@
       </tr>
       {% endfor %}
     </table>
+    <a class="btn btn-primary" href="{% url 'createcouple' %}">Add Couple</a>
   </div>
 </div>
+
 
 
 
