@@ -67,7 +67,7 @@ def resolve_mismatches(request, comp_id):
             heatlist_dancers = HeatlistDancer.objects.all().delete()
             comp.process_state = comp.HEAT_ENTRIES_MATCHED
             comp.save()
-            return redirect("comps:heats", comp_id)
+            return redirect("comps:comp_heats", comp_id)
         else:
             first_unmatched = unmatched_entries.first()
             first_set = unmatched_entries.filter(entry=first_unmatched.entry).order_by('couple__dancer_1')
