@@ -2,12 +2,13 @@ from django.core import serializers
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Comp, Heat, HeatEntry, UnmatchedHeatEntry, HeatlistDancer
-from .forms import CompForm
+from .forms import CompForm, HeatForm
 from .tasks import process_heatlist_task
 from .file_based_heatlist import FileBasedHeatlist
 from .comp_mngr_heatlist import CompMngrHeatlist
 from .comp_organizer_heatlist import CompOrgHeatlist
 from .ndca_prem_heatlist import NdcaPremHeatlist
+from .filters import HeatFilter
 
 def all_comps(request):
     comps = Comp.objects.order_by('start_date')
