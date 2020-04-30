@@ -28,12 +28,42 @@ class Comp(models.Model):
         max_length=2,
         choices=DATA_FORMAT_CHOICES,
         default=COMP_MNGR,
-    )
+        )
 
     # URLs are optional, blank=True allows that, use heatlist_file if URL not available
     heatsheet_url = models.URLField(blank=True)
     heatsheet_file = models.FileField(upload_to=comp_logo_path, blank=True)
     scoresheet_url = models.URLField(blank=True)
+
+    # the different states of processing a competition
+    INITIAL = "IN"
+    DANCERS_LOADED = "DL"
+    DANCER_NAMES_FORMATTED = "DNF"
+    HEATS_LOADED = "HL"
+    HEAT_STYLES_DEFINED = "HSD"
+    HEAT_LEVELS_DEFINED = "HLD"
+    HEAT_ENTRIES_MATCHED = "CEM"
+    SCORESHEETS_LOADED = "SSL"
+    RESULTS_RESOLVED = "RR"
+    COMPLETE = "FIN"
+    PROCESS_STATE_CHOICES = [
+        (INITIAL, 'Comp Initialized'),
+        (DANCERS_LOADED, 'Dancers Loaded'),
+        (DANCER_NAMES_FORMATTED, 'Dancer Names Formatted'),
+        (HEATS_LOADED, 'Heats Loaded'),
+        (HEAT_STYLES_DEFINED, 'Heat Styles Defined'),
+        (HEAT_LEVELS_DEFINED, 'Heat Levels Defined'),
+        (HEAT_ENTRIES_MATCHED, 'Heat Entries Matched'),
+        (SCORESHEETS_LOADED, 'Scoresheets Loaded'),
+        (RESULTS_RESOLVED, 'Results Resolved '),
+        (COMPLETE, 'Processing Complete')
+    ]
+
+    process_state = models.CharField(
+        max_length = 3,
+        choices=PROCESS_STATE_CHOICES,
+        default=INITIAL,
+        )
 
     def __str__(self):
         return self.title
