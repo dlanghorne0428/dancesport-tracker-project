@@ -20,7 +20,7 @@ def process_heatlist_task(self, comp_data, heatlist_data):
 
     progress_recorder = ProgressRecorder(self)
 
-    if len(comp.heatsheet_file) > 0:
+    if comp.heatsheet_file:
         heatlist = FileBasedHeatlist()
         heatlist.load(comp.heatsheet_file, heatlist_dancers)
     else:
@@ -39,7 +39,12 @@ def process_heatlist_task(self, comp_data, heatlist_data):
         if the_name is None:
             break
         progress_recorder.set_progress(index, num_dancers, description=the_name)
-        
+
     unmatched_heat_count = heatlist.complete_processing()
     result = [index, unmatched_heat_count]
+    if unmatched_heat_count == 0:
+        comp.process_state = comp.HEAT_ENTRIES_MATCHED
+    else:
+        comp.process_state = comp.HEATS_LOADED
+    comp.save()
     return result
