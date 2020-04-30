@@ -21,7 +21,7 @@
             <td>{{ comp.start_date }}</td>
             <td>{{ comp.end_date }}</td>
 
-            <td><a href="{% url 'comps:detail' comp.id %}"">{{ comp.title }}</a></td>
+            <td><a href="{% url 'comps:comp_detail' comp.id %}"">{{ comp.title }}</a></td>
             <td>{{ comp.location }}</td>
           </tr>
         {% endfor %}

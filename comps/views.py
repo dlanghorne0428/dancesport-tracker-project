@@ -17,9 +17,9 @@ def all_comps(request):
     page_obj = paginator.get_page(page_number)
     return render(request, "comps/all_comps.html", {'page_obj': page_obj})
 
-def detail(request, comp_id):
+def comp_detail(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
-    return render(request, "comps/detail.html", {'comp':comp})
+    return render(request, "comps/comp_detail.html", {'comp':comp})
 
 def createcomp(request):
     if request.method == "GET":
@@ -65,7 +65,9 @@ def resolve_mismatches(request, comp_id):
         if unmatched_entries.count() == 0:
             # all unmatched entries resolved, delete heatlist_dancer entries from database
             heatlist_dancers = HeatlistDancer.objects.all().delete()
-            return redirect("comps:heats", comp_id)
+            comp.process_state = comp.HEAT_ENTRIES_MATCHED
+            comp.save()
+            return redirect("comps:comp_heats", comp_id)
         else:
             first_unmatched = unmatched_entries.first()
             first_set = unmatched_entries.filter(entry=first_unmatched.entry).order_by('couple__dancer_1')
@@ -88,13 +90,13 @@ def resolve_mismatches(request, comp_id):
                 # delete the heat entries that have been resolved
                 #print("deleting unmatched entry", e.couple)
                 e.delete()
-            return redirect("comps:heat_entries", first_entry.entry.heat.id)
+            return redirect("comps:heat", first_entry.entry.heat.id)
         elif submit == "Delete":
             first_entry = unmatched_entries.first()
             # deleting the heat entry that this unmatched entry points to will also delete all the unmatched entries
             # that point to the same entry.
             first_entry.entry.delete()
-            return redirect("comps:heat_entries", first_entry.entry.heat.id)
+            return redirect("comps:heat", first_entry.entry.heat.id)
 
 
 def resolve_dancers(request, comp_id):
@@ -138,6 +140,9 @@ def resolve_dancers(request, comp_id):
         fields = current_name.name.split()
         for field in range(1, len(fields)):
             possible_formats.append(current_name.format_name(current_name.name, simple=False, split_on=field))
+    else:
+        comp.process_state = Comp.DANCER_NAMES_FORMATTED
+        comp.save()
 
     return render(request, 'comps/dancers.html', {'comp': comp, 'page_obj': page_obj, 'current_name': current_name, 'possible_formats': possible_formats })
 
@@ -151,9 +156,9 @@ def load_dancers(request, comp_id):
     if HeatlistDancer.objects.count() > 0:
         heatlist_dancers = HeatlistDancer.objects.all().delete()
 
-    if len(comp.heatsheet_file) > 0:
-        heatlist = FileBasedHeatlist()
-        heatlist.open(comp.heatsheet_file)
+    if comp.heatsheet_file:
+            heatlist = FileBasedHeatlist()
+            heatlist.open(comp.heatsheet_file)
     else:
         if comp.url_data_format == Comp.COMP_MNGR:
             heatlist = CompMngrHeatlist()
@@ -168,6 +173,9 @@ def load_dancers(request, comp_id):
         in_database = HeatlistDancer.objects.filter(name = d.name)
         if in_database.count() == 0:
             d.save()
+
+    comp.process_state = Comp.DANCERS_LOADED
+    comp.save()
 
     return redirect("comps:resolve_dancers", comp.id)
 

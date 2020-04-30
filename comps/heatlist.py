@@ -28,6 +28,9 @@ class Heatlist():
             else:
                 # TODO: what if two middle names?
                 return (name_fields[0], first_fields[0], first_fields[1])
+        else:
+            print("could not split name:", name)
+            return(name, '', '')
 
 
     ############### DANCER / COUPLE ROUTINES  ###########################################

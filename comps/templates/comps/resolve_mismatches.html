@@ -10,8 +10,8 @@
 </div>
 
 <div class="row">
-  <div class="col-6 offset-md-3">
-    <h4 class="text-center">{{ first_entry.entry.heat.get_category_display }} {{ first_entry.entry.heat.heat_number }}</h4>
+  <div class="col-8 offset-md-2">
+    <h4 class="text-center">{{ first_entry.entry.heat.get_category_display }} {{ first_entry.entry.heat.heat_number }} {{ first_entry.entry.heat.info}}</h4>
     <h4 class="text-center">Find matching couple for:</h4>
     <div class="alert alert-info text-center" role="alert">
       {{ first_entry.dancer.name }} and {{ first_entry.partner.name }}
@@ -21,7 +21,7 @@
       <label for="couples">Choose a couple:</label>
       <select id="couples" name="couple">
         {% for entry in unmatched_entries %}
-        <option value="{{ entry.couple }}">{{ entry.couple.dancer_1 }} and {{ entry.couple.dancer_2 }}</option>
+        <option value="{{ entry.couple }}">{{ entry.couple.dancer_1 }} and {{ entry.couple.dancer_2 }}, {{ entry.couple.couple_type }}</option>
         {% endfor %}
       </select>
       <br /><br />
@@ -29,5 +29,7 @@
       <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
       <input class="btn btn-warning" type="submit" name="submit" value="Delete">
     </form>
+  </div>
+</div>
 
 {% endblock %}
