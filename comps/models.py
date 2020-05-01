@@ -143,6 +143,19 @@ class Heat(models.Model):
         elif self.info.startswith("PA-"):
             self.info = self.info[3:]
 
+    # temporary
+    def info_prefix(self):
+        if self.info.startswith("L-"):
+            return self.info[2:]
+        elif self.info.startswith("G-"):
+            return self.info[2:]
+        elif self.info.startswith("AP-"):
+            return self.info[3:]
+        elif self.info.startswith("PA-"):
+            return self.info[3:]
+        else:
+            return self.info
+
 
     def multi_dance(self):
         '''This function returns True if the description indicates a multi-dance heat.'''
