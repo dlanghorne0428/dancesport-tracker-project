@@ -1,0 +1,66 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col">
+    <h2 class="text-center">{{ heat.comp.title }}</h2>
+    <h3 class="text-center">{{ heat.get_category_display }} {{ heat.heat_number}} {{ heat.info }}: {{ heat_couple_type }}</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-4 border border-dark">
+    <h3 class="text-center">Find Couple</h3>
+    <p>{{ error }}</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <label for="couples">Choose a couple:</label>
+      <select id="couples" name="couple">
+        {% for couple in matching_couples %}
+        <option value="{{ couple }}">{{ couple.dancer_1 }} and {{ couple.dancer_2 }}, {{ couple.couple_type }}</option>
+        {% endfor %}
+      </select>
+      <br /><br />
+      <input class="btn btn-danger" type="submit" name="submit" value="Change Type">
+      <input class="btn btn-danger" type="submit" name="submit" value="Change Couple">
+      <input class="btn btn-secondary" type="submit" name="submit" value="Skip">
+    </form>
+  </div>
+
+  <div class="col lg-8 border border-dark">
+    <h3 class="text-center">Entries</h3>
+    <table class="table table-bordered table-sm">
+      <thead class="thead-dark">
+        <tr>
+          <th colspan="3" class="text-center">Couple</th>
+          <th class="text-center">Shirt Number</th>
+          <th class="text-center">Couple Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          {% if entry == targeted_entry %}
+            <tr class="table-warning">
+          {% else %}
+            <tr>
+          {% endif %}
+          <td>{{ entry.couple.dancer_1 }}</td>
+          <td>and</td>
+          <td>{{ entry.couple.dancer_2 }}</td>
+          <td class="text-center">{{ entry.shirt_number }}</td>
+          <td>{{ entry.couple.couple_type }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock %}
