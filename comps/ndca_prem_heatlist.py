@@ -6,81 +6,6 @@ from .models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
 from .heatlist import Heatlist
 
 
-
-def load_heat(h, line="", comp_ref=""):
-
-    h.comp = comp_ref
-    h.rounds = "F"      # assume final only
-    if len(line) > 0:
-        # split the heat information into fields
-        cols = line.split("</td>")
-        for c in cols:
-            # find the session
-            start_pos = c.find("-sess")
-            if start_pos > -1:
-                start_pos += len("-sess") + 2
-                h.session = c[start_pos:]
-                continue
-
-            # find the heat time
-            start_pos = c.find("-time-round")
-            if start_pos > -1:
-                start_pos += len("-time-round") + 2
-                end_pos = c.find("</div>")
-                time_string = c[start_pos:end_pos]
-                time_fields = time_string.split()
-                day_of_week = time_fields[0]
-                time_string = time_fields[1] + time_fields[2]
-                h.set_time(time_string, day_of_week)
-                continue
-
-            # find the heat number and convert to integer
-            start_pos = c.find("-heat")
-            if start_pos > -1:
-                start_pos +=  len("-heat") + 2
-                number_string = c[start_pos:]
-                if len(number_string) == 0:
-                    h.heat_number = 0
-                    h.extra = ""
-                else:
-                    try:
-                        h.heat_number = int(number_string)
-                    except:
-                        # extract non-digit info into the extra property
-                        index = 0
-                        while number_string[index].isdigit():
-                            index += 1
-                            h.heat_number = int(number_string[:index])
-                            h.extra = number_string[index:]
-                continue
-
-            # find the heat description information
-            start_pos = c.find("-desc")
-            if start_pos > -1:
-                start_pos += len("-desc") + 2
-                h.info = c[start_pos:]
-                if "Professional" in h.info:
-                    h.category = Heat.PRO_HEAT
-                else:
-                    h.category = Heat.NORMAL_HEAT
-
-                # set the style and level if necessary
-
-                h.remove_info_prefix()
-                h.set_level()
-                h.set_dance_style()
-                continue
-
-
-        # save for building heat entries
-        # save the dancer name, scoresheet code, and partner name
-        # self.dancer = dancer.name
-        # self.code = dancer.code
-        # self.partner = partner
-
-
-
-
 class NdcaPremHeatlist(Heatlist):
     '''This is a derived class for reading Heatlist information from the NdcaPremier website.
        It derives from the generic Heatlist class and presents the same interface.
@@ -125,6 +50,70 @@ class NdcaPremHeatlist(Heatlist):
         return None
 
 
+    def load_heat(self, h, line="", comp_ref=""):
+
+        h.comp = comp_ref
+        h.rounds = "F"      # assume final only
+        if len(line) > 0:
+            # split the heat information into fields
+            cols = line.split("</td>")
+            for c in cols:
+                # find the session
+                start_pos = c.find("-sess")
+                if start_pos > -1:
+                    start_pos += len("-sess") + 2
+                    h.session = c[start_pos:]
+                    continue
+
+                # find the heat time
+                start_pos = c.find("-time-round")
+                if start_pos > -1:
+                    start_pos += len("-time-round") + 2
+                    end_pos = c.find("</div>")
+                    time_string = c[start_pos:end_pos]
+                    time_fields = time_string.split()
+                    day_of_week = time_fields[0].split(',')[0]
+                    time_string = time_fields[1] + time_fields[2]
+                    h.set_time(time_string, day_of_week)
+                    continue
+
+                # find the heat number and convert to integer
+                start_pos = c.find("-heat")
+                if start_pos > -1:
+                    start_pos +=  len("-heat") + 2
+                    number_string = c[start_pos:]
+                    if len(number_string) == 0:
+                        h.heat_number = 0
+                        h.extra = ""
+                    else:
+                        try:
+                            h.heat_number = int(number_string)
+                        except:
+                            # extract non-digit info into the extra property
+                            index = 0
+                            while number_string[index].isdigit():
+                                index += 1
+                                h.heat_number = int(number_string[:index])
+                                h.extra = number_string[index:]
+                    continue
+
+                # find the heat description information
+                start_pos = c.find("-desc")
+                if start_pos > -1:
+                    start_pos += len("-desc") + 2
+                    h.info = c[start_pos:]
+                    if "Professional" in h.info:
+                        h.category = Heat.PRO_HEAT
+                    else:
+                        h.category = Heat.NORMAL_HEAT
+
+                    # set the style and level if necessary
+
+                    h.remove_info_prefix()
+                    h.set_level()
+                    h.set_dance_style()
+
+
     def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
         '''This method extracts heat information from the heat_data read in from a URL.
         The information is saved into the specified dancer object.'''
@@ -148,7 +137,7 @@ class NdcaPremHeatlist(Heatlist):
                         if partner.name > dancer.name:
                             # if this row is the start of a new heat, create a new heat object
                             heat = Heat()
-                            load_heat(heat, rows[row_index], comp_ref)
+                            self.load_heat(heat, rows[row_index], comp_ref)
                             h = self.add_heat_to_database(heat, comp_ref)
                             if h is not None:
                                 # this format doesn't store shirt numbers, use code instead

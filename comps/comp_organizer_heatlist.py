@@ -6,67 +6,6 @@ from .models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
 from .heatlist import Heatlist
 
 
-
-def load_heat(h, items, item_index, comp_ref):
-
-    h.comp = comp_ref
-
-    # Start with the session
-    start_pos = items[item_index].find("-sess") + len("-sess") + 2
-    h.session = items[item_index][start_pos:]
-
-    # get the heat number string and convert it to an integer
-    start_pos = items[item_index+1].find("-heat") + len("-heat") + 2
-    number_string = items[item_index+1][start_pos:]
-    index = 0
-    while not (number_string[index].isdigit()):
-        index += 1
-        if index == len(number_string):
-            break
-    # get the heat category
-    category_string = number_string[:index]
-    if category_string in ["Solo ", "Formation ", "Team match "]:
-        h.heat_number = -1  # indicate an error
-        return None
-    elif category_string == "Pro heat ":
-        h.category = Heat.PRO_HEAT
-    elif category_string == "Heat ":
-        h.category = Heat.HEAT
-
-    try:
-        h.heat_number = int(number_string[index:])
-    except:
-        # split out extra non-digit info from the heat number
-        if index == len(number_string):
-            h.extra = number_string
-        else:
-            end_index = index
-            while number_string[end_index].isdigit():
-                end_index += 1
-            h.heat_number = int(number_string[index:end_index])
-            h.extra = number_string[end_index:]
-
-    # save the heat time, determine if there are multiple rounds
-    start_pos = items[item_index+2].find("-time") + len("-time") + 2
-    heat_time = items[item_index+2][start_pos:]
-    time_fields = heat_time.split()
-    if len(time_fields) >= 2:
-        if "<br" in time_fields[1]:
-            time_string = time_fields[1].split("<br")[0]
-        else:
-            time_string = time_fields[1]
-        day_of_week = time_fields[0]
-        h.set_time(time_string, day_of_week)
-    else:
-        print("Invalid time format", time_fields)
-
-    start_pos = items[item_index+4].find("-desc") + len("-desc") + 2
-    h.info = items[item_index+4][start_pos:]
-    h.remove_info_prefix()
-    h.set_level()
-    h.set_dance_style()
-
-
 class CompOrgHeatlist(Heatlist):
     '''This is a derived class for reading Heatlist information from a website in CompOrganizer format.
        It derives from the generic Heatlist class and presents the same interface.
@@ -93,6 +32,66 @@ class CompOrgHeatlist(Heatlist):
             return stripped
         else:
             return None
+
+
+    def load_heat(self, h, items, item_index, comp_ref):
+
+        h.comp = comp_ref
+
+        # Start with the session
+        start_pos = items[item_index].find("-sess") + len("-sess") + 2
+        h.session = items[item_index][start_pos:]
+
+        # get the heat number string and convert it to an integer
+        start_pos = items[item_index+1].find("-heat") + len("-heat") + 2
+        number_string = items[item_index+1][start_pos:]
+        index = 0
+        while not (number_string[index].isdigit()):
+            index += 1
+            if index == len(number_string):
+                break
+        # get the heat category
+        category_string = number_string[:index]
+        if category_string in ["Solo ", "Formation ", "Team match "]:
+            h.heat_number = -1  # indicate an error
+            return None
+        elif category_string == "Pro heat ":
+            h.category = Heat.PRO_HEAT
+        elif category_string == "Heat ":
+            h.category = Heat.HEAT
+
+        try:
+            h.heat_number = int(number_string[index:])
+        except:
+            # split out extra non-digit info from the heat number
+            if index == len(number_string):
+                h.extra = number_string
+            else:
+                end_index = index
+                while number_string[end_index].isdigit():
+                    end_index += 1
+                h.heat_number = int(number_string[index:end_index])
+                h.extra = number_string[end_index:]
+
+        # save the heat time, determine if there are multiple rounds
+        start_pos = items[item_index+2].find("-time") + len("-time") + 2
+        heat_time = items[item_index+2][start_pos:]
+        time_fields = heat_time.split()
+        if len(time_fields) >= 2:
+            if "<br" in time_fields[1]:
+                time_string = time_fields[1].split("<br")[0]
+            else:
+                time_string = time_fields[1]
+            day_of_week = time_fields[0]
+            h.set_time(time_string, day_of_week)
+        else:
+            print("Invalid time format", time_fields)
+
+        start_pos = items[item_index+4].find("-desc") + len("-desc") + 2
+        h.info = items[item_index+4][start_pos:]
+        h.remove_info_prefix()
+        h.set_level()
+        h.set_dance_style()
 
 
     def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
@@ -123,7 +122,7 @@ class CompOrgHeatlist(Heatlist):
                     if partner.name > dancer.name:
                         # build heat object, which takes up the next five items
                         heat = Heat()
-                        load_heat(heat, items, item_index, comp_ref)
+                        self.load_heat(heat, items, item_index, comp_ref)
                         h = self.add_heat_to_database(heat, comp_ref)
                         if h is not None:
                             start_pos = items[item_index+3].find("-numb") + len("-numb") + 2
