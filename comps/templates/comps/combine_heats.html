@@ -1,0 +1,41 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-8 offset-md-2">
+    <h2 class="text-center">{{ comp.title }}</h2>
+    <h3 class="text-center">Heats To Combine</h3>
+  </div>
+</div>
+
+
+  <div class="col-lg-8 border border-dark">
+    <table class="table table-bordered table-sm">
+      <thead class="thead-dark">
+        <tr>
+          <th>Category</th>
+          <th>Number</th>
+          <th class="text-center">Time</th>
+          <th class="text-center">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for heat in heats %}
+        <tr>
+          <td>{{ heat.get_category_display }}</td>
+          <td class="text-center">{{ heat.heat_number }}</td>
+          <td>{{ heat.time }}</td>
+          <td><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br />
+    <form method="POST">
+      {% csrf_token %}
+      <input class="btn btn-primary" type="submit" name="submit" value="Submit">
+      <input class="btn btn-secondary" type="submit" name="submit" value="Skip">
+    </form>
+  </div>
+
+{% endblock %}
