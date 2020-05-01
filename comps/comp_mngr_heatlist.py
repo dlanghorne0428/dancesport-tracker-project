@@ -7,58 +7,6 @@ from .models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
 from .heatlist import Heatlist
 
 
-
-def load_heat(h, category, line="", comp_ref="", number=0):
-    h.comp = comp_ref
-    if category == "Pro heat":
-        h.category = Heat.PRO_HEAT
-    else:
-        h.category = Heat.NORMAL_HEAT
-    h.heat_number = number
-    h.rounds = "F"      # assume final only
-    if len(line) > 0:           # if line is not empty, parse it to obtain other properites
-        fields = line.split("<td>")
-        # get the session number, heat number, and multi-round info
-        heat_time = fields[1].split("</td>")[0]
-        if "@" in heat_time:
-            heat_time_fields = heat_time.split("@")
-            h.session = heat_time_fields[0]
-            heat_time = heat_time_fields[1]
-        else:
-            h.session = ""
-        if "<br>" in heat_time:
-            time_session_fields = heat_time.split("<br>")
-            heat_time = time_session_fields[0]
-
-        # the heat_time string is in this format hh:mm PM day-of-week
-        time_fields = heat_time.split()
-        if len(time_fields) == 2:
-            time_string = time_fields[0]
-            day_of_week = time_fields[1]
-            h.set_time(time_string, day_of_week)
-        else:
-            print("Invalid time format")
-
-        # get the heat info
-        h.info = fields[4].split("</td>")[0]
-        h.remove_info_prefix()
-        h.set_level()
-        h.set_dance_style()
-
-        # pull any non-digit characters from the heat number into extra
-        start_pos = fields[3].find(category) + len(category) + 1
-        i = start_pos
-        # stop at the first non-digit
-        while fields[3][i] in string.digits:
-            i = i + 1
-        if i > start_pos:
-            h.heat_number = int(fields[3][start_pos:i])
-        # anything non-digit is extra information, like ballroom assignment
-        num_chars = len("</td>")
-        h.extra = fields[3][i:-num_chars]
-        h.extra = h.extra.replace("Ballroom ", "")
-
-
 class CompMngrHeatlist(Heatlist):
     ''' This class derives from Heatlist. It parses the heatlist in CompMngr format and stores
         information about the heats in this competition.'''
@@ -86,6 +34,55 @@ class CompMngrHeatlist(Heatlist):
         name = line[start_pos:end_pos]
         return name
 
+    def load_heat(self, h, category, line="", comp_ref="", number=0):
+        h.comp = comp_ref
+        if category == "Pro heat":
+            h.category = Heat.PRO_HEAT
+        else:
+            h.category = Heat.NORMAL_HEAT
+        h.heat_number = number
+        h.rounds = "F"      # assume final only
+        if len(line) > 0:           # if line is not empty, parse it to obtain other properites
+            fields = line.split("<td>")
+            # get the session number, heat number, and multi-round info
+            heat_time = fields[1].split("</td>")[0]
+            if "@" in heat_time:
+                heat_time_fields = heat_time.split("@")
+                h.session = heat_time_fields[0]
+                heat_time = heat_time_fields[1]
+            else:
+                h.session = ""
+            if "<br>" in heat_time:
+                time_session_fields = heat_time.split("<br>")
+                heat_time = time_session_fields[0]
+
+            # the heat_time string is in this format hh:mm PM day-of-week
+            time_fields = heat_time.split()
+            if len(time_fields) == 2:
+                time_string = time_fields[0]
+                day_of_week = time_fields[1]
+                h.set_time(time_string, day_of_week)
+            else:
+                print("Invalid time format")
+
+            # get the heat info
+            h.info = fields[4].split("</td>")[0]
+            h.remove_info_prefix()
+            h.set_level()
+            h.set_dance_style()
+
+            # pull any non-digit characters from the heat number into extra
+            start_pos = fields[3].find(category) + len(category) + 1
+            i = start_pos
+            # stop at the first non-digit
+            while fields[3][i] in string.digits:
+                i = i + 1
+            if i > start_pos:
+                h.heat_number = int(fields[3][start_pos:i])
+            # anything non-digit is extra information, like ballroom assignment
+            num_chars = len("</td>")
+            h.extra = fields[3][i:-num_chars]
+            h.extra = h.extra.replace("Ballroom ", "")
 
     ################# READING THE HEATLIST HTML FILE ################################
     # These methods process the HTML data file in CompMngr heatlist format
@@ -149,7 +146,7 @@ class CompMngrHeatlist(Heatlist):
     def build_heat(self, category_str, line, comp_ref):
         # turn that heat info into an object and add it to the database
         heat = Heat()
-        load_heat(heat, category_str, line, comp_ref)
+        self.load_heat(heat, category_str, line, comp_ref)
         return self.add_heat_to_database(heat, comp_ref)
 
 
