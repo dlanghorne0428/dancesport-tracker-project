@@ -99,11 +99,37 @@ def resolve_mismatches(request, comp_id):
             return redirect("comps:heat", first_entry.entry.heat.id)
 
 
+def fix_null_entries(request, comp_id):
+    comp = get_object_or_404(Comp, pk=comp_id)
+    heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
+    current_heat_number = 0
+    for heat in heats_in_comp:
+        entries = HeatEntry.objects.filter(heat=heat).order_by('shirt_number')
+        for e in entries:
+            if e.couple is None:
+                if request.method == "GET":
+                    print(heat.category, heat.heat_number, heat.info, e.shirt_number)
+                    return render(request, 'comps/fix_null_entries.html', {'heat': heat, 'entries': entries, 'targeted_entry': e})
+                else: #POST
+                    submit = request.POST.get("submit")
+                    if submit == "Skip":
+                        return redirect ('comps:heat', heat.id)
+                    elif submit == "Delete Entry":
+                        e.delete()
+                        if len(entries) == 1:
+                            print("deleted only entry in this heat, deleting heat")
+                            heat.delete()
+                            return redirect ('comps:comp_heats', comp_id)
+                        else:
+                            return redirect('comps:heat', heat.id)
+    else:
+        return redirect ('comps:comp_heats', comp_id)
+
+
 def combine_heats(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
     current_heat_number = 0
-    heats_to_display = list()
     for heat in heats_in_comp:
         if heat.info_prefix() != heat.info:
             if heat.heat_number != current_heat_number:
@@ -112,8 +138,6 @@ def combine_heats(request, comp_id):
                 possible_matches = list()
             for match in possible_matches:
                 if heat.info_prefix() == match.info_prefix():
-                    heats_to_display.append(match)
-                    heats_to_display.append(heat)
                     if request.method == "GET":
                         print("Found ", heat.category, heat.heat_number, heat.info)
                         print("Match!", match.category, match.heat_number, match.info)

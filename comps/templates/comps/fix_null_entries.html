@@ -11,13 +11,14 @@
 
 <div class="row">
   <div class="col-lg-3 border border-dark">
-    <h3 class="text-center">Edit Heat Info</h3>
+    <h3 class="text-center">Find Couple</h3>
     <p>{{ error }}</p>
 
     <form method="POST">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button class="btn btn-primary" type="submit">Save</button>
+      <!-- {{ form.as_p }} -->
+      <input class="btn btn-danger" type="submit" name="submit" value="Delete Entry">
+      <input class="btn btn-secondary" type="submit" name="submit" value="Skip">
     </form>
   </div>
 
@@ -34,7 +35,11 @@
       </thead>
       <tbody>
         {% for entry in entries %}
-        <tr>
+          {% if entry == targeted_entry %}
+            <tr class="table-warning">
+          {% else %}
+            <tr>
+          {% endif %}
           <td>{{ entry.couple.dancer_1 }}</td>
           <td>and</td>
           <td>{{ entry.couple.dancer_2 }}</td>
