@@ -123,7 +123,7 @@ class CompMngrHeatlist(Heatlist):
     def load(self, url, heatlist_dancers):
         for d in heatlist_dancers:
             self.dancers.append(d)
-            print(d.name)
+            #print(d.name)
 
         # open the file and skip all the lines until last dancer is found
         response = requests.get(url)
