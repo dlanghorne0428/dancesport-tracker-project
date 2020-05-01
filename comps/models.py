@@ -164,7 +164,7 @@ class Heat(models.Model):
         right_pos = s.find(')')
         if left_pos == -1 or right_pos == -1:
             return False
-        elif "Mixed" in s or "ML" in s or "Solo Star" in s or "NP" in s:
+        elif "Mixed" in s or "-ML" in s or "Solo Star" in s or "NP" in s:
             return False
         elif "/" in s[left_pos:right_pos] or "," in s[left_pos:right_pos]:
             return True
@@ -219,9 +219,9 @@ class Heat(models.Model):
     def junior_heat(self):
         '''This function returns True if the description indicates a junior or youth heat.'''
         s = self.info
-        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or "YU" in s or \
-           "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or "JU" in s or \
-           "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or "Pre Teen" in s or \
+        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or \
+           "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or \
+           "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or \
            "High School" in s or "Elementary School" in s or \
            "-TB" in s or "Teddy Bear" in s:
 
@@ -235,7 +235,7 @@ class Heat(models.Model):
 
 
     def couple_type(self):
-        if self.category == "Pro heat" or self.category == "PH": #Heat.PRO_HEAT:
+        if self.category == Heat.PRO_HEAT:
             return Couple.PRO_COUPLE
         elif self.amateur_heat():
             if self.junior_heat():
