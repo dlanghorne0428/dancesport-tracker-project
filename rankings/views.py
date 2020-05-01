@@ -33,7 +33,7 @@ def viewdancer(request, dancer_pk):
     dancer = get_object_or_404(Dancer, pk=dancer_pk)
     if request.method == "GET":
         form = DancerForm(instance=dancer)
-        couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer))
+        couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1')
         return render(request, 'rankings/viewdancer.html', {'dancer': dancer, 'form': form, 'couples': couples})
     else:
         try:
