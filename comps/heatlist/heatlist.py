@@ -1,7 +1,7 @@
 
 from rankings.models import Couple, Dancer
 from rankings.couple_matching import find_couple_exact_match
-from .models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
 
 
 age_div_prefix_list = ("L-", "G-", "AC-", "Pro ", "AC-", "Professional", "AM/AM", "Amateur", "Youth", "MF-", "M/F")

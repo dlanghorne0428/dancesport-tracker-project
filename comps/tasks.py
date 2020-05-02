@@ -1,10 +1,10 @@
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 from django.core import serializers
-from .file_based_heatlist import FileBasedHeatlist
-from .comp_mngr_heatlist import CompMngrHeatlist
-from .comp_organizer_heatlist import CompOrgHeatlist
-from .ndca_prem_heatlist import NdcaPremHeatlist
+from .heatlist.file_based_heatlist import FileBasedHeatlist
+from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
+from .heatlist.comp_organizer_heatlist import CompOrgHeatlist
+from .heatlist.ndca_prem_heatlist import NdcaPremHeatlist
 from .models import Comp
 import time
 

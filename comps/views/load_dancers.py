@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from comps.models import Comp, HeatlistDancer, UnmatchedHeatEntry
-from comps.file_based_heatlist import FileBasedHeatlist
-from comps.comp_mngr_heatlist import CompMngrHeatlist
-from comps.comp_organizer_heatlist import CompOrgHeatlist
-from comps.ndca_prem_heatlist import NdcaPremHeatlist
+from comps.heatlist.file_based_heatlist import FileBasedHeatlist
+from comps.heatlist.comp_mngr_heatlist import CompMngrHeatlist
+from comps.heatlist.comp_organizer_heatlist import CompOrgHeatlist
+from comps.heatlist.ndca_prem_heatlist import NdcaPremHeatlist
 
 
 def load_dancers(request, comp_id):
