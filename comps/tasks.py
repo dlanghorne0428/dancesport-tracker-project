@@ -40,9 +40,9 @@ def process_heatlist_task(self, comp_data, heatlist_data):
             break
         progress_recorder.set_progress(index, num_dancers, description=the_name)
 
-    unmatched_heat_count = heatlist.complete_processing()
-    result = [index, unmatched_heat_count]
-    if unmatched_heat_count == 0:
+    unmatched_entries = heatlist.complete_processing()
+    result = [index, unmatched_entries]
+    if unmatched_entries == 0:
         comp.process_state = comp.HEAT_ENTRIES_MATCHED
     else:
         comp.process_state = comp.HEATS_LOADED

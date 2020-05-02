@@ -139,4 +139,4 @@ class FileBasedHeatlist(Heatlist):
         '''Complete the process of reading heatsheet data from the common file format.'''
         # close the file
         self.filedata.close()
-        return self.unmatched_heats
+        return self.unmatched_entries

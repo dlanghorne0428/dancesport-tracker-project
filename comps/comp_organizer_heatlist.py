@@ -206,4 +206,4 @@ class CompOrgHeatlist(Heatlist):
     def complete_processing(self):
         '''This method sorts data structures after all the heat information
            has been obtained from the website.'''
-        return self.unmatched_heats
+        return self.unmatched_entries
