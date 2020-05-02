@@ -23,7 +23,10 @@ class Dancer(models.Model):
     )
 
     def __str__(self):
-        return self.name_last + ", " + self.name_first + " " + self.name_middle
+        if len(self.name_middle) > 0:
+            return self.name_last + ", " + self.name_first + " " + self.name_middle
+        else:
+            return self.name_last + ", " + self.name_first
 
 
 class Couple(models.Model):
