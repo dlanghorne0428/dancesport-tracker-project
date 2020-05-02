@@ -305,6 +305,9 @@ class HeatEntry(models.Model):
     def __lt__(self, h):
         return self.heat < h.heat
 
+    def __str__(self):
+        return str(self.heat) + ": " + str(self.couple)
+
     # def __eq__(self, h):
     #     return self.heat == h.heat and self.couple == h.couple
 
