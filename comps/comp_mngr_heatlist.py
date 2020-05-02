@@ -209,4 +209,4 @@ class CompMngrHeatlist(Heatlist):
     def complete_processing(self):
         '''This method completes the processing of the Comp Manager heatlist,
            by closing the file and sorting the lists.'''
-        return self.unmatched_heats
+        return self.unmatched_entries

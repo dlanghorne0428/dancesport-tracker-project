@@ -4,7 +4,7 @@
 {% block content %}
   <div class="row">
     <div class="col-8 offset-md-2">
-      <h2 class="text-center">{{ comp.title }}</h2>
+      <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
       <h3 class="text-center">Dancers</h3>
     </div>
   </div>
