@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models import Comp, HeatEntry
 from rankings.models import Dancer
-
+from rankings.filters import DancerFilter
 
 def dancers(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
@@ -12,7 +12,8 @@ def dancers(request, comp_id):
         return redirect ('comps:resolve_dancers', comp_id)
     else:
         dancers = Dancer.objects.filter(Q(follower_or_instructor__heatentry__heat__comp=comp) | Q(leader_or_student__heatentry__heat__comp=comp)).distinct().order_by('name_last')
-        paginator = Paginator(dancers, 16)
+        f = DancerFilter(request.GET, queryset=dancers)
+        paginator = Paginator(f.qs, 16)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, 'comps/dancers.html', {'comp': comp, 'page_obj': page_obj})
+        return render(request, 'comps/dancers.html', {'comp': comp, 'page_obj': page_obj, 'filter': f})

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from comps.models import Comp, HeatlistDancer
+from comps.models import Comp, HeatlistDancer, UnmatchedHeatEntry
 from comps.file_based_heatlist import FileBasedHeatlist
 from comps.comp_mngr_heatlist import CompMngrHeatlist
 from comps.comp_organizer_heatlist import CompOrgHeatlist
@@ -13,7 +13,10 @@ def load_dancers(request, comp_id):
         comp=comp_objects[0]
 
     if HeatlistDancer.objects.count() > 0:
-        heatlist_dancers = HeatlistDancer.objects.all().delete()
+        HeatlistDancer.objects.all().delete()
+
+    if UnmatchedHeatEntry.objects.count() > 0:
+        UnmatchedHeatEntry.objects.all().delete()
 
     if comp.heatsheet_file:
             heatlist = FileBasedHeatlist()

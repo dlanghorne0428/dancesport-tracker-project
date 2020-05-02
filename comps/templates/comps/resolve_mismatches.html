@@ -4,8 +4,9 @@
 {% block content %}
 <div class="row">
   <div class="col-8 offset-md-2">
-    <h2 class="text-center">{{ comp.title }}</h2>
+    <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
     <h3 class="text-center">Resolve Mismatches</h3>
+    <h4 class="text-center">{{ entries_remaining }} entries remaining to match</h4>
   </div>
 </div>
 
@@ -20,8 +21,8 @@
       {% csrf_token %}
       <label for="couples">Choose a couple:</label>
       <select id="couples" name="couple">
-        {% for entry in unmatched_entries %}
-        <option value="{{ entry.couple }}">{{ entry.couple.dancer_1 }} and {{ entry.couple.dancer_2 }}, {{ entry.couple.couple_type }}</option>
+        {% for match in possible_matches %}
+        <option value="{{ match }}">{{ match.dancer_1 }} and {{ match.dancer_2 }}, {{ match.couple_type }}</option>
         {% endfor %}
       </select>
       <br /><br />
