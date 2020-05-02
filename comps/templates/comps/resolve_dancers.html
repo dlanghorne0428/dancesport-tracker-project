@@ -1,0 +1,74 @@
+
+{% extends "rankings/base.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-8 offset-md-2">
+      <h2 class="text-center">{{ comp.title }}</h2>
+      <h3 class="text-center">Dancers</h3>
+    </div>
+  </div>
+
+  <div class="row align-items-start">
+
+    <div class="col border border-dark">
+
+      <h4>Names from Heatlist</h4>
+      <ul>
+        {% for dancer in page_obj %}
+          {% if dancer.formatting_needed %}
+            <li><strong>{{ dancer.name }}</strong></li>
+          {% else %}
+            <li>{{ dancer.name }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="col border border-dark">
+      <h4 class="text-center">Format Name</h4>
+      {% if current_name %}
+      <div class="alert alert-info text-center" role="alert">
+        {{ current_name.name }}
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <label for="spelling">Choose a format:</label>
+        <select id="spelling" name="spelling">
+          {% for spelling in possible_formats %}
+          <option value="{{ spelling }}">{{ spelling }}</option>
+          {% endfor %}
+        </select>
+        <br /><br />
+        <input class="btn btn-primary" type="submit" name="submit" value="Submit">
+        <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
+        <input class="btn btn-warning" type="submit" name="submit" value="Delete">
+      </form>
+      {% else %}
+      <div class="alert alert-success text-center" role="alert">
+        All names have been correctly formatted.
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page=1" aria-label="Goto page 1">1</a></li>
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+    {% endif %}
+    <li class="page-item active" aria-current="page">
+      <span class="page-link">{{ page_obj.number }}
+        <span class="sr-only">(current)</span>
+      </span>
+    </li>
+    {% if page_obj.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Goto last page">{{ page_obj.paginator.num_pages }}</a></li>
+    {% endif %}
+  </ul>
+  </nav>
+
+{% endblock %}
