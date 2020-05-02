@@ -30,9 +30,10 @@
 {% if comp.heatsheet_url %}
 <div class="row">
   <div class="col-6 offset-md-3">
-      <a id="load_heats_button" class="btn btn-info" role="button" href="{% url 'comps:load_dancers' comp.id %}">Load Dancers</a>
-      <a id="load_dancers_button" class="btn btn-info" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
+      <a id="load_dancers_button" class="btn btn-info" role="button" href="{% url 'comps:load_dancers' comp.id %}">Load Dancers</a>
+      <a id="load_heats_button" class="btn btn-info" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
       <a id="resolve_mismatches_button" class="btn btn-info" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Mismatches</a>
+      <a id="view_dancers_button" class="btn btn-info" role="button" href="{% url 'comps:dancers' comp.id %}">View Dancers</a>
       <a id="view_heats_button" class="btn btn-info" role="button" href="{% url 'comps:comp_heats' comp.id %}">View Heats</a>
   </div>
 </div>
@@ -46,15 +47,17 @@
   console.log("Running JS")
   var process_state = '{{ comp.process_state }}';
   if (process_state === '{{ comp.INITIAL }}') {
-    $( '#load_heats_button' ).removeClass( "btn-info" );
-    $( '#load_heats_button' ).addClass( "btn-primary" );
-  } else if (process_state === '{{ comp.DANCERS_LOADED }}' || process_state === '{{ comp.DANCER_NAMES_FORMATTED }}') {
     $( '#load_dancers_button' ).removeClass( "btn-info" );
     $( '#load_dancers_button' ).addClass( "btn-primary" );
+  } else if (process_state === '{{ comp.DANCERS_LOADED }}' || process_state === '{{ comp.DANCER_NAMES_FORMATTED }}') {
+    $( '#load_heats_button' ).removeClass( "btn-info" );
+    $( '#load_heats_button' ).addClass( "btn-primary" );
   } else if (process_state === '{{ comp.HEATS_LOADED}}' ) {
     $( '#resolve_mismatches_button' ).removeClass( "btn-info" );
     $( '#resolve_mismatches_button' ).addClass( "btn-primary" );
   } else if (process_state === '{{ comp.HEAT_ENTRIES_MATCHED}}' || process_state === '{{ comp.HEAT_STYLES_DEFINED }}' || process_state === '{{ comp.HEAT_LEVELS_DEFINED }}') {
+    $( '#view_dancers_button' ).removeClass( "btn-info" );
+    $( '#view_dancers_button' ).addClass( "btn-primary" );
     $( '#view_heats_button' ).removeClass( "btn-info" );
     $( '#view_heats_button' ).addClass( "btn-primary" );
   }
