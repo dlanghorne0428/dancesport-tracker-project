@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row">
   <div class="col-8 offset-md-2">
-    <h2 class="text-center">{{ comp.title }}</h2>
+    <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
     <h3 class="text-center">Heats</h3>
   </div>
 </div>
@@ -12,7 +12,7 @@
 <div class="row align-items-start">
 
 
-  <div class="col-lg-8 border border-dark">
+  <div class="col-lg-9 border border-dark">
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
@@ -35,7 +35,7 @@
     </table>
   </div>
 
-  <div class="col-lg-4 border border-dark">
+  <div class="col-lg-3 border border-dark">
     <h4 class="text-center">Filter</h4>
     <form method="get">
       {{ filter.form.as_p }}
