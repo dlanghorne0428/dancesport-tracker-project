@@ -10,47 +10,16 @@
   </div>
 
   <div class="row align-items-start">
-
-    <div class="col border border-dark">
-
-      <h4>Names from Heatlist</h4>
-      <ul>
+    <div class="col-lg-4 offset-lg-4">
+      <table class="table table-bordered table-sm">
         {% for dancer in page_obj %}
-          {% if dancer.formatting_needed %}
-            <li><strong>{{ dancer.name }}</strong></li>
-          {% else %}
-            <li>{{ dancer.name }}</li>
-          {% endif %}
+        <tr>
+          <td>{{ dancer.name_last}}, {{ dancer.name_first }} {{dancer.name_middle}}</td>
+          <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:dancer_heats' comp.id dancer.id %}">View Heats</a></td>
+        </tr>
         {% endfor %}
-      </ul>
+      </table>
     </div>
-
-    <div class="col border border-dark">
-      <h4 class="text-center">Format Name</h4>
-      {% if current_name %}
-      <div class="alert alert-info text-center" role="alert">
-        {{ current_name.name }}
-      </div>
-      <form method="POST">
-        {% csrf_token %}
-        <label for="spelling">Choose a format:</label>
-        <select id="spelling" name="spelling">
-          {% for spelling in possible_formats %}
-          <option value="{{ spelling }}">{{ spelling }}</option>
-          {% endfor %}
-        </select>
-        <br /><br />
-        <input class="btn btn-primary" type="submit" name="submit" value="Submit">
-        <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
-        <input class="btn btn-warning" type="submit" name="submit" value="Delete">
-      </form>
-      {% else %}
-      <div class="alert alert-success text-center" role="alert">
-        All names have been correctly formatted.
-      </div>
-      {% endif %}
-    </div>
-
   </div>
 
   <nav aria-label="Page navigation">

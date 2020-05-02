@@ -48,4 +48,4 @@ def resolve_dancers(request, comp_id):
         comp.process_state = Comp.DANCER_NAMES_FORMATTED
         comp.save()
 
-    return render(request, 'comps/dancers.html', {'comp': comp, 'page_obj': page_obj, 'current_name': current_name, 'possible_formats': possible_formats })
+    return render(request, 'comps/resolve_dancers.html', {'comp': comp, 'page_obj': page_obj, 'current_name': current_name, 'possible_formats': possible_formats })
