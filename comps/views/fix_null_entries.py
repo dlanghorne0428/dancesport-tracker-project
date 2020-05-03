@@ -6,7 +6,6 @@ from rankings.models import Couple
 def fix_null_entries(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
-    current_heat_number = 0
     for heat in heats_in_comp:
         entries = HeatEntry.objects.filter(heat=heat).order_by('shirt_number')
         for e in entries:

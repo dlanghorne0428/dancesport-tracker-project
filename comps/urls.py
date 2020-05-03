@@ -18,5 +18,6 @@ urlpatterns = [
     path('<int:comp_id>/bad_couple_type', views.fix_couple_type, name="fix_couple_type"),
     path('<int:comp_id>/bad_couple_type/<int:count>', views.fix_couple_type, name="fix_couple_type"),
     path('heat/<int:heat_id>/', views.heat, name="heat"),
+    path('<int:comp_id>/load_scoresheets', views.load_scoresheets, name="load_scoresheets"),
     path('create/', views.createcomp, name='createcomp'),
 ]

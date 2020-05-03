@@ -10,7 +10,10 @@ def resolve_mismatches(request, comp_id):
     if unmatched_entries.count() == 0:
         # all unmatched entries resolved, delete heatlist_dancer entries from database
         heatlist_dancers = HeatlistDancer.objects.all().delete()
-        comp.process_state = comp.HEAT_ENTRIES_MATCHED
+        if comp.process_state == comp.SCORESHEETS_LOADED:
+            comp.process_state = comp.RESULTS_RESOLVED
+        else:
+            comp.process_state = comp.HEAT_ENTRIES_MATCHED
         comp.save()
         return redirect("comps:comp_heats", comp_id)
     else:

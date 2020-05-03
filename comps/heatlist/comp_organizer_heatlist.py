@@ -2,8 +2,8 @@ import requests
 
 from django.db.models import Q
 from rankings.models import Couple, Dancer
-from .models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
-from .heatlist import Heatlist
+from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.heatlist.heatlist import Heatlist
 
 
 class CompOrgHeatlist(Heatlist):

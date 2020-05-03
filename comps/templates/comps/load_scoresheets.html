@@ -1,0 +1,53 @@
+{% extends "rankings/base.html" %}
+{% load static %}
+{% block content %}
+<h1 class="text-center">Processing Scoresheets for <a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h1>
+
+<div class='progress-wrapper'>
+  <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+</div>
+<div id="progress-bar-message">Waiting for progress to start...</div>
+
+<div id="celery-result"></div>
+
+<div class="row">
+  <div class="col-4 offset-md-4">
+      <a id="resolve_mismatches_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Unmatched Heats</a>
+      <a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:comp_heats' comp.id %}">View Heats</a>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+<script>
+  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+  function customProgress(progressBarElement, progressBarMessageElement, progress) {
+      progressBarElement.style.backgroundColor = '#68a9ef';
+      progressBarElement.style.width = progress.percent + "%";
+      var description = progress.description || "";
+      progressBarMessageElement.innerHTML = 'Processing: ' + description + ' - heat ' + progress.current + ' of ' + progress.total;
+    }
+
+  function customResult(resultElement, result) {
+    $( resultElement ).append(
+      $('<p>').text('Processed ' + result[0] + " heats. " + result[1] + " late entries found")
+    );
+    if (result[1] == 0) {
+      $( '#view_heats_button' ).removeClass( "disabled" );
+    } else {
+      $( '#resolve_mismatches_button' ).removeClass( "disabled" );
+    }
+  }
+
+  $(function () {
+    CeleryProgressBar.initProgressBar(progressUrl, {
+      onProgress: customProgress,
+      onResult: customResult,
+    })
+  });
+</script>
+
+{% endblock %}
