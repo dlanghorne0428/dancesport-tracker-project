@@ -10,5 +10,6 @@ from .fix_null_entries import *
 from .heat import *
 from .load_dancers import *
 from .load_heats import *
+from .load_scoresheets import *
 from .resolve_dancers import *
 from .resolve_mismatches import *

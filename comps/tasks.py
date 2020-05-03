@@ -5,7 +5,9 @@ from .heatlist.file_based_heatlist import FileBasedHeatlist
 from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
 from .heatlist.comp_organizer_heatlist import CompOrgHeatlist
 from .heatlist.ndca_prem_heatlist import NdcaPremHeatlist
-from .models import Comp
+from .scoresheet.results_processor import Results_Processor
+from .scoresheet.comp_mngr_results import CompMngrResults
+from .models import Comp, Heat, HeatEntry
 import time
 
 
@@ -48,3 +50,47 @@ def process_heatlist_task(self, comp_data, heatlist_data):
         comp.process_state = comp.HEATS_LOADED
     comp.save()
     return result
+
+
+@shared_task(bind=True)
+def process_scoresheet_task(self, comp_data):
+    for deserialized_object in serializers.deserialize("json", comp_data):
+        comp = deserialized_object.object
+
+    progress_recorder = ProgressRecorder(self)
+
+    if comp.scoresheet_url:
+        if comp.url_data_format == Comp.COMP_MNGR:
+            scoresheet = CompMngrResults()
+        # elif comp.url_data_format == Comp.NDCA_PREM:
+        #     heatlist = NdcaPremHeatlist()
+        # else: # CompOrganizer for now
+        #     heatlist = CompOrgHeatlist()
+
+        scoresheet.open(comp.scoresheet_url)
+
+        # eventually this part will become a background task with a progress bar
+        heats_to_process = Heat.objects.filter(comp=comp).order_by('heat_number')
+        num_heats = heats_to_process.count()
+
+        index = 0
+        progress_recorder.set_progress(0, num_heats)
+        for heat in heats_to_process:
+            index += 1
+            entries_in_event = HeatEntry.objects.filter(heat=heat)
+            scoresheet.determine_heat_results(entries_in_event)
+            for e in entries_in_event:
+                if e.result == "DNP":
+                    print("Deleting", e)
+                    e.delete()
+
+            progress_recorder.set_progress(index, num_heats, description=str(heat) + " " + heat.info)
+
+        unmatched_entries = len(scoresheet.late_entries)
+        result = [index, unmatched_entries]
+        if unmatched_entries == 0:
+            comp.process_state = comp.RESULTS_RESOLVED
+        else:
+            comp.process_state = comp.SCORESHEETS_LOADED
+        comp.save()
+        return result
