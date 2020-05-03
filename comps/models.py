@@ -2,7 +2,7 @@ import time
 from datetime import date, datetime, timezone, timedelta
 from django.db import models
 from rankings.models import Couple
-from .calc_points import pro_heat_level, non_pro_heat_level
+from .scoresheet.calc_points import pro_heat_level, non_pro_heat_level
 
 def comp_logo_path(instance, filename):
     return "comps/{0}/{1}".format(instance.title, filename)
@@ -263,7 +263,7 @@ class Heat(models.Model):
     #     return (self.category == h.category) and (self.heat_number == h.heat_number)
 
     def __str__(self):
-        return self.comp.title + " " + self.category + " " + self.heat_number.__str__()
+        return self.comp.title + " " + self.get_category_display() + " " + str(self.heat_number)
 
 
 class HeatEntry(models.Model):
@@ -434,4 +434,4 @@ class UnmatchedHeatEntry(models.Model):
 
 
     def __str__(self):
-        return str(self.entry) + "Heatlist: "+ str(self.dancer) + str(self.partner)
+        return str(self.entry) + "Names: "+ str(self.dancer) + " and  " + str(self.partner)
