@@ -92,7 +92,7 @@ class Results_Processor():
             d = HeatlistDancer()
             d.name = name
             d.code = "LATE"
-            d.save()
+            #d.save()
         return d
 
 
@@ -104,7 +104,7 @@ class Results_Processor():
         if points is not None:
             late_entry.points = points
         late_entry.code = "LATE"
-        late_entry.save()
+        #late_entry.save()
         self.late_entries.append(late_entry)
 
         # need to create UnmatchedHeatEntry
@@ -117,7 +117,7 @@ class Results_Processor():
             unmatched_entry = UnmatchedHeatEntry()
             unmatched_entry.populate(late_entry, dancer, partner)
             print("LATE ENTRY", unmatched_entry)
-            unmatched_entry.save()
+            #unmatched_entry.save()
 
 
     def process_response(self, entries, e):
@@ -322,13 +322,13 @@ class Results_Processor():
                         if e.points is None:
                             e.result = "DNP"
                         else:
-                            #print(e, e.result, e.points)
-                            e.save()
+                            print(e, e.result, e.points)
+                            #e.save()
                     for late_entry in self.late_entries:
                         if late_entry.points is None:
                             late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
-                            late_entry.save()
-                            #print("LATE ENTRY SCORING:", late_entry.result, late_entry.points)
+                            #late_entry.save()
+                            print("LATE ENTRY SCORING:", late_entry.result, late_entry.points)
                     break;
 
             # We get here if we aren't in any of the "looking" states
@@ -409,8 +409,8 @@ class Results_Processor():
         for e in entries:
             # if we don't already know the result for this entry
             if len(e.result) == 0:
-                #print(e, "Code:", e.code)
+                print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
                 self.response = self.get_scoresheet(e)
-                #print("Reading Scoresheet for heat:", e.heat.heat_number, e.couple.dancer_1)
+                print("Reading Scoresheet for heat:", e.heat.heat_number, e.couple.dancer_1)
                 result = self.process_response(entries, e)
