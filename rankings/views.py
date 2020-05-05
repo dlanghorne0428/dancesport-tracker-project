@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Dancer, Couple
+from comps.models import Comp, Heat, HeatEntry
 from .forms import DancerForm, CoupleForm
 from .filters import DancerFilter
 
@@ -63,13 +64,24 @@ def createcouple(request):
 
 def viewcouple(request, couple_pk):
     couple = get_object_or_404(Couple, pk=couple_pk)
+    all_comps = Comp.objects.all()
+    comps_for_couple = list()
+    for comp in all_comps:
+        if HeatEntry.objects.filter(heat__comp=comp).filter(couple=couple).count() > 0:
+            comps_for_couple.append(comp)
     if request.method == "GET":
         form = CoupleForm(instance=couple)
-        return render(request, 'rankings/viewcouple.html', {'couple': couple, 'form': form})
+        return render(request, 'rankings/viewcouple.html', {'couple': couple, 'form': form, 'comps_for_couple': comps_for_couple})
     else:
-        try:
-            form = CoupleForm(request.POST, instance=couple)
-            form.save()
-            return redirect('all_couples')
-        except ValueError:
-            return render(request, 'rankings/viewcouple.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
+        submit = request.POST.get("submit")
+        if submit == "Save":
+            try:
+                form = CoupleForm(request.POST, instance=couple)
+                form.save()
+                return redirect('all_couples')
+            except ValueError:
+                return render(request, 'rankings/viewcouple.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
+        elif submit == "Delete Couple":
+            print("Deleting", str(couple))
+            couple.delete()
+            return redirect ('all_couples')
