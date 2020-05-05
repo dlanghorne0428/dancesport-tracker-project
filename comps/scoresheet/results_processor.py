@@ -248,7 +248,8 @@ class Results_Processor():
                                     elif e.result == temp_result:
                                         break
                                     else:
-                                        print(e.heat.heat_number, "Same shirt # - skipping:", e.couple.dancer_1, e.couple.dancer_2, e.result, couple_names, result_index, accum)
+                                        print(e.heat.heat_number, "Same shirt # - new result:", e.couple, e.result, temp_result, accum)
+                                        e.result = temp_result
 
                             # If we get here, we didn't find an entry on the heatsheet that matches
                             # this line on the scoresheet. This is the dreaded late entry.
@@ -288,7 +289,6 @@ class Results_Processor():
                         shirt_number = self.get_shirt_number(current_competitor)
 
                         # loop through all entries on the heatsheet to find a match
-                        # TODO: what if there was a late entry?
                         for e in entries:
 
                             if e.shirt_number == shirt_number:
@@ -298,7 +298,9 @@ class Results_Processor():
                                 elif e.result == result_place:
                                     break
                                 else:
-                                    print(e.heat.heat_number, "Same name - skipping:", e.couple.dancer_1, e.couple.dancer_2, e.result, couple_names, result_index)
+                                    print(e.heat.heat_number, "Same number - new result:", e.couple.dancer_1, e.couple.dancer_2, e.result, result_index)
+                                    e.result = str(result_place)
+                                    break
 
                         else:    # this code runs when competitor not found in heat
                             couple_names = self.get_couple_names(current_competitor)
@@ -321,8 +323,8 @@ class Results_Processor():
                             e.points = calc_points(level, int(e.result), num_competitors=self.entries_in_event, rounds=rounds)
                         if e.points is None:
                             e.result = "DNP"
-                        else:
-                            print(e, e.result, e.points)
+                        #else:
+                            #print(e, e.result, e.points)
                             #e.save()
                     for late_entry in self.late_entries:
                         if late_entry.points is None:
@@ -409,8 +411,8 @@ class Results_Processor():
         for e in entries:
             # if we don't already know the result for this entry
             if len(e.result) == 0:
-                print(e, "Code:", e.code)
+                #print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
                 self.response = self.get_scoresheet(e)
-                print("Reading Scoresheet for heat:", e.heat.heat_number, e.couple.dancer_1)
+                print("Reading Scoresheet for:", e.heat.get_category_display(), e.heat.heat_number)
                 result = self.process_response(entries, e)
