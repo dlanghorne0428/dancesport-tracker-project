@@ -46,10 +46,9 @@ class CompOrgResults(Results_Processor):
     def get_scoresheet(self, entry):
         '''This routine requests the scoresheet for a given entry in this heat
            and returns it to the calling routine for processing.'''
-        # build the request field based on the numeric code found in the
-        # heat report
+        # build the request field based on the numeric code found in the entry
         url = self.base_url + "&id=" + entry.code
-        print("Requesting", url)
+        #print("Requesting", url)
 
         # Make the HTML request and the data is returned as text.
         return requests.get(url)

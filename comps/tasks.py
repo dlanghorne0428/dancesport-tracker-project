@@ -70,7 +70,7 @@ def process_scoresheet_task(self, comp_data):
 
         scoresheet.open(comp.scoresheet_url)
 
-        heats_to_process = Heat.objects.filter(comp=comp).order_by('heat_number')[:10]
+        heats_to_process = Heat.objects.filter(comp=comp).order_by('heat_number')
         num_heats = heats_to_process.count()
 
         index = 0
@@ -82,7 +82,7 @@ def process_scoresheet_task(self, comp_data):
             for e in entries_in_event:
                 if e.result == "DNP":
                     print("Deleting", e)
-                    #e.delete()
+                    e.delete()
 
             progress_recorder.set_progress(index, num_heats, description=str(heat) + " " + heat.info)
 

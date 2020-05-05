@@ -60,11 +60,6 @@ class CompMngrResults(Results_Processor):
             # get payload fields from the input tag
             if "<input" in line:
                 self.find_payload_field(line)
-            # elif "<option" in line:
-            #     if "Jollay" in line:
-            #         print(line)
-
-        #fhand.close()
 
 
     def get_scoresheet(self, entry):
