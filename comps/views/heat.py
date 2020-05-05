@@ -15,10 +15,16 @@ def heat(request, heat_id):
     if request.method == "GET":
         form = HeatForm(instance=heat)
         return render(request, 'comps/heat.html', {'heat': heat, 'form': form, 'entries': entries})
-    else:
-        try:
-            form = HeatForm(request.POST, instance=heat)
-            form.save()
-            return redirect('comps:comp_heats', comp_id)
-        except ValueError:
-            return render(request, 'comps/heat.html', {'heat': heat, 'form': form, 'error': "Invalid data submitted."})
+    else: # POST
+        submit = request.POST.get("submit")
+        if submit == "Save":
+            try:
+                form = HeatForm(request.POST, instance=heat)
+                form.save()
+                return redirect('comps:comp_heats', comp_id)
+            except ValueError:
+                return render(request, 'comps/heat.html', {'heat': heat, 'form': form, 'error': "Invalid data submitted."})
+        elif submit == "Delete Heat":
+            print("Deleting", heat, heat.info)
+            heat.delete()
+            return redirect ('comps:comp_heats', comp_id)

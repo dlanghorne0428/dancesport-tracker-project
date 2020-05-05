@@ -17,7 +17,8 @@
     <form method="POST">
       {% csrf_token %}
       {{ form.as_p }}
-      <button class="btn btn-primary" type="submit">Save</button>
+      <input class="btn btn-primary" type="submit" name="submit" value = "Save"/>
+      <input class="btn btn-danger" type="submit" name="submit" value="Delete Heat" onclick="return confirm('Are you sure?')" />
     </form>
   </div>
 
@@ -49,10 +50,5 @@
     </table>
   </div>
 </div>
-
-
-
-
-
 
 {% endblock %}
