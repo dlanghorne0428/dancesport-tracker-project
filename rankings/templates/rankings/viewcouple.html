@@ -2,18 +2,52 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col-4 offset-md-4">
-    <h2 class="text-centered">Edit Couple</h2>
+<h2 class='text-center'>{{ couple }}</h2>
+<br />
 
-    <h4 class="text-centered">{{ error }}</h4>
+<div class="row">
+  <div class="col-3 offset-md-1 border border-dark">
+    <h3 class="text-center">Edit Profile</h3>
+    <p>{{ error }}</p>
 
     <form method="POST">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button class="btn btn-primary" type="submit">Save</button>
+      <div class="form-group">
+          <label>Leader</label>
+          {{ form.dancer_1}}
+      </div>
+      <div class="form-group">
+        <label class="label">Follower</label>
+          {{ form.dancer_2}}
+      </div>
+      <div class="form-group">
+        <label class="label">Type</label>
+          {{ form.couple_type}}
+      </div>
+      <input class="btn btn-primary" type="submit" name="submit" value = "Save"/>
+      <input class="btn btn-danger" type="submit" name="submit" value="Delete Couple" onclick="return confirm('Are you sure?')" />
     </form>
   </div>
+
+  <div class="col-6 offset-md-1 border border-dark">
+    <h3 class="text-center">Couple's Competitions</h3>
+    <table class="table table-bordered table-sm">
+      <tr>
+        <th>Start Date</th>
+        <th>Title</th>
+        <th>Location</th>
+      </tr>
+
+      {% for comp in comps_for_couple %}
+      <tr>
+        <td>{{ comp.start_date }}</td>
+        <td><a href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></td>
+        <td>{{ comp.location}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
 </div>
+
 
 {% endblock %}
