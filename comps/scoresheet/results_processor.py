@@ -92,7 +92,7 @@ class Results_Processor():
             d = HeatlistDancer()
             d.name = name
             d.code = "LATE"
-            #d.save()
+            d.save()
         return d
 
 
@@ -104,7 +104,7 @@ class Results_Processor():
         if points is not None:
             late_entry.points = points
         late_entry.code = "LATE"
-        #late_entry.save()
+        late_entry.save()
         self.late_entries.append(late_entry)
 
         # need to create UnmatchedHeatEntry
@@ -116,9 +116,8 @@ class Results_Processor():
         else:
             unmatched_entry = UnmatchedHeatEntry()
             unmatched_entry.populate(late_entry, dancer, partner)
-            print("LATE ENTRY", unmatched_entry)
-            #unmatched_entry.save()
-
+            print("LATE ENTRY" + str(unmatched_entry))
+            unmatched_entry.save()
 
     def process_response(self, entries, e):
         '''This routine processes the response returned by the form submittal.
@@ -298,7 +297,7 @@ class Results_Processor():
                                 elif e.result == result_place:
                                     break
                                 else:
-                                    print(e.heat.heat_number, "Same number - new result:", e.couple.dancer_1, e.couple.dancer_2, e.result, result_index)
+                                    print(e.heat.heat_number, "Same number - new result:", e.couple.dancer_1, e.couple.dancer_2, e.result, result_place)
                                     e.result = str(result_place)
                                     break
 
@@ -323,14 +322,14 @@ class Results_Processor():
                             e.points = calc_points(level, int(e.result), num_competitors=self.entries_in_event, rounds=rounds)
                         if e.points is None:
                             e.result = "DNP"
-                        #else:
+                        else:
                             #print(e, e.result, e.points)
-                            #e.save()
+                            e.save()
                     for late_entry in self.late_entries:
                         if late_entry.points is None:
                             late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
-                            #late_entry.save()
-                            print("LATE ENTRY SCORING:", late_entry.result, late_entry.points)
+                            late_entry.save()
+                            print("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
                     break;
 
             # We get here if we aren't in any of the "looking" states
@@ -414,5 +413,5 @@ class Results_Processor():
                 #print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
                 self.response = self.get_scoresheet(e)
-                print("Reading Scoresheet for:", e.heat.get_category_display(), e.heat.heat_number)
+                #print("Reading Scoresheet for:", e.heat.get_category_display(), e.heat.heat_number)
                 result = self.process_response(entries, e)

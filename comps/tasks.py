@@ -86,8 +86,6 @@ def process_scoresheet_task(self, comp_data):
 
             progress_recorder.set_progress(index, num_heats, description=str(heat) + " " + heat.info)
 
-        xyz()
-
         unmatched_entries = len(scoresheet.late_entries)
         result = [index, unmatched_entries]
         if unmatched_entries == 0:

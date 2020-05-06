@@ -34,7 +34,7 @@ class CompOrgResults(Results_Processor):
                 start_pos += len("getResultsCompetitors('")
                 end_pos = l.find("')", start_pos)
                 self.comp_name = l[start_pos:end_pos]
-                print(self.comp_name)
+                #print(self.comp_name)
                 break
 
         # build a base_url that can be used to grab results for individual dancers
