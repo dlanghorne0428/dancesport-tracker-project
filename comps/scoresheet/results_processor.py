@@ -116,9 +116,8 @@ class Results_Processor():
         else:
             unmatched_entry = UnmatchedHeatEntry()
             unmatched_entry.populate(late_entry, dancer, partner)
-            print("LATE ENTRY", unmatched_entry)
+            print("LATE ENTRY" + str(unmatched_entry))
             unmatched_entry.save()
-
 
     def process_response(self, entries, e):
         '''This routine processes the response returned by the form submittal.
@@ -248,7 +247,8 @@ class Results_Processor():
                                     elif e.result == temp_result:
                                         break
                                     else:
-                                        print(e.heat.heat_number, "Same shirt # - skipping:", e.couple.dancer_1, e.couple.dancer_2, e.result, couple_names, result_index, accum)
+                                        print(e.heat.heat_number, "Same shirt # - new result:", e.couple, e.result, temp_result, accum)
+                                        e.result = temp_result
 
                             # If we get here, we didn't find an entry on the heatsheet that matches
                             # this line on the scoresheet. This is the dreaded late entry.
@@ -288,7 +288,6 @@ class Results_Processor():
                         shirt_number = self.get_shirt_number(current_competitor)
 
                         # loop through all entries on the heatsheet to find a match
-                        # TODO: what if there was a late entry?
                         for e in entries:
 
                             if e.shirt_number == shirt_number:
@@ -298,7 +297,9 @@ class Results_Processor():
                                 elif e.result == result_place:
                                     break
                                 else:
-                                    print(e.heat.heat_number, "Same name - skipping:", e.couple.dancer_1, e.couple.dancer_2, e.result, couple_names, result_index)
+                                    print(e.heat.heat_number, "Same number - new result:", e.couple.dancer_1, e.couple.dancer_2, e.result, result_place)
+                                    e.result = str(result_place)
+                                    break
 
                         else:    # this code runs when competitor not found in heat
                             couple_names = self.get_couple_names(current_competitor)
@@ -328,7 +329,7 @@ class Results_Processor():
                         if late_entry.points is None:
                             late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
                             late_entry.save()
-                            #print("LATE ENTRY SCORING:", late_entry.result, late_entry.points)
+                            print("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
                     break;
 
             # We get here if we aren't in any of the "looking" states
@@ -412,5 +413,5 @@ class Results_Processor():
                 #print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
                 self.response = self.get_scoresheet(e)
-                #print("Reading Scoresheet for heat:", e.heat.heat_number, e.couple.dancer_1)
+                #print("Reading Scoresheet for:", e.heat.get_category_display(), e.heat.heat_number)
                 result = self.process_response(entries, e)

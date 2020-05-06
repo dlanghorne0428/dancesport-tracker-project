@@ -7,6 +7,7 @@ from .heatlist.comp_organizer_heatlist import CompOrgHeatlist
 from .heatlist.ndca_prem_heatlist import NdcaPremHeatlist
 from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
+from .scoresheet.comp_organizer_results import CompOrgResults
 from .models import Comp, Heat, HeatEntry
 import time
 
@@ -64,12 +65,11 @@ def process_scoresheet_task(self, comp_data):
             scoresheet = CompMngrResults()
         # elif comp.url_data_format == Comp.NDCA_PREM:
         #     heatlist = NdcaPremHeatlist()
-        # else: # CompOrganizer for now
-        #     heatlist = CompOrgHeatlist()
+        else: # CompOrganizer for now
+             scoresheet = CompOrgResults()
 
         scoresheet.open(comp.scoresheet_url)
 
-        # eventually this part will become a background task with a progress bar
         heats_to_process = Heat.objects.filter(comp=comp).order_by('heat_number')
         num_heats = heats_to_process.count()
 
