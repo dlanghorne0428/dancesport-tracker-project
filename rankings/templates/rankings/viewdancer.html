@@ -28,7 +28,8 @@
         <label class="label">Type</label>
           {{ form.dancer_type}}
       </div>
-      <button class="btn btn-primary" type="submit">Save</button>
+      <input class="btn btn-primary" type="submit" name="submit" value="Save" />
+      <input class="btn btn-danger" type="submit" name="submit" value="Delete Dancer" onclick="return confirm('Are you sure?')" />
     </form>
   </div>
 
