@@ -3,13 +3,14 @@ from comps.models import Comp, Heat, HeatEntry
 from rankings.models import Couple
 
 
-def fix_null_entries(request, comp_id):
+def fix_dup_entries(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
     for heat in heats_in_comp:
         entries = HeatEntry.objects.filter(heat=heat).order_by('shirt_number')
         for e in entries:
-            if e.couple is None:
+            dup_entries = entries.filter(couple=e.couple)
+            if dup_entries.count() > 1:
                 if request.method == "GET":
                     print(heat.category, heat.heat_number, heat.info, e.shirt_number)
                     return render(request, 'comps/fix_entries.html', {'heat': heat, 'entries': entries, 'targeted_entry': e})
