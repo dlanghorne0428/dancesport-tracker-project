@@ -15,6 +15,7 @@ urlpatterns = [
     path('<int:comp_id>/mismatch_heats', views.resolve_mismatches, name="resolve_mismatches"),
     path('<int:comp_id>/combine_heats', views.combine_heats, name="combine_heats"),
     path('<int:comp_id>/null_entries', views.fix_null_entries, name="fix_null_entries"),
+    path('<int:comp_id>/duplicate_entries', views.fix_dup_entries, name="fix_dup_entries"),
     path('<int:comp_id>/bad_couple_type', views.fix_couple_type, name="fix_couple_type"),
     path('<int:comp_id>/bad_couple_type/<int:count>', views.fix_couple_type, name="fix_couple_type"),
     path('heat/<int:heat_id>/', views.heat, name="heat"),
