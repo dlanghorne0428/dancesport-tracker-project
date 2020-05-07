@@ -37,12 +37,18 @@ def viewdancer(request, dancer_pk):
         couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1')
         return render(request, 'rankings/viewdancer.html', {'dancer': dancer, 'form': form, 'couples': couples})
     else:
-        try:
-            form = DancerForm(request.POST, instance=dancer)
-            form.save()
-            return redirect('all_dancers')
-        except ValueError:
-            return render(request, 'rankings/viewdancer.html', {'dancer': dancer, 'form': form, 'error': "Invalid data submitted."})
+        submit = request.POST.get("submit")
+        if submit == "Save":
+            try:
+                form = DancerForm(request.POST, instance=dancer)
+                form.save()
+                return redirect('all_dancers')
+            except ValueError:
+                return render(request, 'rankings/viewdancer.html', {'dancer': dancer, 'form': form, 'error': "Invalid data submitted."})
+        elif submit == "Delete Dancer":
+            print("Deleting", str(dancer))
+            dancer.delete()
+            return redirect ('all_dancers')
 
 def all_couples(request):
     couples = Couple.objects.order_by("dancer_1__name_last")

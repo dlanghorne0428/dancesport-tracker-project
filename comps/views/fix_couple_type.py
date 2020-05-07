@@ -17,9 +17,9 @@ def fix_couple_type(request, comp_id, count=0):
                     if findings > count:
                         matching_couples = Couple.objects.filter(dancer_1=e.couple.dancer_1).order_by('dancer_2')
                         if request.method == "GET":
-                            return render(request, 'comps/fix_couple_type.html', {'heat': heat, 'heat_couple_type': heat_couple_type,
-                                                                                  'entries': entries, 'targeted_entry': e,
-                                                                                  'matching_couples': matching_couples})
+                            return render (request, 'comps/fix_couple_type.html', {'heat': heat, 'heat_couple_type': heat_couple_type, \
+                                                                             'entries': entries, 'targeted_entry': e, \
+                                                                             'matching_couples': matching_couples})
                         else: #POST
                             submit = request.POST.get("submit")
                             if submit == "Skip":
