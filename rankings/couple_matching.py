@@ -24,11 +24,15 @@ def split_name(name):
 
 def find_last_name_matches(dancers, dancer_1_code, dancer_2_code):
     partial_matches = list()
+    print("Dancer matches", dancers.count())
     for d in dancers:
+        print("Dancer", d)
         couples = Couple.objects.filter(dancer_1 = d)
+        print("Couples as 1:", couples.count())
         for c in couples:
             partial_matches.append((c, dancer_1_code))
         couples = Couple.objects.filter(dancer_2 = d)
+        print("Couples as 2:", couples.count())
         for c in couples:
             partial_matches.append((c, dancer_2_code))
     return partial_matches
@@ -51,6 +55,21 @@ def find_couple_partial_match(dancer, partner):
         for p in partial_matches:
             if p not in partial_matching_couples:
                 partial_matching_couples.append(p)
+
+    return partial_matching_couples
+
+
+def find_couple_first_letter_match(dancer, partner):
+    dancer_last, dancer_first, dancer_middle = split_name(dancer.name)
+    print("First letter match", dancer_last)
+    #partner_last, partner_first, partner_middle = split_name(partner.name)
+    partial_matching_couples = list()
+
+    dancers = Dancer.objects.filter(name_last__startswith = dancer_last[0])
+    partial_matches = find_last_name_matches(dancers, dancer.code, partner.code)
+    for p in partial_matches:
+        if p not in partial_matching_couples:
+            partial_matching_couples.append(p)
 
     return partial_matching_couples
 

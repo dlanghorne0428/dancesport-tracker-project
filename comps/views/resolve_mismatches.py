@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models import Comp, Heat, HeatEntry, UnmatchedHeatEntry, HeatlistDancer
 from rankings.models import Couple
-from rankings.couple_matching import find_couple_partial_match
+from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match
 
 
-def resolve_mismatches(request, comp_id):
+def resolve_mismatches(request, comp_id, wider_search=0):
     unmatched_entries = UnmatchedHeatEntry.objects.all().order_by('entry')
     comp = get_object_or_404(Comp, pk=comp_id)
     if unmatched_entries.count() == 0:
@@ -19,7 +19,10 @@ def resolve_mismatches(request, comp_id):
     else:
         first_unmatched = unmatched_entries.first()
         print(unmatched_entries)
-        possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
+        if wider_search == 1:
+            possible_matches = find_couple_first_letter_match(first_unmatched.dancer, first_unmatched.partner)
+        else:
+            possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
         if request.method == "GET":
             possible_couples = list()
             for i in range(len(possible_matches)):
@@ -32,6 +35,8 @@ def resolve_mismatches(request, comp_id):
             submit = request.POST.get("submit")
             if submit == "Reset":
                 return redirect('comps:heats', comp_id)
+            elif submit == "Widen Search":
+                return redirect('comps:resolve_mismatches', comp_id = comp_id, wider_search=1)
             elif submit == "Submit":
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:

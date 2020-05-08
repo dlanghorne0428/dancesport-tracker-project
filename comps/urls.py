@@ -13,6 +13,7 @@ urlpatterns = [
     path('<int:comp_id>/resolve_dancers', views.resolve_dancers, name="resolve_dancers"),
     path('<int:comp_id>/load_heats', views.load_heats, name="load_heats"),
     path('<int:comp_id>/mismatch_heats', views.resolve_mismatches, name="resolve_mismatches"),
+    path('<int:comp_id>/mismatch_heats/<int:wider_search>', views.resolve_mismatches, name="resolve_mismatches"),
     path('<int:comp_id>/combine_heats', views.combine_heats, name="combine_heats"),
     path('<int:comp_id>/null_entries', views.fix_null_entries, name="fix_null_entries"),
     path('<int:comp_id>/duplicate_entries', views.fix_dup_entries, name="fix_dup_entries"),
