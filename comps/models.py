@@ -198,9 +198,17 @@ class Heat(models.Model):
     def set_time(self, time_str, day_of_week_str):
         comp_start_date = self.comp.start_date.isocalendar()
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        isoweekday = days_of_week.index(day_of_week_str) + 1
-        heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
-        time_of_day = time.strptime(time_str, "%I:%M%p")
+        try:
+            isoweekday = days_of_week.index(day_of_week_str) + 1
+            heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
+        except:
+            print(str(self), "Warning in day of week:", day_of_week_str)
+            heat_date = self.comp.start_date
+        try:
+            time_of_day = time.strptime(time_str, "%I:%M%p")
+        except:
+            print(str(self), "Warning in time of day:", time_str)
+            time_of_day = time.strptime("0:0", "%H:%M")
         tz = timezone(offset=timedelta(hours=0))  # avoid warnings about naive time, treat all times as UTC
                                                  # could try to get smarter about where comp was located, but why?
         self.time = datetime(heat_date.year, heat_date.month, heat_date.day,
@@ -219,11 +227,11 @@ class Heat(models.Model):
     def junior_heat(self):
         '''This function returns True if the description indicates a junior or youth heat.'''
         s = self.info
-        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or "YU" in s or \
-           "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or "JU" in s or \
+        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or "YU" in s or "YT" in s or \
+           "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or "JU" in s or "JNR" in s or\
            "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or "Pre Teen" in s or \
            "High School" in s or "Elementary School" in s or \
-           "-TB" in s or "Teddy Bear" in s:
+           "-TB" in s or "Teddy Bear" in s or "TB" in s:
 
            # Under 21 heats are sometimes listed as youth, but should not be treated as juniors
            if "U21" in s or "Under 21" in s:
