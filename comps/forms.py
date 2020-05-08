@@ -10,4 +10,4 @@ from .models import Heat
 class HeatForm(ModelForm):
     class Meta:
         model = Heat
-        fields = ['info', 'time', 'rounds', 'style', 'base_value']
+        fields = ['info', 'heat_number', 'rounds', 'style', 'base_value']
