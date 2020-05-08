@@ -320,9 +320,7 @@ class Results_Processor():
                     for e in entries:
                         if e.points is None and len(e.result) > 0:
                             e.points = calc_points(level, int(e.result), num_competitors=self.entries_in_event, rounds=rounds)
-                        if e.points is None:
-                            e.result = "DNP"
-                        else:
+                        if e.points is not None:
                             #print(e, e.result, e.points)
                             e.save()
                     for late_entry in self.late_entries:
@@ -410,11 +408,23 @@ class Results_Processor():
         '''This routine extracts the results for a given heat.
            A lise of heat entries is passed in.'''
         # loop through the entries in the heat
+        loop_count = 0
+        heat_result = None
         for e in entries:
             # if we don't already know the result for this entry
             if len(e.result) == 0:
                 #print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
+                loop_count += 1
+                if loop_count > 1:
+                    print("Reading Scoresheet for " + e.heat.get_category_display() + " " + str(e.heat.heat_number) + " " + str(e.couple))
                 self.response = self.get_scoresheet(e)
-                #print("Reading Scoresheet for:", e.heat.get_category_display(), e.heat.heat_number)
                 result = self.process_response(entries, e)
+                if result is not None:
+                    heat_result = result
+        if heat_result is not None:
+            for e in entries:
+                if e.points is None:
+                    e.result = "DNP"
+
+        return heat_result

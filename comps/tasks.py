@@ -78,11 +78,14 @@ def process_scoresheet_task(self, comp_data):
         for heat in heats_to_process:
             index += 1
             entries_in_event = HeatEntry.objects.filter(heat=heat)
-            scoresheet.determine_heat_results(entries_in_event)
-            for e in entries_in_event:
-                if e.result == "DNP":
-                    print("Deleting", e)
-                    e.delete()
+            heat_result = scoresheet.determine_heat_results(entries_in_event)
+            if heat_result is None:
+                print("No results for " + str(heat))
+            else:
+                for e in entries_in_event:
+                    if e.result == "DNP":
+                        print("Deleting", e)
+                        e.delete()
 
             progress_recorder.set_progress(index, num_heats, description=str(heat) + " " + heat.info)
 
