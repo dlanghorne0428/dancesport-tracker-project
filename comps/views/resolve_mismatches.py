@@ -18,11 +18,14 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         return redirect("comps:comp_heats", comp_id)
     else:
         first_unmatched = unmatched_entries.first()
-        print(unmatched_entries)
-        if wider_search == 1:
+        print("Searching level", wider_search)
+        if wider_search == 0:
+            possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
+        elif wider_search == 1:
             possible_matches = find_couple_first_letter_match(first_unmatched.dancer, first_unmatched.partner)
         else:
-            possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
+            possible_matches = find_couple_first_letter_match(first_unmatched.dancer, first_unmatched.partner, dancer_only=False)
+
         if request.method == "GET":
             possible_couples = list()
             for i in range(len(possible_matches)):
@@ -36,7 +39,9 @@ def resolve_mismatches(request, comp_id, wider_search=0):
             if submit == "Reset":
                 return redirect('comps:heats', comp_id)
             elif submit == "Widen Search":
-                return redirect('comps:resolve_mismatches', comp_id = comp_id, wider_search=1)
+                if wider_search < 2:
+                    wider_search += 1
+                return redirect('comps:resolve_mismatches', comp_id = comp_id, wider_search=wider_search)
             elif submit == "Submit":
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
@@ -46,7 +51,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                             # update the heat entry with the selected couple
                             e.entry.couple = pm_couple
                             e.entry.code = pm_code
-                            print(e.entry)
+                            #print(e.entry)
                             e.entry.save()
                             e.delete()
                         break
