@@ -397,6 +397,9 @@ class Results_Processor():
                     #print("Found Finals")
                     looking_for_result_column = True
 
+            elif "Place" in line and "<th>" in line:
+                print("Found a table header with Place", line)
+
         # Return which level of results we were able to find on this dancer's scoresheet
         # If they were eliminated before the finals, the final results will not appear,
         # and the calling routine will have to try another dancer to get those.
