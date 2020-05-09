@@ -1,0 +1,22 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-8 offset-md-2">
+    <h2 class="text-center">{{ entry.heat.comp.title }}</h2>
+    <h3 class="text-center">{{ entry.heat.get_category_display }} {{ entry.heat.heat_number }} {{ entry.heat.info }}</h3>
+    <h4 class="text-center">{{ entry.couple.dancer_1}} and {{ entry.couple.dancer_2 }}</h4>
+
+    <h4 class="text-center">{{ error }}</h4>
+  </div>
+
+  <div class="col-4 offset-md-4">
+    <form class="text-center" method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

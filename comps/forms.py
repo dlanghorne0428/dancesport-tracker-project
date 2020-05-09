@@ -11,3 +11,9 @@ class HeatForm(ModelForm):
     class Meta:
         model = Heat
         fields = ['info', 'heat_number', 'extra', 'style', 'base_value']
+
+from .models import HeatEntry
+class HeatEntryForm(ModelForm):
+    class Meta:
+        model = HeatEntry
+        fields = ['shirt_number', 'result', 'points']

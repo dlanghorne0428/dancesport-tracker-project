@@ -5,6 +5,7 @@ from .comp_heats import *
 from .create_comp import *
 from .dancers import *
 from .dancer_heats import *
+from .edit_heat_entry import *
 from .fix_couple_type import *
 from .fix_dup_entries import *
 from .fix_null_entries import *

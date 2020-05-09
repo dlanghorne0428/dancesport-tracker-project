@@ -7,4 +7,4 @@ class HeatFilter(django_filters.FilterSet):
 
     class Meta:
         model = Heat
-        fields = ['category', 'style', 'base_value'  ]
+        fields = ['category', 'style', 'heat_number', 'base_value'  ]
