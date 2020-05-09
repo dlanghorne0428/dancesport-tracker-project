@@ -119,6 +119,7 @@ class Results_Processor():
             print("LATE ENTRY" + str(unmatched_entry))
             unmatched_entry.save()
 
+
     def process_response(self, entries, e):
         '''This routine processes the response returned by the form submittal.
            It is the scoresheet results for a single dancer.

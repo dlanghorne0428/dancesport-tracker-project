@@ -1,8 +1,8 @@
 import requests
-from .calc_points import calc_points
-#from rankings.models import Dancer
-from comps.models import Heat, HeatlistDancer
-#from dancer_list import Dancer_List, Dancer_Type
+from comps.scoresheet.results_processor import Results_Processor
+from comps.scoresheet.calc_points import calc_points
+from comps.models import HeatlistDancer
+
 
 class NdcaPremEvent():
     '''An event is basically the description of a heat.
@@ -18,9 +18,11 @@ class NdcaPremEvent():
         self.name = fields[1]
 
 
-class NdcaPremResults():
+class NdcaPremResults(Results_Processor):
     '''This class processes the results from the NDCA Premier site...'''
     def __init__(self):
+        super().__init__()
+
         # Keep a list of event objects (ID and name)
         self.events = []
 
@@ -33,14 +35,6 @@ class NdcaPremResults():
 
         # get access to format_name
         self.hld = HeatlistDancer()
-
-
-    # def order_pro_am_couple(self, entry):
-    #     '''This method uses the list of instructors to put the student first.'''
-    #     if entry.dancer in self.instructors.names:
-    #         entry.swap_names()
-    #     elif entry.partner not in self.instructors.names:
-    #         print("Instructor Unknown: ", entry.dancer, "or", entry.partner)
 
 
     def get_comp_name(self, comp_id):
@@ -74,7 +68,72 @@ class NdcaPremResults():
             return "round 1-" + accum_value
 
 
-    def process_scoresheet_for_event(self, entries_in_event, event):
+    def process_couple(self, entries, couple_field, result_str):
+        # find the couple's shirt number
+        sub_fields = couple_field.split(" &amp; ")
+        first_space = sub_fields[0].find(" ")
+        shirt_number = sub_fields[0][:first_space]
+
+        # find the names of the couple and format them
+        dancer_name_list = list()
+        dancer_name = sub_fields[0][first_space+1:]
+        for s in range(1, len(dancer_name.split())):
+            dancer_name_list.append(self.hld.format_name(orig_name=dancer_name, simple=False, split_on=s))
+        partner_name_list = list()
+        partner_name = sub_fields[1]
+        for s in range(1, len(partner_name.split())):
+            partner_name_list.append(self.hld.format_name(orig_name=partner_name, simple=False, split_on=s))
+
+        # look for this couple in the entries and add the result and shirt number
+        for entry in entries:
+            if str(entry.couple.dancer_1) in dancer_name_list or str(entry.couple.dancer_2) in dancer_name_list or \
+               str(entry.couple.dancer_1) in partner_name_list or str(entry.couple.dancer_2) in partner_name_list:
+                entry.shirt_number = shirt_number
+                if len(entry.result) == 0:
+                    entry.result = result_str
+                break
+        else:
+            # couple not found, create a late entry
+            print("Could not find", partner_name, "and", dancer_name)
+            couple_names = [dancer_name_list[0], partner_name_list[0]]
+            self.build_late_entry(self.heat, shirt_number, couple_names, result_str)
+
+
+    def update_scoring(self, e):
+        '''This method updates the result and points for a given entry, e.'''
+        if e.points is None and len(e.result) > 0:
+            if e.result.startswith("S"):
+                accum_value = e.result[len("Semis-"):]
+                e.result = "Semis"
+                placement = -2
+            elif e.result.startswith("q"):
+                accum_value = e.result[len("quarters-"):]
+                e.result = "quarters"
+                placement = -1
+            elif e.result.startswith("round 3-"):
+                accum_value = e.result[len("round 3-"):]
+                e.result = "round 3"
+                placement = -3
+            elif e.result.startswith("round 2-"):
+                accum_value = e.result[len("round 2-"):]
+                e.result = "round 2"
+                placement = -5
+            elif e.result.startswith("round 1-"):
+                accum_value = e.result[len("round 1-"):]
+                e.result = "round 1"
+                placement = -10
+            else:
+                placement = int(e.result)
+                accum_value = 0
+            e.points = calc_points(self.heat.base_value, placement, num_competitors=self.entries_in_event, rounds=self.heat.rounds, accum=int(accum_value))
+            print(str(e.couple) + " finish " + e.result + " for " + str(e.points) + " points")
+            e.save()
+            return e.result
+        else:
+            return None
+
+
+    def process_scoresheet_for_event(self, entries, event):
         '''This is the method that requests and processes the scoresheet for a
            particular event. On the NDCA Premier site, the scoresheets are
            organized by event, not by dancer name.'''
@@ -90,8 +149,8 @@ class NdcaPremResults():
         looking_for_prelim_round = False
         process_finalists = False
         looking_for_semifinal = False
-        total_entries = 0
-        heat = entries_in_event.first().heat
+        self.entries_in_event = 0
+        self.heat = entries.first().heat
 
         # build the URL based on comp ID and event ID
         url = "http://www.ndcapremier.com/scripts/results.asp?cyi=" + self.comp_id + "&event=" + event.id
@@ -159,57 +218,16 @@ class NdcaPremResults():
                     couple_field = fields[0].split("<td>")[1]
                     # get the result info from the last column
                     result_place = fields[col_count-1].split("<td>")[1]
-                    # don't need to convert, leave it as a string
-                    # try:
-                    #     result_place = int(result_field)
-                    # except:
-                    #     result_place = None
-                    total_entries += 1
+                    self.entries_in_event += 1
 
-                    # find the couple's shirt number
-                    sub_fields = couple_field.split(" &amp; ")
-                    first_space = sub_fields[0].find(" ")
-                    shirt_number = sub_fields[0][:first_space]
-
-                    # find the names of the couple and format them
-                    dancer_name_list = list()
-                    dancer_name = sub_fields[0][first_space+1:]
-                    for s in range(1, len(dancer_name.split())):
-                        dancer_name_list.append(self.hld.format_name(orig_name=dancer_name, simple=False, split_on=s))
-                    partner_name_list = list()
-                    partner_name = sub_fields[1]
-                    for s in range(1, len(partner_name.split())):
-                        partner_name_list.append(self.hld.format_name(orig_name=partner_name, simple=False, split_on=s))
-                    #print(dancer_name, "and", partner_name)
-                    #print(dancer_name_list)
-                    #print(partner_name_list)
-
-                    # look for this couple in the entries and add the result and shirt number
-                    for entry in entries_in_event:
-                        if str(entry.couple.dancer_1) in dancer_name_list or str(entry.couple.dancer_2) in dancer_name_list or \
-                           str(entry.couple.dancer_1) in partner_name_list or str(entry.couple.dancer_2) in partner_name_list:
-                            #print("Found " + str(entry.couple) + ": " + result_place)
-                            entry.shirt_number = shirt_number
-                            if len(entry.result) == 0:
-                                entry.result = result_place
-                            break
-                    else:
-                        # couple not found, create a late entry
-                        print("Could not find", partner_name, "and", dancer_name)
-                        xyz()
-                        h = heat_report.build_late_entry()
-                        h.dancer = dancer_name_list[0]
-                        h.partner = partner_name_list[0]
-                        h.shirt_number = shirt_number
-                        h.result = result_place
-                        h.code = "LATE"
-                        heat_report.append(h)
+                    # process this couple
+                    self.process_couple(entries, couple_field, result_place)
 
             elif looking_for_semifinal:
                 # if we find a semifinal, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
                     print("Found semi-final")
-                    heat.rounds = "S"
+                    self.heat.rounds = "S"
                     looking_for_semifinal = False
                     looking_for_final_dance = True
                     dance_count = 0
@@ -219,7 +237,7 @@ class NdcaPremResults():
                 # if we find a quarter final, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
                     print("Found quarter-final")
-                    heat.rounds = "Q"
+                    self.heat.rounds = "Q"
                     looking_for_quarterfinal = False
                     looking_for_final_dance = True
                     dance_count = 0
@@ -229,24 +247,24 @@ class NdcaPremResults():
                 # if we find an earlier round, set the rounds and look for the results of this round
                 if 'class="roundHeader">Third' in l:
                     print("Found Third Round")
-                    heat.rounds = "R3"
+                    self.heat.rounds = "R3"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">Second' in l:
                     print("Found Second Round")
-                    heat.rounds = "R2"
+                    self.heat.rounds = "R2"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">First' in l:
                     print("Found First Round")
-                    if heat.rounds == "R3":
-                        heat.rounds = "R321"
-                    elif heat.rounds == "R2":
-                        heat.rounds = "R21"
+                    if self.heat.rounds == "R3":
+                        self.heat.rounds = "R321"
+                    elif self.heat.rounds == "R2":
+                        self.heat.rounds = "R21"
                     else:
-                        heat.rounds = "R1"
+                        self.heat.rounds = "R1"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
@@ -264,13 +282,13 @@ class NdcaPremResults():
                 # once we find the results of an early round, look for earlier rounds
                 if "</table>" in l:
                     looking_for_eliminations = False
-                    if heat.rounds == "S":
+                    if self.heat.rounds == "S":
                         looking_for_quarterfinal = True
-                    elif heat.rounds == "Q":
+                    elif self.heat.rounds == "Q":
                         looking_for_prelim_round = True
-                    elif heat.rounds == "R3":
+                    elif self.heat.rounds == "R3":
                         looking_for_prelim_round = True
-                    elif heat.rounds == "R2":
+                    elif self.heat.rounds == "R2":
                         looking_for_prelim_round = True
                 else:
                     # process the result of the next couple
@@ -282,116 +300,52 @@ class NdcaPremResults():
                     if recall_place != "Recall":
                         # if the couple was not recalled determine how many votes they got
                         accum_value = fields[accum_column].split("<td>")[1]
+                        result_str = self.temp_result(self.heat.rounds, accum_value)
 
-                        # extract the shirt number
-                        sub_fields = couple_field.split(" &amp; ")
-                        first_space = sub_fields[0].find(" ")
-                        shirt_number = sub_fields[0][:first_space]
+                        # process this couple
+                        self.process_couple(entries, couple_field, result_str)
 
-                        # extract the names of the couple
-                        dancer_name_list = list()
-                        dancer_name = sub_fields[0][first_space+1:]
-                        for s in range(1, len(dancer_name.split())):
-                            dancer_name_list.append(Dancer.format_name(dancer_name, split_on=s))
-                        partner_name_list = list()
-                        partner_name = sub_fields[1]
-                        for s in range(1, len(partner_name.split())):
-                            partner_name_list.append(Dancer.format_name(partner_name, split_on=s))
-
-                        # look for the couple in the heat report
-                        for index in range(heat_report.length()):
-                            entry = heat_report.entry(index)
-                            if entry.dancer in dancer_name_list:
-                                entry.shirt_number = shirt_number
-                                # put the couple names in the right order
-                                if entry.category == "Heat" and not entry.amateur_heat():
-                                    self.order_pro_am_couple(entry)
-                                # if the couple already has a result, they were not recalled so don't overwrite it
-                                if entry.result is None:
-                                    entry.result = self.temp_result(heat_report.rounds(), accum_value)
-                                break
-                            elif entry.partner in dancer_name_list:
-                                entry.shirt_number = shirt_number
-                                if entry.category == "Heat" and not entry.amateur_heat():
-                                    self.order_pro_am_couple(entry)
-                                else:
-                                    entry.swap_names()
-                                if entry.result is None:
-                                    entry.result = self.temp_result(heat_report.rounds(), accum_value)
-                                break
-                        else:
-                            # if no matching couple, add a late entry to the heat report
-                            h = heat_report.build_late_entry()
-                            h.dancer = dancer_name_list[0]
-                            h.partner = partner_name_list[0]
-                            h.shirt_number = shirt_number
-                            self.order_pro_am_couple(h)
-                            if h.result is None:
-                                h.result = self.temp_result(heat_report.rounds(), accum_value)
-                            h.code = "LATE"
-                            heat_report.append(h)
                     i += 1
             else:
                 i+= 1
 
         # entire scoresheet was processed
-        # for each entry in the heat report, extract the recall votes and calculate the points
-        for e in entries_in_event:
-            if e.points is None and e.result is not None:
-                if e.result.startswith("S"):
-                    accum_value = e.result[len("Semis-"):]
-                    e.result = "Semis"
-                    placement = -2
-                elif e.result.startswith("q"):
-                    accum_value = e.result[len("quarters-"):]
-                    e.result = "quarters"
-                    placement = -1
-                elif e.result.startswith("round 3-"):
-                    accum_value = e.result[len("round 3-"):]
-                    e.result = "round 3"
-                    placement = -3
-                elif e.result.startswith("round 2-"):
-                    accum_value = e.result[len("round 2-"):]
-                    e.result = "round 2"
-                    placement = -5
-                elif e.result.startswith("round 1-"):
-                    accum_value = e.result[len("round 1-"):]
-                    e.result = "round 1"
-                    placement = -10
-                else:
-                    placement = int(e.result)
-                    accum_value = 0
-                e.points = calc_points(heat.base_value, placement, num_competitors=total_entries, rounds=heat.rounds, accum=int(accum_value))
-                #print(str(e.couple), "finish", e.result, "for", e.points, "points")
-                e.save()
+        # for each entry in the event, extract the recall votes and calculate the points
+        event_result = None
+        for e in entries:
+            temp_result = self.update_scoring(e)
+            if event_result is None:
+                event_result = temp_result
+        for late_entry in self.late_entries:
+            temp_result = self.update_scoring(late_entry)
+            if temp_result is not None:
+                print("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
+                if event_result is None:
+                    event_result = temp_result
+
+        return event_result
 
 
-    def determine_heat_results(self, entries_in_event):
-        '''This method obtains the results for all events in the given heat report.'''
+    def determine_heat_results(self, entries):
+        '''This method obtains the results for all entries in the event.'''
         # process the scoresheet for each of those events.
-        if entries_in_event.count() > 0:
-            event_name = entries_in_event.first().heat.info
-            for e in self.events:
-                if e.name == event_name:
-                    print("Processing " + e.name)
-                    self.process_scoresheet_for_event(entries_in_event, e)
-                    return True  # What to return here?
+        if entries.count() > 0:
+            event_name = entries.first().heat.info
+            for event in self.events:
+                if event.name == event_name:
+                    print("Processing " + event.name)
+                    event_result = self.process_scoresheet_for_event(entries, event)
+                    if event_result is not None:
+                        for entry in entries:
+                            if entry.points is None:
+                                entry.result = "DNP"
+
+                    return event_result
             else:
-                print("Could not find event", event_name)
-                xyz()
+                print("ERROR: Could not find event", event_name)
                 return None
         else:
-            print("No entries in event", event.name)
-            xyz()
-            return None
-
-
-    def event_id(self, title):
-        '''This method returns an event ID for the specified event title.'''
-        for e in self.events:
-            if e.name == title:
-                return e.id
-        else:
+            print("ERROR: No entries in event", event.name)
             return None
 
 
@@ -414,8 +368,6 @@ class NdcaPremResults():
                 category = cat_link[start_pos:end_pos]
                 self.categories.append(category)
 
-        #print("Catgories", self.categories)
-
         # build a list of events, by looping through the event categories.
         for cat in self.categories:
             url = "http://www.ndcapremier.com/scripts/event_list.asp?cyi=" + self.comp_id + "&cat=" + cat
@@ -426,33 +378,3 @@ class NdcaPremResults():
                     event = NdcaPremEvent(e)
                     #print(event.name + " " +  event.id)
                     self.events.append(event)
-
-
-    def close(self):
-        '''This method performs any cleanup processing required.'''
-        pass
-
-
-if __name__ == '__main__':
-    results = NdcaPremResults()
-    results.open("http://www.ndcapremier.com/results.htm?cyi=398")
-    h = Heat()
-    h.info = "WDC World Professional Latin Int'l Latin Championship (CC,S,R,PD,J)"
-    h.set_category("Pro heat")
-    h.set_level()
-    h.dancer = "Bager, Troels" #"Alitto, Oreste"
-    h.partner = "Jeliazkova, Ina" # "Belozerova, Valeriia"
-    h.rounds = "F"
-    hr = Heat_Report()
-    hr.append(h)
-    results.determine_heat_results(hr)
-    print("Results Processed")
-#    results.determine_heat_results("Professional Rising Star Events Amer. Rhythm (CC,R,SW,B,M)")
-#    results.determine_heat_results("Professional Rising Star Events Int'l Ballroom (W,T,VW,F,Q)")
-#    results.determine_heat_results("Professional Rising Star Events Int'l Latin (CC,S,R,PD,J)")
-     # this heat had a semi final
-#    results.determine_heat_results("Professional Open Championships  Int'l Ballroom Championship (W,T,VW,F,Q)")
-#    results.determine_heat_results("Professional Open Championships  Amer. Rhythm Championship (CC,R,SW,B,M)")
-#    results.determine_heat_results("Professional Open Championships  Int'l Latin Championship (CC,S,R,PD,J)")
-#    results.determine_heat_results("Professional Open Championships  Amer. Smooth Championship (W,T,F,VW)")
-#    results.determine_heat_results("Professional Open Championships  Show Dance Championship (SD)")
