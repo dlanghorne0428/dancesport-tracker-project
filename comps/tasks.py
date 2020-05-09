@@ -69,13 +69,13 @@ def process_scoresheet_task(self, comp_data):
         else: # CompOrganizer for now
              scoresheet = CompOrgResults()
 
-        index = 0
-        progress_recorder.set_progress(0, num_heats, description="Accessing website for results")
-        scoresheet.open(comp.scoresheet_url)
-
         heats_to_process = Heat.objects.filter(comp=comp).order_by('heat_number')
         num_heats = heats_to_process.count()
 
+        index = 0
+        progress_recorder.set_progress(0, num_heats, description="Accessing website for results")
+        scoresheet.open(comp.scoresheet_url)
+        
         for heat in heats_to_process:
             index += 1
             entries_in_event = HeatEntry.objects.filter(heat=heat)
