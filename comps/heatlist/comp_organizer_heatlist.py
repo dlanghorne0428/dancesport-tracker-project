@@ -58,7 +58,7 @@ class CompOrgHeatlist(Heatlist):
         elif category_string == "Pro heat ":
             h.category = Heat.PRO_HEAT
         elif category_string == "Heat ":
-            h.category = Heat.HEAT
+            h.category = Heat.NORMAL_HEAT
 
         try:
             h.heat_number = int(number_string[index:])

@@ -123,7 +123,7 @@ class FileBasedHeatlist(Heatlist):
                 print("No partner found in ", couple_fields)
                 p = None
             if p is not None:
-                if p.nane > d.name:
+                if p.name > d.name:
                     self.heat = Heat()
                     self.load_heat(heat_info, comp_ref)
                     h = self.add_heat_to_database(self.heat, comp_ref)
