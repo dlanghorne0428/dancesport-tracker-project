@@ -8,7 +8,39 @@ from .filters import DancerFilter
 
 # Create your views here.
 def home(request):
-    return render(request, "rankings/home.html")
+    pro_couples = Couple.objects.filter(couple_type=Couple.PRO_COUPLE)
+    if request.method == "POST":
+        # submit = request.POST.get("submit")
+        # print("Submit is", submit)
+        style = request.POST.get("style")
+        print("Style is", style)
+        if style == "Rhythm":
+            heat_style = Heat.RHYTHM
+        elif style == "Latin":
+            heat_style = Heat.LATIN
+        elif style == "Standard":
+            heat_style = Heat.STANDARD
+        else:
+            heat_style = Heat.SMOOTH
+        for c in pro_couples:
+            entries = HeatEntry.objects.filter(couple=c).filter(heat__style=heat_style)
+            event_count = 0
+            total_points = 0.0
+            for e in entries:
+                if e.points is not None:
+                    event_count += 1
+                    total_points += e.points
+            if event_count > 0:
+                c.event_count = event_count
+                c.total_points = round(total_points, 2)
+                c.rating = round(total_points / event_count, 2)
+            else:
+                c.event_count = 0
+                c.total_points = 0.0
+                c.rating = 0.0
+            c.save()
+    pro_couples = pro_couples.filter(event_count__gte=1).order_by('-rating')
+    return render(request, "rankings/home.html", {'couples': pro_couples, 'styles': Heat.DANCE_STYLE_CHOICES})
 
 
 def all_dancers(request):

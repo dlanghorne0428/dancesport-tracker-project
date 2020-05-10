@@ -2,9 +2,57 @@
 
 {% block content %}
 
-<div class="col-4 offset-md-4">
-  <p class="text-center">Not much else here for now</p>
+<div class="col-8 offset-md-2">
+  <h1 class="text-center">2020 DanceSport Rankings</h1>
 </div>
 
+<div class="row">
+
+  <div class="col-3 border border-dark">
+    <h3 class="text-center">Filter Rankings</h3>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+          <label for="style">Style</label>
+          <select class="form-control" id="style" name="style">
+              <option value="Smooth">Smooth</option>
+              <option value="Rhythm">Rhythm</option>
+              <option value="Standard">Standard</option>
+              <option value="Latin">Latin</option>
+          </select>
+      </div>
+      <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
+    </form>
+  </div>
+
+  <div class="col-8">
+    <table class="table table-bordered table-sm">
+      <thead class="thead-dark">
+        <tr>
+          <th>Dancer 1</th>
+          <th></th>
+          <th>Dancer 2</th>
+          <th>Events</th>
+          <th>Total Points</th>
+          <th>Average</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for couple in couples %}
+        <tr>
+          <td>{{ couple.dancer_1 }}</td>
+          <td>and</td>
+          <td>{{ couple.dancer_2 }}</td>
+          <td class="text-center">{{ couple.event_count }}</td>
+          <td class="text-center">{{ couple.total_points }}</td>
+          <td class="text-center">{{ couple.rating }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
 
 {% endblock %}
