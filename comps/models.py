@@ -217,6 +217,8 @@ class Heat(models.Model):
 
     def amateur_heat(self):
         '''This function returns True if the description indicates an amateur heat.'''
+        if "Amateur" in self.comp.title:
+            return True
         s = self.info
         if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s:
             return True

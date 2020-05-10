@@ -8,6 +8,7 @@ from .heatlist.ndca_prem_heatlist import NdcaPremHeatlist
 from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
 from .scoresheet.comp_organizer_results import CompOrgResults
+from .scoresheet.ndca_prem_results import NdcaPremResults
 from .models import Comp, Heat, HeatEntry
 import time
 
@@ -63,31 +64,35 @@ def process_scoresheet_task(self, comp_data):
     if comp.scoresheet_url:
         if comp.url_data_format == Comp.COMP_MNGR:
             scoresheet = CompMngrResults()
-        # elif comp.url_data_format == Comp.NDCA_PREM:
-        #     heatlist = NdcaPremHeatlist()
+        elif comp.url_data_format == Comp.NDCA_PREM:
+             scoresheet = NdcaPremResults()
         else: # CompOrganizer for now
              scoresheet = CompOrgResults()
-
-        scoresheet.open(comp.scoresheet_url)
 
         heats_to_process = Heat.objects.filter(comp=comp).order_by('heat_number')
         num_heats = heats_to_process.count()
 
         index = 0
-        progress_recorder.set_progress(0, num_heats)
+        progress_recorder.set_progress(0, num_heats, description="Accessing website for results")
+        scoresheet.open(comp.scoresheet_url)
+        
         for heat in heats_to_process:
             index += 1
             entries_in_event = HeatEntry.objects.filter(heat=heat)
-            heat_result = scoresheet.determine_heat_results(entries_in_event)
-            if heat_result is None:
-                print("No results for " + str(heat))
+            if entries_in_event.count() > 0:
+                heat_result = scoresheet.determine_heat_results(entries_in_event)
+                if heat_result is None:
+                    print("No results for " + str(heat))
+                else:
+                    for e in entries_in_event:
+                        if e.result == "DNP":
+                            print("Deleting", e)
+                            e.delete()
             else:
-                for e in entries_in_event:
-                    if e.result == "DNP":
-                        print("Deleting", e)
-                        e.delete()
+                print("No entries in " + str(heat))
 
-            progress_recorder.set_progress(index, num_heats, description=str(heat) + " " + heat.info)
+            heat_str = heat.get_category_display() + " " + str(heat.heat_number)
+            progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)
 
         unmatched_entries = len(scoresheet.late_entries)
         result = [index, unmatched_entries]
