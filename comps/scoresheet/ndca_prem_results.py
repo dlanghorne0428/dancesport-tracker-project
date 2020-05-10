@@ -126,7 +126,7 @@ class NdcaPremResults(Results_Processor):
                 placement = int(e.result)
                 accum_value = 0
             e.points = calc_points(self.heat.base_value, placement, num_competitors=self.entries_in_event, rounds=self.heat.rounds, accum=int(accum_value))
-            print(str(e.couple) + " finish " + e.result + " for " + str(e.points) + " points")
+            #print(str(e.couple) + " finish " + e.result + " for " + str(e.points) + " points")
             e.save()
             return e.result
         else:
@@ -253,7 +253,8 @@ class NdcaPremResults(Results_Processor):
                     dance_count = 0
                 elif 'class="roundHeader">Second' in l:
                     print("Found Second Round")
-                    self.heat.rounds = "R2"
+                    if self.heat_rounds != "R3":
+                        self.heat.rounds = "R2"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
@@ -330,19 +331,24 @@ class NdcaPremResults(Results_Processor):
         '''This method obtains the results for all entries in the event.'''
         # process the scoresheet for each of those events.
         if entries.count() > 0:
-            event_name = entries.first().heat.info
-            for event in self.events:
-                if event.name == event_name:
-                    print("Processing " + event.name)
-                    event_result = self.process_scoresheet_for_event(entries, event)
-                    if event_result is not None:
-                        for entry in entries:
-                            if entry.points is None:
-                                entry.result = "DNP"
+            for entry in entries:
+                if entry.points is None:
+                    event_name = entries.first().heat.info
+                    for event in self.events:
+                        if event.name == event_name:
+                            #print("Processing " + event.name)
+                            event_result = self.process_scoresheet_for_event(entries, event)
+                            if event_result is not None:
+                                for entry in entries:
+                                    if entry.points is None:
+                                        entry.result = "DNP"
 
-                    return event_result
-            else:
-                print("ERROR: Could not find event", event_name)
+                            return event_result
+
+                    else:
+                        print("ERROR: Could not find event", event_name)
+                        return None
+            else: # all entries have results already
                 return None
         else:
             print("ERROR: No entries in event", event.name)
