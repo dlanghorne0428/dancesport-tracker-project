@@ -108,9 +108,9 @@ class Heat(models.Model):
         (RHYTHM, "Rhythm"),
         (STANDARD,  "Standard"),
         (LATIN, "Latin"),
-        (CABARET, "Cabaret / Theater Arts"),
-        (NIGHTCLUB, "Night Club"),
-        (COUNTRY, "Country Western"),
+        (CABARET, "Cabaret-Theater_Arts"),
+        (NIGHTCLUB, "Nightclub"),
+        (COUNTRY, "Country_Western"),
         (COMBINED, "Combined"),
         (UNKNOWN, "Unknown"),
     ]
