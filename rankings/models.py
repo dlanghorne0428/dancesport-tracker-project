@@ -40,17 +40,22 @@ class Couple(models.Model):
     AMATEUR_COUPLE = 'AMC'
     JR_AMATEUR_COUPLE = 'JAC'
     COUPLE_TYPE_CHOICES = [
-        (PRO_COUPLE, 'Professional Couple'),
-        (PRO_AM_COUPLE, 'Pro-Am Couple'),
-        (JR_PRO_AM_COUPLE , 'Junior Pro-Am Couple'),
-        (AMATEUR_COUPLE, 'Amateur Couple'),
-        (JR_AMATEUR_COUPLE , 'Junior Amateur Couple'),
+        (PRO_COUPLE, 'Professional_Couple'),
+        (PRO_AM_COUPLE, 'Pro-Am_Couple'),
+        (JR_PRO_AM_COUPLE , 'Junior_Pro-Am_Couple'),
+        (AMATEUR_COUPLE, 'Amateur_Couple'),
+        (JR_AMATEUR_COUPLE , 'Junior_Amateur_Couple'),
     ]
     couple_type = models.CharField(
         max_length=3,
         choices=COUPLE_TYPE_CHOICES,
         default=PRO_AM_COUPLE,
     )
+
+    # fields for rankingg
+    event_count = models.IntegerField(default=0)
+    total_points = models.FloatField(default=0.0)
+    rating = models.FloatField(default=0.0)
 
     def __str__(self):
         return self.dancer_1.__str__() + " and " + self.dancer_2.__str__()

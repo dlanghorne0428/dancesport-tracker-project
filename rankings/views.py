@@ -8,7 +8,46 @@ from .filters import DancerFilter
 
 # Create your views here.
 def home(request):
-    return render(request, "rankings/home.html")
+    couples = Couple.objects.filter(couple_type=Couple.PRO_COUPLE)
+    couple_types = Couple.COUPLE_TYPE_CHOICES
+    couple_type_labels = list()
+    for c in couple_types:
+        couple_type_labels.append(c[1])
+    couple_type = couple_type_labels[0]
+
+    styles = Heat.DANCE_STYLE_CHOICES
+    style_labels = list()
+    for s in styles:
+        style_labels.append(s[1])
+    style = style_labels[0]
+    if request.method == "POST":
+        couple_type = request.POST.get("couple_type")
+        index = couple_type_labels.index(couple_type)
+        heat_couple_type = Couple.COUPLE_TYPE_CHOICES[index][0]
+        couples = Couple.objects.filter(couple_type=heat_couple_type)
+        style = request.POST.get("style")
+        index = style_labels.index(style)
+        heat_style = Heat.DANCE_STYLE_CHOICES[index][0]
+        for c in couples:
+            entries = HeatEntry.objects.filter(couple=c).filter(heat__style=heat_style)
+            event_count = 0
+            total_points = 0.0
+            for e in entries:
+                if e.points is not None:
+                    event_count += 1
+                    total_points += e.points
+            if event_count > 0:
+                c.event_count = event_count
+                c.total_points = round(total_points, 2)
+                c.rating = round(total_points / event_count, 2)
+            else:
+                c.event_count = 0
+                c.total_points = 0.0
+                c.rating = 0.0
+            c.save()
+    couples = couples.filter(event_count__gte=1).order_by('-rating')
+    return render(request, "rankings/home.html", {'couples': couples, 'styles': style_labels, 'selected_style': style,
+                                                  'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
 
 
 def all_dancers(request):
