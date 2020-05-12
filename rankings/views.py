@@ -46,7 +46,10 @@ def home(request):
                 c.rating = 0.0
             c.save()
     couples = couples.filter(event_count__gte=1).order_by('-rating')
-    return render(request, "rankings/home.html", {'couples': couples, 'styles': style_labels, 'selected_style': style,
+    paginator = Paginator(couples, 16)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "rankings/home.html", {'page_obj': page_obj, 'styles': style_labels, 'selected_style': style,
                                                   'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
 
 
