@@ -4,15 +4,15 @@
     <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?{% param_replace page=1 %}">&laquo; first</a>
-            <a href="?{% param_replace page=page_obj.previous_page_number %}">&lt; prev</a>
+            <a href="?{% param_replace page=page_obj.previous_page_number %}">&larr; prev</a>
         {% endif %}
 
-        <span class="current">
+        <span class="current px-4">
             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?{% param_replace page=page_obj.next_page_number %}">next &gt;</a>
+            <a href="?{% param_replace page=page_obj.next_page_number %}">next &rarr;</a>
             <a href="?{% param_replace page=page_obj.paginator.num_pages %}">last &raquo;</a>
         {% endif %}
     </span>
