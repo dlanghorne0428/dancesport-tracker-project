@@ -54,7 +54,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for couple in couples %}
+        {% for couple in page_obj %}
         <tr>
           <td>{{ couple.dancer_1 }}</td>
           <td>and</td>
@@ -66,6 +66,7 @@
         {% endfor %}
       </tbody>
     </table>
+    {% include "rankings/pagination.html" %}
   </div>
 
 </div>
