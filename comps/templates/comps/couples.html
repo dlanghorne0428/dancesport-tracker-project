@@ -5,17 +5,17 @@
   <div class="row">
     <div class="col-8 offset-md-2">
       <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
-      <h3 class="text-center">Dancers</h3>
+      <h3 class="text-center">Couples</h3>
     </div>
   </div>
 
   <div class="row align-items-start">
-    <div class="col-lg-4 offset-lg-3 border border-dark">
+    <div class="col-lg-8 offset-lg-2 border border-dark">
       <table class="table table-bordered table-sm">
-        {% for dancer in page_obj %}
+        {% for couple in page_obj %}
         <tr>
-          <td>{{ dancer.name_last}}, {{ dancer.name_first }} {{dancer.name_middle}}</td>
-          <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:dancer_heats' comp.id dancer.id %}">View Heats</a></td>
+          <td>{{ couple }}</td>
+          <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id couple.id %}">View Heats</a></td>
         </tr>
         {% endfor %}
       </table>
@@ -23,13 +23,13 @@
       {% include "rankings/pagination.html" %}
     </div>
 
-    <div class="col-lg-3 border border-dark">
+    <!-- <div class="col-lg-3 border border-dark">
       <h4 class="text-center">Filter</h4>
       <form method="get">
         {{ filter.form.as_p }}
       <input class="btn btn-primary mx-auto" type="submit" value="Submit" />
       </form>
-    </div>
+    </div> -->
 
   </div>
 
