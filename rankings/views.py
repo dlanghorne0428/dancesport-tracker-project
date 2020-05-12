@@ -112,7 +112,7 @@ def createcouple(request):
 
 def viewcouple(request, couple_pk):
     couple = get_object_or_404(Couple, pk=couple_pk)
-    all_comps = Comp.objects.all()
+    all_comps = Comp.objects.all().order_by('-start_date')
     comps_for_couple = list()
     for comp in all_comps:
         if HeatEntry.objects.filter(heat__comp=comp).filter(couple=couple).count() > 0:
