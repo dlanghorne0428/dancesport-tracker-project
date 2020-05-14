@@ -163,6 +163,8 @@ def rankings(request):
     couple_stats.sort(key=itemgetter('rating'), reverse=True)
     while couple_stats[-1]['event_count'] == 0:
         couple_stats.pop()
+        if len(couple_stats) == 0:
+            break
     paginator = Paginator(couple_stats, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
