@@ -54,14 +54,14 @@
         </tr>
       </thead>
       <tbody>
-        {% for couple in page_obj %}
+        {% for couple_stats in page_obj %}
         <tr>
-          <td>{{ couple.dancer_1 }}</td>
+          <td>{{ couple_stats.couple.dancer_1 }}</td>
           <td>and</td>
-          <td>{{ couple.dancer_2 }}</td>
-          <td class="text-center">{{ couple.event_count }}</td>
-          <td class="text-center">{{ couple.total_points }}</td>
-          <td class="text-center">{{ couple.rating }}</td>
+          <td>{{ couple_stats.couple.dancer_2 }}</td>
+          <td class="text-center">{{ couple_stats.event_count }}</td>
+          <td class="text-center">{{ couple_stats.total_points }}</td>
+          <td class="text-center">{{ couple_stats.rating }}</td>
         </tr>
         {% endfor %}
       </tbody>

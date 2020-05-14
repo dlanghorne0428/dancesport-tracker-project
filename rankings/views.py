@@ -5,52 +5,19 @@ from .models import Dancer, Couple
 from comps.models import Comp, Heat, HeatEntry
 from .forms import DancerForm, CoupleForm
 from .filters import DancerFilter
+from operator import itemgetter
 
 # Create your views here.
 def home(request):
-    couples = Couple.objects.filter(couple_type=Couple.PRO_COUPLE)
     couple_types = Couple.COUPLE_TYPE_CHOICES
-    couple_type_labels = list()
-    for c in couple_types:
-        couple_type_labels.append(c[1])
-    couple_type = couple_type_labels[0]
-
+    heat_couple_type = couple_types[0][0]
     styles = Heat.DANCE_STYLE_CHOICES
-    style_labels = list()
-    for s in styles:
-        style_labels.append(s[1])
-    style = style_labels[0]
-    if request.method == "POST":
-        couple_type = request.POST.get("couple_type")
-        index = couple_type_labels.index(couple_type)
-        heat_couple_type = Couple.COUPLE_TYPE_CHOICES[index][0]
-        couples = Couple.objects.filter(couple_type=heat_couple_type)
-        style = request.POST.get("style")
-        index = style_labels.index(style)
-        heat_style = Heat.DANCE_STYLE_CHOICES[index][0]
-        for c in couples:
-            entries = HeatEntry.objects.filter(couple=c).filter(heat__style=heat_style)
-            event_count = 0
-            total_points = 0.0
-            for e in entries:
-                if e.points is not None:
-                    event_count += 1
-                    total_points += e.points
-            if event_count > 0:
-                c.event_count = event_count
-                c.total_points = round(total_points, 2)
-                c.rating = round(total_points / event_count, 2)
-            else:
-                c.event_count = 0
-                c.total_points = 0.0
-                c.rating = 0.0
-            c.save()
-    couples = couples.filter(event_count__gte=1).order_by('-rating')
-    paginator = Paginator(couples, 16)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, "rankings/home.html", {'page_obj': page_obj, 'styles': style_labels, 'selected_style': style,
-                                                  'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
+    heat_style = styles[0][0]
+
+    url_string = "rankings/?type=" + heat_couple_type + "&style=" + heat_style
+    print(url_string)
+
+    return redirect(url_string)
 
 
 def all_dancers(request):
@@ -133,3 +100,73 @@ def viewcouple(request, couple_pk):
             print("Deleting", str(couple))
             couple.delete()
             return redirect ('all_couples')
+
+
+def rankings(request):
+    couple_types = Couple.COUPLE_TYPE_CHOICES
+    couple_type_choices = list()
+    for c in couple_types:
+        couple_type_choices.append(c[0])
+    couple_type_labels = list()
+    for c in couple_types:
+        couple_type_labels.append(c[1])
+
+    styles = Heat.DANCE_STYLE_CHOICES
+    style_choices = list()
+    for s in styles:
+        style_choices.append(s[0])
+    style_labels = list()
+    for s in styles:
+        style_labels.append(s[1])
+
+    if request.method == "GET":
+        page_number = request.GET.get('page')
+        print("Page Number is", page_number)
+        heat_couple_type = request.GET.get('type')
+        index = couple_type_choices.index(heat_couple_type)
+        couple_type = couple_type_labels[index]
+        print("Couple_Type is", heat_couple_type, couple_type)
+        heat_style = request.GET.get('style')
+        index = style_choices.index(heat_style)
+        style = style_labels[index]
+        print("Style is", heat_style, style)
+    else:
+        page_number = 1
+        couple_type = request.POST.get("couple_type")
+        index = couple_type_labels.index(couple_type)
+        heat_couple_type = Couple.COUPLE_TYPE_CHOICES[index][0]
+        style = request.POST.get("style")
+        index = style_labels.index(style)
+        heat_style = Heat.DANCE_STYLE_CHOICES[index][0]
+        current_url = request.path
+        url_string = current_url +"?type=" + heat_couple_type + "&style=" + heat_style
+        print(url_string)
+        return redirect(url_string)
+
+    couples = Couple.objects.filter(couple_type=heat_couple_type)
+    couple_stats = list()
+    for c in couples:
+        stats = {'couple': c, 'event_count': 0, 'total_points': 0.0, 'rating': 0.0}
+        couple_stats.append(stats)
+
+    for cs in couple_stats:
+        entries = HeatEntry.objects.filter(couple=cs['couple']).filter(heat__style=heat_style)
+        for e in entries:
+            if e.points is not None:
+                cs['event_count'] += 1
+                cs['total_points'] += e.points
+        if cs['event_count'] > 0:
+            cs['total_points'] = round(cs['total_points'], 2)
+            cs['rating'] = round(cs['total_points'] / cs['event_count'], 2)
+
+    #couples = couples.filter(event_count__gte=1).order_by('-rating')
+    couple_stats.sort(key=itemgetter('rating'), reverse=True)
+    while couple_stats[-1]['event_count'] == 0:
+        couple_stats.pop()
+        if len(couple_stats) == 0:
+            break
+    paginator = Paginator(couple_stats, 16)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'rankings/rankings.html', {'page_obj': page_obj, 'styles': style_labels, 'selected_style': style,
+                                                      'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
