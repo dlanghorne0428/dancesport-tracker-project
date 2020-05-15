@@ -3,33 +3,12 @@
 {% block content %}
 
 <h2 class='text-center'>{{ couple }}</h2>
+<h3 class='text-center'>Couple Type: {{ couple.get_couple_type_display }}</h3>
 <br />
 
 <div class="row">
-  <div class="col-3 border border-dark">
-    <h3 class="text-center">Edit Profile</h3>
-    <p>{{ error }}</p>
 
-    <form method="POST">
-      {% csrf_token %}
-      <div class="form-group">
-          <label>Leader</label>
-          {{ form.dancer_1}}
-      </div>
-      <div class="form-group">
-        <label class="label">Follower</label>
-          {{ form.dancer_2}}
-      </div>
-      <div class="form-group">
-        <label class="label">Type</label>
-          {{ form.couple_type}}
-      </div>
-      <input class="btn btn-primary" type="submit" name="submit" value = "Save"/>
-      <input class="btn btn-danger" type="submit" name="submit" value="Delete Couple" onclick="return confirm('Are you sure?')" />
-    </form>
-  </div>
-
-  <div class="col-8 offset=1 border border-dark">
+  <div class="col border border-dark">
     <h3 class="text-center">Couple's Competitions</h3>
     <table class="table table-bordered table-sm">
       <tr>
@@ -48,8 +27,10 @@
       </tr>
       {% endfor %}
     </table>
+    <div class="text-center my-3">
+      <a class="btn btn-primary" href="{% url 'editcouple' couple.id %}">Edit Couple</a>
+    </div>
   </div>
 </div>
-
 
 {% endblock %}
