@@ -17,7 +17,7 @@
             <th>Dancer 1</th>
             <th></th>
             <th>Dancer 2</th>
-            <th>Category</th>
+            <th>Couple Type</th>
           </tr>
         </thead>
         <tbody>
@@ -31,15 +31,14 @@
           {% endfor %}
         </tbody>
       </table>
+
+      {% include "rankings/pagination.html" %}
+
+      <div class="text-center my-3">
+        <a class="btn btn-primary" href="{% url 'createcouple' %}">Add Couple</a>
+      </div>
     </div>
   </div>
 
-  {% include "rankings/pagination.html" %}
-
-  <div class="row">
-    <div class="col-2 offset-md-5">
-      <a class="btn btn-primary" href="{% url 'createcouple' %}">Add Couple</a>
-    </div>
-  </div>
 
 {% endblock %}

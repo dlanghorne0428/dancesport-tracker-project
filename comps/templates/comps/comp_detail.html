@@ -20,21 +20,28 @@
     {% else %}
       <h4 class="text-center">{{ comp.start_date }} to {{ comp.end_date }}</h4>
     {% endif %}
-    <p>
+    <!-- <p>
       Process State: {{ comp.get_process_state_display }}
-    </p>
+    </p> -->
   </div>
 </div>
 
 
 {% if comp.heatsheet_url %}
 <div class="row">
-  <div class="col-8 offset-2">
+  <div class="col-6 offset-3 text-center">
       <a id="load_dancers_button" class="btn btn-info" role="button" href="{% url 'comps:load_dancers' comp.id %}">Load Dancers</a>
       <a id="load_heats_button" class="btn btn-info" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
       <a id="load_scoresheets_button" class="btn btn-info" role="button" href="{% url 'comps:load_scoresheets' comp.id %}">Load Scoresheets</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col-6 offset-3 text-center">
       <a id="resolve_mismatches_button" class="btn btn-info" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Mismatches</a>
-      <br />
+  </div>
+</div>
+<div class="row">
+  <div class="col-6 offset-3 text-center">
       <a id="view_dancers_button" class="btn btn-info" role="button" href="{% url 'comps:dancers' comp.id %}">View Dancers</a>
       <a id="view_heats_button" class="btn btn-info" role="button" href="{% url 'comps:comp_heats' comp.id %}">View Heats</a>
       <a id="view_couples_button" class="btn btn-info" role="button" href="{% url 'comps:couples' comp.id %}">View Couples</a>

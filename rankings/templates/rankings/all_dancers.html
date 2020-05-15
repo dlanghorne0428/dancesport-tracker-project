@@ -10,7 +10,7 @@
 
   <div class="row align-items-start">
 
-    <div class="col border border-dark">
+    <div class="col-6 offset-1 border border-dark">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
@@ -38,23 +38,21 @@
         </tbody>
       </table>
       {% include "rankings/pagination.html" %}
+      <div class="text-center mt-3">
+        <a class="btn btn-primary" href="{% url 'createdancer' %}">Add Dancer</a>
+      </div>
     </div>
 
-    <div class="col border border-dark">
+    <div class="col-4 border border-dark">
       <h4 class="text-center">Filter</h4>
       <form method="get">
         {{ filter.form.as_p }}
-      <button class="btn btn-primary" type="submit">Submit</button>
+      <div class="text-center">
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </div>
       </form>
     </div>
 
-  </div>
-
-
-  <div class="row">
-    <div class="col-2 offset-md-5">
-      <a class="btn btn-primary" href="{% url 'createdancer' %}">Add Dancer</a>
-    </div>
   </div>
 
 {% endblock %}

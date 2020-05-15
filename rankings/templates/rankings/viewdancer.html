@@ -3,6 +3,7 @@
 {% block content %}
 
 <h2 class='text-center'>{{ dancer }}</h2>
+<h3 class='text-center'>{{ dancer.get_dancer_type_display }}</h3>
 <br />
 
 <div class="row">
@@ -28,12 +29,16 @@
         <label class="label">Type</label>
           {{ form.dancer_type}}
       </div>
-      <input class="btn btn-primary" type="submit" name="submit" value="Save" />
-      <input class="btn btn-danger" type="submit" name="submit" value="Delete Dancer" onclick="return confirm('Are you sure?')" />
+      <div class="text-center mt-3">
+        <input class="btn btn-primary" type="submit" name="submit" value="Save" />
+      </div>
+      <div class="text-center mt-2">
+        <input class="btn btn-danger" type="submit" name="submit" value="Delete Dancer" onclick="return confirm('Are you sure?')" />
+      </div>
     </form>
   </div>
 
-  <div class="col-7 offset-md-1 border border-dark">
+  <div class="col-8 border border-dark">
     <h3 class="text-center">Dancer's Current Couples</h3>
     <table class="table table-bordered table-sm">
       <tr>
@@ -41,6 +46,7 @@
         <th></th>
         <th>Dancer 2</th>
         <th>Category</th>
+        <th>Action</th>
       </tr>
 
       {% for couple in couples %}
@@ -48,11 +54,17 @@
         <td>{{ couple.dancer_1 }}</td>
         <td>and</td>
         <td>{{ couple.dancer_2 }}</td>
-        <td><a href="{% url 'viewcouple' couple.id %}">{{ couple.get_couple_type_display }}</a></td>
+        <td>{{ couple.get_couple_type_display }}</td>
+        <td>
+          <a class="btn btn-primary btn-sm" href="{% url 'viewcouple' couple.id %}">View</a>
+          <a class="btn btn-secondary btn-sm" href="{% url 'editcouple' couple.id %}">Edit</a>
+        </td>
       </tr>
       {% endfor %}
     </table>
-    <a class="btn btn-primary" href="{% url 'createcouple' %}">Add Couple</a>
+    <div class="text-center mt-3">
+      <a class="btn btn-primary" href="{% url 'createcouple' %}">Add Couple</a>
+    </div>
   </div>
 </div>
 
