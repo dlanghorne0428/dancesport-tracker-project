@@ -84,9 +84,14 @@ def viewcouple(request, couple_pk):
     for comp in all_comps:
         if HeatEntry.objects.filter(heat__comp=comp).filter(couple=couple).count() > 0:
             comps_for_couple.append(comp)
+    return render(request, 'rankings/viewcouple.html', {'couple': couple, 'comps_for_couple': comps_for_couple})
+
+
+def editcouple(request, couple_pk):
+    couple = get_object_or_404(Couple, pk=couple_pk)
     if request.method == "GET":
         form = CoupleForm(instance=couple)
-        return render(request, 'rankings/viewcouple.html', {'couple': couple, 'form': form, 'comps_for_couple': comps_for_couple})
+        return render(request, 'rankings/editcouple.html', {'couple': couple, 'form': form})
     else:
         submit = request.POST.get("submit")
         if submit == "Save":
@@ -100,7 +105,6 @@ def viewcouple(request, couple_pk):
             print("Deleting", str(couple))
             couple.delete()
             return redirect ('all_couples')
-
 
 def rankings(request):
     couple_types = Couple.COUPLE_TYPE_CHOICES
@@ -130,6 +134,8 @@ def rankings(request):
         index = style_choices.index(heat_style)
         style = style_labels[index]
         print("Style is", heat_style, style)
+        last_name = request.GET.get('last_name')
+        print("Last name is", last_name)
     else:
         page_number = 1
         couple_type = request.POST.get("couple_type")
@@ -140,13 +146,16 @@ def rankings(request):
         heat_style = Heat.DANCE_STYLE_CHOICES[index][0]
         current_url = request.path
         url_string = current_url +"?type=" + heat_couple_type + "&style=" + heat_style
-        print(url_string)
+        last_name = request.POST.get("last_name")
+        if last_name is not None:
+            url_string += "&last_name=" + last_name
+        print("POST", url_string)
         return redirect(url_string)
 
     couples = Couple.objects.filter(couple_type=heat_couple_type)
     couple_stats = list()
     for c in couples:
-        stats = {'couple': c, 'event_count': 0, 'total_points': 0.0, 'rating': 0.0}
+        stats = {'couple': c, 'event_count': 0, 'total_points': 0.0, 'rating': 0.0, index: 0}
         couple_stats.append(stats)
 
     for cs in couple_stats:
@@ -165,6 +174,12 @@ def rankings(request):
         couple_stats.pop()
         if len(couple_stats) == 0:
             break
+    for i in range(len(couple_stats)):
+        couple_stats[i]['index'] = i + 1
+    if last_name is not None:
+        if len(last_name) > 0:
+            couple_stats = list(filter(lambda dancer: dancer['couple'].dancer_1.name_last == last_name or \
+                                                      dancer['couple'].dancer_2.name_last == last_name, couple_stats))
     paginator = Paginator(couple_stats, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
