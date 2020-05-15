@@ -178,8 +178,8 @@ def rankings(request):
         couple_stats[i]['index'] = i + 1
     if last_name is not None:
         if len(last_name) > 0:
-            couple_stats = list(filter(lambda dancer: dancer['couple'].dancer_1.name_last == last_name or \
-                                                      dancer['couple'].dancer_2.name_last == last_name, couple_stats))
+            couple_stats = list(filter(lambda dancer: last_name in dancer['couple'].dancer_1.name_last  or \
+                                                      last_name in dancer['couple'].dancer_2.name_last, couple_stats))
     paginator = Paginator(couple_stats, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
