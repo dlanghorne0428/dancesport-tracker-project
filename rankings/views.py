@@ -5,7 +5,8 @@ from .models import Dancer, Couple
 from comps.models import Comp, Heat, HeatEntry
 from .forms import DancerForm, CoupleForm
 from .filters import DancerFilter
-from operator import itemgetter
+from .tasks import process_rating_task
+
 
 # Create your views here.
 def home(request):
@@ -152,36 +153,8 @@ def rankings(request):
         print("POST", url_string)
         return redirect(url_string)
 
-    couples = Couple.objects.filter(couple_type=heat_couple_type)
-    couple_stats = list()
-    for c in couples:
-        stats = {'couple': c, 'event_count': 0, 'total_points': 0.0, 'rating': 0.0, index: 0}
-        couple_stats.append(stats)
-
-    for cs in couple_stats:
-        entries = HeatEntry.objects.filter(couple=cs['couple']).filter(heat__style=heat_style)
-        for e in entries:
-            if e.points is not None:
-                cs['event_count'] += 1
-                cs['total_points'] += e.points
-        if cs['event_count'] > 0:
-            cs['total_points'] = round(cs['total_points'], 2)
-            cs['rating'] = round(cs['total_points'] / cs['event_count'], 2)
-
-    #couples = couples.filter(event_count__gte=1).order_by('-rating')
-    couple_stats.sort(key=itemgetter('rating'), reverse=True)
-    while couple_stats[-1]['event_count'] == 0:
-        couple_stats.pop()
-        if len(couple_stats) == 0:
-            break
-    for i in range(len(couple_stats)):
-        couple_stats[i]['index'] = i + 1
-    if last_name is not None:
-        if len(last_name) > 0:
-            couple_stats = list(filter(lambda dancer: last_name in dancer['couple'].dancer_1.name_last  or \
-                                                      last_name in dancer['couple'].dancer_2.name_last, couple_stats))
-    paginator = Paginator(couple_stats, 16)
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'rankings/rankings.html', {'page_obj': page_obj, 'styles': style_labels, 'selected_style': style,
+    result = process_rating_task.delay(heat_couple_type, heat_style, last_name, page_number)
+
+    return render(request, 'rankings/rankings.html', context={'task_id': result.task_id, 'styles': style_labels, 'selected_style': style,
                                                       'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
