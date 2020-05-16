@@ -119,6 +119,18 @@ def viewcouple(request, couple_pk):
     return render(request, 'rankings/viewcouple.html', {'couple': couple, 'comps_for_couple': comps_for_couple})
 
 
+def combine_couples(request, couple_pk, couple2_pk):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    couple = get_object_or_404(Couple, pk=couple_pk)
+    couple2 = get_object_or_404(Couple, pk=couple2_pk)
+    couple2_heat_entries = HeatEntry.objects.filter(couple=couple2)
+    for entry in couple2_heat_entries:
+        entry.couple = couple
+        entry.save()
+    return redirect('viewcouple', couple_pk)
+
+
 def editcouple(request, couple_pk):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
