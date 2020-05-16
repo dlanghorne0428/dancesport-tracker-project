@@ -21,7 +21,6 @@ def home(request):
 
 
 def all_dancers(request):
-    #dancers = Dancer.objects.order_by('name_last')
     f = DancerFilter(request.GET, queryset=Dancer.objects.order_by('name_last'))
     paginator = Paginator(f.qs, 16)
     page_number = request.GET.get('page')
@@ -29,6 +28,8 @@ def all_dancers(request):
     return render(request, 'rankings/all_dancers.html', {'page_obj': page_obj, 'filter': f})
 
 def createdancer(request):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
     if request.method == "GET":
         return render(request, 'rankings/createdancer.html', {'form':DancerForm()})
     else:
@@ -41,10 +42,17 @@ def createdancer(request):
 
 def viewdancer(request, dancer_pk):
     dancer = get_object_or_404(Dancer, pk=dancer_pk)
+    couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1')
+    return render(request, 'rankings/viewdancer.html', {'dancer': dancer, 'couples': couples})
+
+
+def editdancer(request, dancer_pk):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    dancer = get_object_or_404(Dancer, pk=dancer_pk)
     if request.method == "GET":
         form = DancerForm(instance=dancer)
-        couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1')
-        return render(request, 'rankings/viewdancer.html', {'dancer': dancer, 'form': form, 'couples': couples})
+        return render(request, 'rankings/editdancer.html', {'dancer': dancer, 'form': form})
     else:
         submit = request.POST.get("submit")
         if submit == "Save":
@@ -53,11 +61,12 @@ def viewdancer(request, dancer_pk):
                 form.save()
                 return redirect('all_dancers')
             except ValueError:
-                return render(request, 'rankings/viewdancer.html', {'dancer': dancer, 'form': form, 'error': "Invalid data submitted."})
+                return render(request, 'rankings/editdancer.html', {'dancer': dancer, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Dancer":
             print("Deleting", str(dancer))
             dancer.delete()
             return redirect ('all_dancers')
+
 
 def all_couples(request):
     couples = Couple.objects.order_by("dancer_1__name_last")
@@ -67,6 +76,8 @@ def all_couples(request):
     return render(request, 'rankings/all_couples.html', {'page_obj': page_obj})
 
 def createcouple(request):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
     if request.method == "GET":
         return render(request, 'rankings/createcouple.html', {'form':CoupleForm()})
     else:
@@ -88,6 +99,8 @@ def viewcouple(request, couple_pk):
 
 
 def editcouple(request, couple_pk):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
     couple = get_object_or_404(Couple, pk=couple_pk)
     if request.method == "GET":
         form = CoupleForm(instance=couple)

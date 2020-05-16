@@ -16,29 +16,24 @@
           <tr>
             <th>Name</th>
             <th>Category</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {% for dancer in page_obj %}
           <tr>
+            <td>{{ dancer }}</td>
+            <td>{{ dancer.get_dancer_type_display }}</td>
             <td>
-              <a href="{% url 'viewdancer' dancer.id %}">
-                {% if dancer.name_middle %}
-                  {{ dancer.name_last }}, {{ dancer.name_first }} {{ dancer.name_middle }}
-                {% else %}
-                  {{ dancer.name_last }}, {{ dancer.name_first }}
-                {% endif %}
-              </a>
-            </td>
-            <td>
-              {{ dancer.get_dancer_type_display }}
+              <a class="btn btn-primary btn-sm" href="{% url 'viewdancer' dancer.id %}">View</a>
+              <a class="btn btn-secondary btn-sm" href="{% url 'editdancer' dancer.id %}">Edit</a>
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       {% include "rankings/pagination.html" %}
-      <div class="text-center mt-3">
+      <div class="text-center mt-2">
         <a class="btn btn-primary" href="{% url 'createdancer' %}">Add Dancer</a>
       </div>
     </div>
