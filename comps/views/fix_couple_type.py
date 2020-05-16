@@ -4,6 +4,9 @@ from rankings.models import Couple
 
 
 def fix_couple_type(request, comp_id, count=0):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
     findings = 0

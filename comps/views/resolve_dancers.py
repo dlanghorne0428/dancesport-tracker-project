@@ -4,8 +4,10 @@ from comps.models import Comp, HeatlistDancer
 
 
 def resolve_dancers(request, comp_id):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+        
     comp = get_object_or_404(Comp, pk=comp_id)
-    #TODO: if no heatlist dancers, obtain list of dancers from this comp's heats?
     names_to_format = HeatlistDancer.objects.filter(formatting_needed = True)
     current_name = names_to_format.first()
 

@@ -5,6 +5,8 @@ from rankings.couple_matching import find_couple_partial_match, find_couple_firs
 
 
 def resolve_mismatches(request, comp_id, wider_search=0):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
     unmatched_entries = UnmatchedHeatEntry.objects.all().order_by('entry')
     comp = get_object_or_404(Comp, pk=comp_id)
     if unmatched_entries.count() == 0:

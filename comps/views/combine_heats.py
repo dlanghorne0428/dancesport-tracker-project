@@ -5,6 +5,9 @@ from rankings.models import Couple
 
 
 def combine_heats(request, comp_id):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+        
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
     current_heat_number = 0
