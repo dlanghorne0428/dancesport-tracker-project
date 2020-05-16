@@ -7,6 +7,7 @@ from .couples import *
 from .dancers import *
 from .couple_heats import *
 from .dancer_heats import *
+from .edit_heat import *
 from .edit_heat_entry import *
 from .fix_couple_type import *
 from .fix_dup_entries import *
