@@ -4,6 +4,9 @@ from comps.forms import HeatEntryForm
 
 
 def edit_heat_entry(request, entry_id):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+        
     entry = get_object_or_404(HeatEntry, pk=entry_id)
     if request.method == "GET":
         form = HeatEntryForm(instance=entry)

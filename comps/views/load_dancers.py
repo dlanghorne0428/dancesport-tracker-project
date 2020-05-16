@@ -7,7 +7,8 @@ from comps.heatlist.ndca_prem_heatlist import NdcaPremHeatlist
 
 
 def load_dancers(request, comp_id):
-    #comp = get_object_or_404(Comp, pk=comp_id)
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
     comp_objects = Comp.objects.filter(pk=comp_id)
     if len(comp_objects) == 1:
         comp=comp_objects[0]
