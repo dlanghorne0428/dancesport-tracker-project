@@ -214,7 +214,6 @@ def rankings(request):
             cs['total_points'] = round(cs['total_points'], 2)
             cs['rating'] = round(cs['total_points'] / cs['event_count'], 2)
 
-    #couples = couples.filter(event_count__gte=1).order_by('-rating')
     couple_stats.sort(key=itemgetter('rating'), reverse=True)
     while couple_stats[-1]['event_count'] == 0:
         couple_stats.pop()
@@ -224,8 +223,8 @@ def rankings(request):
         couple_stats[i]['index'] = i + 1
     if last_name is not None:
         if len(last_name) > 0:
-            couple_stats = list(filter(lambda dancer: last_name in dancer['couple'].dancer_1.name_last  or \
-                                                      last_name in dancer['couple'].dancer_2.name_last, couple_stats))
+            couple_stats = list(filter(lambda dancer: last_name.lower() in dancer['couple'].dancer_1.name_last.lower()  or \
+                                                      last_name.lower() in dancer['couple'].dancer_2.name_last.lower(), couple_stats))
     paginator = Paginator(couple_stats, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
