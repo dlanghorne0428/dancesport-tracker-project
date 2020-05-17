@@ -25,8 +25,8 @@
             <td>{{ dancer }}</td>
             <td>{{ dancer.get_dancer_type_display }}</td>
             <td>
-              <a class="btn btn-primary btn-sm" href="{% url 'viewdancer' dancer.id %}">View</a>
-              <a class="btn btn-secondary btn-sm" href="{% url 'editdancer' dancer.id %}">Edit</a>
+              <a class="btn btn-primary btn-sm" href="{% url 'view_dancer' dancer.id %}">View</a>
+              <a class="btn btn-secondary btn-sm" href="{% url 'edit_dancer' dancer.id %}">Edit</a>
             </td>
           </tr>
           {% endfor %}
@@ -34,7 +34,7 @@
       </table>
       {% include "rankings/pagination.html" %}
       <div class="text-center mt-2">
-        <a class="btn btn-primary" href="{% url 'createdancer' %}">Add Dancer</a>
+        <a class="btn btn-primary" href="{% url 'create_dancer' %}">Add Dancer</a>
       </div>
     </div>
 
