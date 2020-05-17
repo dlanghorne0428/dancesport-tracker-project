@@ -52,10 +52,5 @@ class Couple(models.Model):
         default=PRO_AM_COUPLE,
     )
 
-    # fields for rankingg
-    event_count = models.IntegerField(default=0)
-    total_points = models.FloatField(default=0.0)
-    rating = models.FloatField(default=0.0)
-
     def __str__(self):
         return self.dancer_1.__str__() + " and " + self.dancer_2.__str__()
