@@ -6,4 +6,5 @@ celery
 celery-progress
 django-filter
 requests
+Pillow
 whitenoise
