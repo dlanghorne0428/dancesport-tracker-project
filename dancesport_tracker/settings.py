@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'xlc6j*k09&u-5z$-@j$ank^n!dof^h3)tjb84w^e+$#&^^zfzj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -139,8 +139,10 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+#CELERY_BROKER_URL = 'redis://localhost'
+#CELERY_RESULT_BACKEND = 'redis://localhost/0'
 CELERY_BROKER_URL = os.environ['REDIS_URL']
-CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
+3CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
 
 # Media
 MEDIA_URL = '/media/'

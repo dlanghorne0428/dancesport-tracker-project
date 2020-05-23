@@ -2,19 +2,19 @@
 {% extends "rankings/base.html" %}
 {% load static %}
 {% block content %}
-<div class="row">
+<!-- <div class="row">
 
   {% if comp.logo != "" %}
     <div class="col text-center">
         <img src="{{ comp.logo.url }}"" />
     </div>
   {% endif %}
-</div>
+</div> -->
 
 <div class="row">
   <div class="col-8 offset-md-2">
     <h2 class="text-center">{{ comp.title }}</h2>
-    <h3 class="text-center"{{ comp.location }}</h3>
+    <h3 class="text-center">{{ comp.location }}</h3>
     {% if comp.start_date == comp.end_date %}
       <h4 class="text-center">{{ comp.start_date }}</h4>
     {% else %}
