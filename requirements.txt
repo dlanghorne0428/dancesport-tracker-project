@@ -1,0 +1,8 @@
+django
+gunicorn
+django-heroku
+redis
+celery
+celery-progress
+requests
+whitenoise
