@@ -4,5 +4,6 @@ django-heroku
 redis
 celery
 celery-progress
+django-filters
 requests
 whitenoise
