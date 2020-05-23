@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django_filters',
     'celery',
     'celery_progress',
-    'whitenoise'
+    'whitenoise',
     'rankings',
     'comps',
 ]
