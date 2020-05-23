@@ -54,7 +54,7 @@ class Heat(models.Model):
     style = models.CharField(max_length = 4, choices = DANCE_STYLE_CHOICES, default="UNK")
 
     # these fields indicate the when the heat is scheduled to be danced
-    session = models.CharField(max_length=20, blank=True)
+    session = models.CharField(max_length=40, blank=True)
     time = models.DateTimeField(blank=True)
 
     # this field indicates if the heat had prelim rounds before the Final.

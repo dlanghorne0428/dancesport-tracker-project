@@ -18,7 +18,7 @@ class Heat_Entry(models.Model):
     result = models.CharField(max_length=10, blank=True)
 
     # store the point value earned by this couple in this heatsheet
-    points = models.FloatField(null=True)
+    points = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
 
     def populate(self, heat_obj, couple_obj=None, scoresheet_code=None, shirt_number="???"):
