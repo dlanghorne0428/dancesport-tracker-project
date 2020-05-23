@@ -51,7 +51,6 @@ class Heatlist():
                 h = heats_in_database.first()
             else:
                 h = heat
-                print(h)
                 h.save()   # save the heat into the database
             return h
         else: # not a heat that we care about
