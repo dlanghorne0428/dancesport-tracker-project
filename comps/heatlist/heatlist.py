@@ -1,7 +1,9 @@
 
 from rankings.models import Couple, Dancer
 from rankings.couple_matching import find_couple_exact_match
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
+from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 
 
 age_div_prefix_list = ("L-", "G-", "AC-", "Pro ", "AC-", "Professional", "AM/AM", "Amateur", "Youth", "MF-", "M/F")
@@ -60,17 +62,17 @@ class Heatlist():
 
         couple_type = heat.couple_type()
         couple, code = find_couple_exact_match(dancer, partner, couple_type)
-        heat_entry_obj = HeatEntry()
+        heat_entry_obj = Heat_Entry()
         # populate and save matching heat entry
         if couple is not None:
             heat_entry_obj.populate(heat, couple, code, shirt_number)
-            entries_in_database = HeatEntry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
+            entries_in_database = Heat_Entry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
             if entries_in_database.count() == 0:
                 heat_entry_obj.save()
         else:
             # populate and save partially completed heat entry
             heat_entry_obj.populate(heat, shirt_number=shirt_number)
-            entries_in_database = HeatEntry.objects.filter(heat=heat, shirt_number=shirt_number)
+            entries_in_database = Heat_Entry.objects.filter(heat=heat, shirt_number=shirt_number)
             if entries_in_database.count() == 0:
                 heat_entry_obj.save()
                 he = heat_entry_obj
@@ -78,9 +80,9 @@ class Heatlist():
                 he = entries_in_database.first()
 
             # save this unmatched heat entry, unless it's already there for some reason
-            mismatches_in_database = UnmatchedHeatEntry.objects.filter(entry=he, dancer=dancer, partner=partner)
+            mismatches_in_database = Unmatched_Heat_Entry.objects.filter(entry=he, dancer=dancer, partner=partner)
             if mismatches_in_database.count() == 0:
-                mismatch = UnmatchedHeatEntry()
+                mismatch = Unmatched_Heat_Entry()
                 mismatch.populate(he, dancer, partner)
                 mismatch.save()
 

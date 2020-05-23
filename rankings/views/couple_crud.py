@@ -2,7 +2,9 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from rankings.models import Couple
-from comps.models import Comp, Heat, HeatEntry
+from comps.models.comp import Comp
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 from rankings.forms import CoupleForm
 
 ################################################
@@ -39,7 +41,7 @@ def view_couple(request, couple_pk):
     all_comps = Comp.objects.all().order_by('-start_date')
     comps_for_couple = list()
     for comp in all_comps:
-        if HeatEntry.objects.filter(heat__comp=comp).filter(couple=couple).count() > 0:
+        if Heat_Entry.objects.filter(heat__comp=comp).filter(couple=couple).count() > 0:
             comps_for_couple.append(comp)
     return render(request, 'rankings/view_couple.html', {'couple': couple, 'comps_for_couple': comps_for_couple})
 
@@ -49,7 +51,7 @@ def combine_couples(request, couple_pk, couple2_pk):
         return render(request, 'rankings/permission_denied.html')
     couple = get_object_or_404(Couple, pk=couple_pk)
     couple2 = get_object_or_404(Couple, pk=couple2_pk)
-    couple2_heat_entries = HeatEntry.objects.filter(couple=couple2)
+    couple2_heat_entries = Heat_Entry.objects.filter(couple=couple2)
     for entry in couple2_heat_entries:
         entry.couple = couple
         entry.save()

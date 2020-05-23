@@ -2,7 +2,8 @@ import requests
 import html
 
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -169,7 +170,7 @@ class NdcaPremHeatlist(Heatlist):
             if 'class="team"' in competitors[c]:
                 continue
             safe = html.unescape(competitors[c])
-            d = HeatlistDancer()
+            d = Heatlist_Dancer()
             d.load_from_ndca_premier(safe)
             try:
                 code_num = int(d.code)

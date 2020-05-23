@@ -2,7 +2,8 @@ import requests
 
 from django.db.models import Q
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -162,7 +163,7 @@ class CompOrgHeatlist(Heatlist):
         competitors = response.text.split("},")
         for c in range(len(competitors) - 1):
             start_pos = competitors[c].find('"id')
-            d = HeatlistDancer()
+            d = Heatlist_Dancer()
             d.load_from_comp_org(competitors[c][start_pos:])
             try:
                 code_num = int(d.code)

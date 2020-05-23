@@ -3,7 +3,8 @@ import requests
 
 from django.db.models import Q
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -104,7 +105,7 @@ class CompMngrHeatlist(Heatlist):
             self.line_index += 1
             # if the line has "Show Entries", we can extract the name of a dancer
             if "Show entries" in line:
-                dancer = HeatlistDancer()
+                dancer = Heatlist_Dancer()
                 dancer.load_from_comp_mngr(line.strip())
                 self.dancers.append(dancer)
             # if we see the line that says "size="", extract the name of the competition

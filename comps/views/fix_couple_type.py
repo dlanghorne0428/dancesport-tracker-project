@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from comps.models import Comp, Heat, HeatEntry
+from comps.models.comp import Comp
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 from rankings.models import Couple
 
 
@@ -12,7 +14,7 @@ def fix_couple_type(request, comp_id, count=0):
     findings = 0
     for heat in heats_in_comp:
         heat_couple_type = heat.couple_type()
-        entries = HeatEntry.objects.filter(heat=heat).order_by('shirt_number')
+        entries = Heat_Entry.objects.filter(heat=heat).order_by('shirt_number')
         for e in entries:
             if e.couple is not None:
                 if e.couple.couple_type != heat_couple_type:

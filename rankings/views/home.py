@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from rankings.models import Couple
-from comps.models import Heat
+from comps.models.heat import Heat
 
 
 def home(request):
