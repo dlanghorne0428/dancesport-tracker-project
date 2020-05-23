@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from comps.models import Heat, HeatEntry
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 from comps.forms import HeatForm
 
 

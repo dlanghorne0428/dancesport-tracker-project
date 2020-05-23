@@ -1,5 +1,5 @@
 import django_filters
-from .models import Heat
+from .models.heat import Heat
 
 class HeatFilter(django_filters.FilterSet):
 

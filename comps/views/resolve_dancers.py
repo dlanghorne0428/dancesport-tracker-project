@@ -1,20 +1,21 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
-from comps.models import Comp, HeatlistDancer
+from comps.models.comp import Comp
+from comps.models.heatlist_dancer import Heatlist_Dancer
 
 
 def resolve_dancers(request, comp_id):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
-        
+
     comp = get_object_or_404(Comp, pk=comp_id)
-    names_to_format = HeatlistDancer.objects.filter(formatting_needed = True)
+    names_to_format = Heatlist_Dancer.objects.filter(formatting_needed = True)
     current_name = names_to_format.first()
 
     if request.method == "POST":
         submit = request.POST.get("submit")
         # determine what page to show
-        heatlist_dancers = HeatlistDancer.objects.all().order_by('pk')
+        heatlist_dancers = Heatlist_Dancer.objects.all().order_by('pk')
         for index in range(len(heatlist_dancers)):
             if current_name.name == heatlist_dancers[index].name:
                 page_number = index // 16 + 1
@@ -31,13 +32,13 @@ def resolve_dancers(request, comp_id):
             current_name.save()
 
         # find next name to format
-        names_to_format = HeatlistDancer.objects.filter(formatting_needed = True)
+        names_to_format = Heatlist_Dancer.objects.filter(formatting_needed = True)
         current_name = names_to_format.first()
     else: # GET
         page_number = request.GET.get('page')
 
     # do this for either GET or POST
-    heatlist_dancers = HeatlistDancer.objects.all().order_by('pk')
+    heatlist_dancers = Heatlist_Dancer.objects.all().order_by('pk')
     paginator = Paginator(heatlist_dancers, 16)
     page_obj = paginator.get_page(page_number)
 

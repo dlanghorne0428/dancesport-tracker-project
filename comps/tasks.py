@@ -9,7 +9,9 @@ from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
 from .scoresheet.comp_organizer_results import CompOrgResults
 from .scoresheet.ndca_prem_results import NdcaPremResults
-from .models import Comp, Heat, HeatEntry
+from comps.models.comp import Comp
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 import time
 
 
@@ -75,10 +77,10 @@ def process_scoresheet_task(self, comp_data):
         index = 0
         progress_recorder.set_progress(0, num_heats, description="Accessing website for results")
         scoresheet.open(comp.scoresheet_url)
-        
+
         for heat in heats_to_process:
             index += 1
-            entries_in_event = HeatEntry.objects.filter(heat=heat)
+            entries_in_event = Heat_Entry.objects.filter(heat=heat)
             if entries_in_event.count() > 0:
                 heat_result = scoresheet.determine_heat_results(entries_in_event)
                 if heat_result is None:

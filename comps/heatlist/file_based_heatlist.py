@@ -1,7 +1,8 @@
 import json
 
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat 
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -36,7 +37,7 @@ class FileBasedHeatlist(Heatlist):
             if line == "Heats":
                 break
             else:
-                d = HeatlistDancer()
+                d = Heatlist_Dancer()
                 d.load_from_file(line)
                 #d = Dancer(fields[0], fields[1])
                 self.dancers.append(d)

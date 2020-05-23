@@ -1,7 +1,9 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from rankings.models import Dancer, Couple
-from comps.models import Comp, Heat, HeatEntry
+from comps.models.comp import Comp
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 from operator import itemgetter
 
 
@@ -58,7 +60,7 @@ def calc_rankings(request):
         couple_stats.append(stats)
 
     for cs in couple_stats:
-        entries = HeatEntry.objects.filter(couple=cs['couple']).filter(heat__style=heat_style)
+        entries = Heat_Entry.objects.filter(couple=cs['couple']).filter(heat__style=heat_style)
         for e in entries:
             if e.points is not None:
                 cs['event_count'] += 1

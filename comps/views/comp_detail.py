@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from comps.models import Comp
+from comps.models.comp import Comp
 
 def comp_detail(request, comp_id):
     # only show load dancer, load heat buttons for valid users

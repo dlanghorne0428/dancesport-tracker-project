@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-from comps.models import Comp, Heat
+from comps.models.comp import Comp
+from comps.models.heat import Heat
 from comps.filters import HeatFilter
 
 

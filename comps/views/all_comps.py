@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
-from comps.models import Comp
+from comps.models.comp import Comp
 
 
 def all_comps(request):

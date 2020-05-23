@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from comps.models import Heat
+from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        UnmatchedHeatEntry.objects.all().delete()
+        Unmatched_Heat_Entry.objects.all().delete()

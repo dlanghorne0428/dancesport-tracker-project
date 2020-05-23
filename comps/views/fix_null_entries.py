@@ -1,16 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from comps.models import Comp, Heat, HeatEntry
+from comps.models.comp import Comp
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 from rankings.models import Couple
 
 
 def fix_null_entries(request, comp_id):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
-        
+
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
     for heat in heats_in_comp:
-        entries = HeatEntry.objects.filter(heat=heat).order_by('shirt_number')
+        entries = Heat_Entry.objects.filter(heat=heat).order_by('shirt_number')
         for e in entries:
             if e.couple is None:
                 if request.method == "GET":

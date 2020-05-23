@@ -1,7 +1,7 @@
 import requests
 from comps.scoresheet.results_processor import Results_Processor
 from comps.scoresheet.calc_points import calc_points
-from comps.models import HeatlistDancer
+from comps.models.heatlist_dancer import Heatlist_Dancer
 
 
 class NdcaPremEvent():
@@ -34,7 +34,7 @@ class NdcaPremResults(Results_Processor):
         self.comp_id = None
 
         # get access to format_name
-        self.hld = HeatlistDancer()
+        self.hld = Heatlist_Dancer()
 
 
     def get_comp_name(self, comp_id):

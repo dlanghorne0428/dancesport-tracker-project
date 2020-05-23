@@ -3,7 +3,7 @@
 # this file contains various routines on finding matching couples based on partial names
 
 from .models import Dancer, Couple
-from comps.models import HeatlistDancer
+from comps.models.heatlist_dancer import Heatlist_Dancer
 
 
 def split_name(name):
