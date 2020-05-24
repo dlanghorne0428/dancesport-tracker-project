@@ -39,10 +39,6 @@ class CompOrgHeatlist(Heatlist):
 
         h.comp = comp_ref
 
-        # Start with the session
-        start_pos = items[item_index].find("-sess") + len("-sess") + 2
-        h.session = items[item_index][start_pos:]
-
         # get the heat number string and convert it to an integer
         start_pos = items[item_index+1].find("-heat") + len("-heat") + 2
         number_string = items[item_index+1][start_pos:]

@@ -1,7 +1,7 @@
 import json
 
 from rankings.models import Couple, Dancer
-from comps.models.heat import Heat 
+from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
@@ -84,7 +84,7 @@ class FileBasedHeatlist(Heatlist):
 
         # extract the heat time information
         time_fields = summary[self.TIME_COLUMN].split("@")
-        self.heat.session = time_fields[0]
+        #self.heat.session = time_fields[0]
         time_info = time_fields[1]
         heat_time_fields = time_info.split()
         day_of_week = heat_time_fields[0]

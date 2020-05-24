@@ -45,14 +45,11 @@ class CompMngrHeatlist(Heatlist):
         h.rounds = "F"      # assume final only
         if len(line) > 0:           # if line is not empty, parse it to obtain other properites
             fields = line.split("<td>")
-            # get the session number, heat number, and multi-round info
+            # get the heat number, and multi-round info
             heat_time = fields[1].split("</td>")[0]
             if "@" in heat_time:
                 heat_time_fields = heat_time.split("@")
-                h.session = heat_time_fields[0]
                 heat_time = heat_time_fields[1]
-            else:
-                h.session = ""
             if "<br>" in heat_time:
                 time_session_fields = heat_time.split("<br>")
                 heat_time = time_session_fields[0]
