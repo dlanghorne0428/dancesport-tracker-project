@@ -53,14 +53,13 @@ class Heat(models.Model):
     ]
     style = models.CharField(max_length = 4, choices = DANCE_STYLE_CHOICES, default="UNK")
 
-    # these fields indicate the when the heat is scheduled to be danced
-    session = models.CharField(max_length=40, blank=True)
+    # this field indicates the when the heat is scheduled to be danced
     time = models.DateTimeField(blank=True)
 
     # this field indicates if the heat had prelim rounds before the Final.
     rounds = models.CharField(max_length=20, default="F")  # default is Final only
 
-    # this fields stores the base point value for the winner of a final round only heat
+    # this field stores the base point value for the winner of a final round only heat
     # value increases if preliminary rounds are danced
     base_value = models.IntegerField(blank=True)
 
@@ -200,11 +199,11 @@ class Heat(models.Model):
 
     def __lt__(self, h):
         ''' override < operator to sort heats by various fields.'''
-        # if session numbers are the same, sort by time
-        if self.session == h.session:
+        # if times are the same, sort by number
+        if self.time == h.time:
+            return self.heat_number < h.heat_number
+        else: # use the time to determine order
             return self.time < h.time
-        else: # use the session numbers to determine order
-            return self.session < h.session
 
 
     def __str__(self):

@@ -59,13 +59,6 @@ class NdcaPremHeatlist(Heatlist):
             # split the heat information into fields
             cols = line.split("</td>")
             for c in cols:
-                # find the session
-                start_pos = c.find("-sess")
-                if start_pos > -1:
-                    start_pos += len("-sess") + 2
-                    h.session = c[start_pos:]
-                    continue
-
                 # find the heat time
                 start_pos = c.find("-time-round")
                 if start_pos > -1:
