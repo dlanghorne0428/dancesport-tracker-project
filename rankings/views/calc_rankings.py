@@ -5,6 +5,7 @@ from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from operator import itemgetter
+from decimal import Decimal
 
 
 def calc_rankings(request):
@@ -56,7 +57,7 @@ def calc_rankings(request):
     couples = Couple.objects.filter(couple_type=heat_couple_type)
     couple_stats = list()
     for c in couples:
-        stats = {'couple': c, 'event_count': 0, 'total_points': 0.0, 'rating': 0.0, index: 0}
+        stats = {'couple': c, 'event_count': 0, 'total_points': Decimal(0.00), 'rating': Decimal(0.00), index: 0}
         couple_stats.append(stats)
 
     for cs in couple_stats:
