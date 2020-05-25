@@ -15,7 +15,7 @@ class Heat_Entry(models.Model):
     code = models.CharField(max_length=10, blank=True)
 
     # store the result placement, could be a digit 1 - 9, or a string indicating the prelim round
-    result = models.CharField(max_length=10, blank=True)
+    result = models.CharField(max_length=12, blank=True)
 
     # store the point value earned by this couple in this heatsheet
     points = models.DecimalField(max_digits=5, decimal_places=2, null=True)
