@@ -31,7 +31,11 @@
           <td>and</td>
           <td>{{ entry.couple.dancer_2 }}</td>
           <td class="text-center">{{ entry.shirt_number }}</td>
-          <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
+          {% if entry.result|length > 0 %}
+            <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
+          {% elif show_edit_button %}
+            <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">Edit</a></td>
+          {% endif %}
           {% if entry.points %}
             <td class="text-center">{{ entry.points}}</td>
           {% endif %}
