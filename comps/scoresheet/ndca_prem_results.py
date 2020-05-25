@@ -253,7 +253,7 @@ class NdcaPremResults(Results_Processor):
                     dance_count = 0
                 elif 'class="roundHeader">Second' in l:
                     print("Found Second Round")
-                    if self.heat_rounds != "R3":
+                    if self.heat.rounds != "R3":
                         self.heat.rounds = "R2"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
