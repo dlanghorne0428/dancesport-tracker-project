@@ -4,6 +4,8 @@ django-heroku
 redis
 celery
 celery-progress
+cloudinary
+dj3-cloudinary-storage
 django-filter
 requests
 Pillow
