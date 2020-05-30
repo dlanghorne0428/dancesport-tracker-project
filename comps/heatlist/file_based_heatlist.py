@@ -27,13 +27,13 @@ class FileBasedHeatlist(Heatlist):
         '''Begin the process of reading heatsheet data from the common file format.'''
         self.filedata = fieldfile
         self.filedata.open(mode="rt")
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         self.comp_name = line.split(":")[1]
         #print(self.comp_name)
         # read past the line that says Dancers:
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         while True:
-            line = self.filedata.readline().strip()
+            line = self.filedata.readline().decode().strip()
             if line == "Heats":
                 break
             else:
@@ -53,12 +53,12 @@ class FileBasedHeatlist(Heatlist):
 
         self.filedata = fieldfile
         self.filedata.open(mode="rt")
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         self.comp_name = line.split(":")[1]
         # read past the line that says Dancers:
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         while True:
-            line = self.filedata.readline().strip()
+            line = self.filedata.readline().decode().strip()
             if line == "Heats":
                 break
                 # leave the file open
@@ -101,7 +101,7 @@ class FileBasedHeatlist(Heatlist):
     def get_next_dancer(self, dancer_index, comp_ref):
         '''Read heat information for the next dance from the common file format.
            Must be called after the file has alrady been opened.'''
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         fields = line.split(":")
         d = self.dancers[dancer_index]
         try:
@@ -111,7 +111,7 @@ class FileBasedHeatlist(Heatlist):
             num_heats = -1
             return None
         for index in range(num_heats):
-            line = self.filedata.readline().strip()
+            line = self.filedata.readline().decode().strip()
             heat_info = json.loads(line)
             couple_fields = heat_info[self.NAMES_COLUMN].split (" and ")
             shirt_number = heat_info[self.SHIRT_NUM_COLUMN]
