@@ -2,18 +2,18 @@
 
 {% block content %}
 
-<div class="col-8 offset-md-2">
+<div class="col-12">
   <h1 class="text-center">2020 DanceSport Rankings</h1>
 </div>
 
 <div class="row">
-
+<div class="col-12 col-lg-10 offset-lg-1">
   <form method="POST">
     {% csrf_token %}
-    <div class="form-row align-items-end">
-      <div class="form-group col offset-3">
+    <div class="form-row align-items-end mx-auto">
+      <div class="form-group col-3>
           <label for="couple_type">Couple Type</label>
-          <select class="form-control form-control-lg" id="couple_type" name="couple_type">
+          <select class="form-control" id="couple_type" name="couple_type">
               {% for c in couple_types %}
                 {% if c == selected_couple_type %}
                   <option selected value={{ c }}>{{ c }}</option>
@@ -23,9 +23,9 @@
               {% endfor %}
           </select>
       </div>
-      <div class="form-group col">
+      <div class="form-group col-3">
           <label for="style">Style</label>
-          <select class="form-control form-control-lg" id="style" name="style">
+          <select class="form-control id="style" name="style">
               {% for s in styles %}
                 {% if s == selected_style %}
                   <option selected value={{ s }}>{{ s }}</option>
@@ -35,19 +35,21 @@
               {% endfor %}
           </select>
       </div>
-      <div class="form-group col">
-          <label for="last_name">Last Name Contains</label>
-          <input class="form-control-lg" id="last_name" name="last_name" type="text">
+      <div class="form-group col-3">
+          <label for="last_name">Last Name</label>
+          <input class="form-control" id="last_name" name="last_name" type="text">
       </div>
-      <div class="form-group col">
-        <input class="btn btn-primary btn-lg" type="submit" name="submit" value="Submit"/>
+      <div class="form-group col-3">
+        <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
       </div>
     </div>
   </form>
 </div>
 
+</div>
+
 <div class="row">
-  <div class="col-10 offset-1">
+  <div class="col-12 col-lg-10 offset-lg-1">
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
@@ -56,7 +58,7 @@
           <th></th>
           <th>Dancer 2</th>
           <th>Events</th>
-          <th>Total Points</th>
+          <th>Points</th>
           <th>Average</th>
         </tr>
       </thead>

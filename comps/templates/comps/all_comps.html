@@ -3,13 +3,17 @@
 
 
 <div class="row">
-  <div class="col-10 offset-md-1">
+  <div class="col-12">
     <h2 class="text-center">Competitions</h2>
     {% if show_add_button %}
     <div class="text-center my-1">
       <a class="btn btn-primary" href="{% url 'comps:createcomp' %}">Add New Competition</a>
     </div>
     {% endif %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 col-lg-10 offset-lg-1">
     <table class="table table-sm table-bordered">
       <thead class="thead-dark">
         <tr>
@@ -31,10 +35,9 @@
         {% endfor %}
       </tbody>
     </table>
+    {% include "rankings/pagination.html" %}
   </div>
 </div>
 
-
-{% include "rankings/pagination.html" %}
 
 {% endblock %}
