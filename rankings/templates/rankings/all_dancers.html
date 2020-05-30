@@ -3,14 +3,14 @@
 {% block content %}
 
   <div class="row">
-    <div class="col-4 offset-md-4">
+    <div class="col-12">
       <h2 class="text-center">Dancers</h2>
     </div>
   </div>
 
   <div class="row align-items-start">
 
-    <div class="col-6 offset-1 border border-dark">
+    <div class="col-12 col-md-6 offset-md-1 border border-dark">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="col-4 border border-dark">
+    <div class="col-12 col-md-4 border border-dark">
       <h4 class="text-center">Filter</h4>
       <form method="get">
         {{ filter.form.as_p }}
