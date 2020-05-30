@@ -1,18 +1,19 @@
 
 {% extends "rankings/base.html" %}
 {% load static %}
+{% load cloudinary %}
 {% block content %}
 <div class="row">
 
   {% if comp.logo != "" %}
     <div class="col text-center">
-        <img src="{{ comp.logo.url }}"" />
+      {% cloudinary comp.logo.public_id  height=360 width=640 crop="fit" %}
     </div>
   {% endif %}
 </div>
 
 <div class="row">
-  <div class="col-8 offset-md-2">
+  <div class="col-8 offset-2">
     <h2 class="text-center">{{ comp.title }}</h2>
     <h3 class="text-center">{{ comp.location }}</h3>
     {% if comp.start_date == comp.end_date %}
