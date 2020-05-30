@@ -16,7 +16,7 @@ def load_dancers(request, comp_id):
         comp=comp_objects[0]
 
     if Heatlist_Dancer.objects.count() > 0:
-        heatlist_Dancer.objects.all().delete()
+        Heatlist_Dancer.objects.all().delete()
 
     if Unmatched_Heat_Entry.objects.count() > 0:
         Unmatched_Heat_Entry.objects.all().delete()
