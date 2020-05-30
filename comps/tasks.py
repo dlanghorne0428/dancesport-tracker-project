@@ -28,6 +28,7 @@ def process_heatlist_task(self, comp_data, heatlist_data):
 
     if comp.heatsheet_file:
         heatlist = FileBasedHeatlist()
+        print("Using Heatlist File")
         heatlist.load(comp.heatsheet_file, heatlist_dancers)
     else:
         if comp.url_data_format == Comp.COMP_MNGR:
