@@ -1,4 +1,6 @@
 from django.db import models
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
+from cloudinary.models import CloudinaryField
 
 def comp_logo_path(instance, filename):
     return "comps/{0}/{1}".format(instance.title, filename)
@@ -9,7 +11,7 @@ class Comp(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
 
-    logo = models.ImageField(upload_to=comp_logo_path, blank=True)
+    logo = CloudinaryField('logo', blank=True)
 
     # the different file formats pointed to by the URLs
     COMP_MNGR = 'CM'
@@ -28,7 +30,7 @@ class Comp(models.Model):
 
     # URLs are optional, blank=True allows that, use heatlist_file if URL not available
     heatsheet_url = models.URLField(blank=True)
-    heatsheet_file = models.FileField(upload_to=comp_logo_path, blank=True)
+    heatsheet_file = models.ImageField(upload_to=comp_logo_path, blank=True, storage=RawMediaCloudinaryStorage())
     scoresheet_url = models.URLField(blank=True)
 
     # the different states of processing a competition
