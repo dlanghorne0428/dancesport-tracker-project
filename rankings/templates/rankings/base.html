@@ -17,7 +17,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse w-100 dual-collapse2" id="navbarSupportedContent">
+      <div class="collapse navbar-collapse w-180 dual-collapse2" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">Home<span class="sr-only">(current)</span></a>
@@ -33,7 +33,7 @@
           </li>
         </ul>
       </div>
-      <div class="collapse navbar-collapse w-100 dual-collapse2" id="navbarSupportedContent">
+      <div class="collapse navbar-collapse w-180 dual-collapse2" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
             <li class="navbar-text">{{ user.username }}</li>

@@ -3,16 +3,16 @@
 {% block content %}
 
 <div class="col-12">
-  <h1 class="text-center">2020 DanceSport Rankings</h1>
+  <h2 class="text-center">2020 DanceSport Rankings</h2>
 </div>
 
 <div class="row">
-<div class="col-12 col-lg-10 offset-lg-1">
-  <form method="POST">
+<div class="col-12 col-lg-10 offset-lg-1 bg-primary">
+  <form class="mx-auto" method="POST">
     {% csrf_token %}
-    <div class="form-row align-items-end mx-auto">
+    <div class="form-row align-items-end">
       <div class="form-group col-3">
-          <label for="couple_type">Couple Type</label>
+          <label class="text-white" for="couple_type">Couple Type</label>
           <select class="form-control" id="couple_type" name="couple_type">
               {% for c in couple_types %}
                 {% if c == selected_couple_type %}
@@ -24,7 +24,7 @@
           </select>
       </div>
       <div class="form-group col-3">
-          <label for="style">Style</label>
+          <label class="text-white" for="style">Style</label>
           <select class="form-control id="style" name="style">
               {% for s in styles %}
                 {% if s == selected_style %}
@@ -35,12 +35,12 @@
               {% endfor %}
           </select>
       </div>
-      <div class="form-group col-3">
-          <label for="last_name">Last Name</label>
+      <div class="form-group col-4">
+          <label class="text-white"for="last_name">Last Name</label>
           <input class="form-control" id="last_name" name="last_name" type="text">
       </div>
-      <div class="form-group col-3">
-        <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
+      <div class="form-group col-2">
+        <input class="btn btn-info" type="submit" name="submit" value="Submit"/>
       </div>
     </div>
   </form>
@@ -49,7 +49,7 @@
 </div>
 
 <div class="row">
-  <div class="col-12 col-lg-10 offset-lg-1">
+  <div class="col-12 col-lg-10 offset-lg-1 px-0">
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
