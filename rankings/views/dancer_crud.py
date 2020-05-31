@@ -27,17 +27,23 @@ def create_dancer(request):
 
 
 def all_dancers(request):
+    # only show add and edit buttons for valid users
+    show_admin_buttons = request.user.is_superuser
+
     f = DancerFilter(request.GET, queryset=Dancer.objects.order_by('name_last'))
     paginator = Paginator(f.qs, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'rankings/all_dancers.html', {'page_obj': page_obj, 'filter': f})
+    return render(request, 'rankings/all_dancers.html', {'page_obj': page_obj, 'filter': f, 'show_admin_buttons': show_admin_buttons})
 
 
 def view_dancer(request, dancer_pk):
+    # only show add and edit buttons for valid users
+    show_admin_buttons = request.user.is_superuser
+
     dancer = get_object_or_404(Dancer, pk=dancer_pk)
     couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1')
-    return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'couples': couples})
+    return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'couples': couples, 'show_admin_buttons': show_admin_buttons})
 
 
 def edit_dancer(request, dancer_pk):

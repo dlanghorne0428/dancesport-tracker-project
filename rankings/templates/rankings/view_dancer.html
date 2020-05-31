@@ -26,14 +26,18 @@
         <td>{{ couple.get_couple_type_display }}</td>
         <td>
           <a class="btn btn-primary btn-sm" href="{% url 'view_couple' couple.id %}">View</a>
-          <a class="btn btn-secondary btn-sm" href="{% url 'edit_couple' couple.id %}">Edit</a>
+          {% if show_admin_buttons %}
+            <a class="btn btn-secondary btn-sm" href="{% url 'edit_couple' couple.id %}">Edit</a>
+          {% endif %}
         </td>
       </tr>
       {% endfor %}
     </table>
-    <div class="text-center mt-3">
-      <a class="btn btn-primary" href="{% url 'create_couple' %}">Add Couple</a>
-    </div>
+    {% if show_admin_buttons %}
+      <div class="text-center mt-3">
+        <a class="btn btn-primary" href="{% url 'create_couple' %}">Add Couple</a>
+      </div>
+    {% endif %}
   </div>
 </div>
 

@@ -27,9 +27,11 @@
       </tr>
       {% endfor %}
     </table>
-    <div class="text-center my-3">
-      <a class="btn btn-primary" href="{% url 'edit_couple' couple.id %}">Edit Couple</a>
-    </div>
+    {% if show_admin_buttons %}
+      <div class="text-center my-3">
+        <a class="btn btn-primary" href="{% url 'edit_couple' couple.id %}">Edit Couple</a>
+      </div>
+    {% endif %}
   </div>
 </div>
 
