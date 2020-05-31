@@ -11,7 +11,7 @@
   <form method="POST">
     {% csrf_token %}
     <div class="form-row align-items-end mx-auto">
-      <div class="form-group col-3>
+      <div class="form-group col-3">
           <label for="couple_type">Couple Type</label>
           <select class="form-control" id="couple_type" name="couple_type">
               {% for c in couple_types %}
