@@ -30,7 +30,8 @@ class Comp(models.Model):
 
     # URLs are optional, blank=True allows that, use heatlist_file if URL not available
     heatsheet_url = models.URLField(blank=True)
-    heatsheet_file = models.ImageField(upload_to=comp_logo_path, blank=True, storage=RawMediaCloudinaryStorage())
+    #heatsheet_file = models.ImageField(upload_to=comp_logo_path, blank=True, storage=RawMediaCloudinaryStorage())
+    heatsheet_file = models.FileField(upload_to=comp_logo_path, blank=True, storage=RawMediaCloudinaryStorage())
     scoresheet_url = models.URLField(blank=True)
 
     # the different states of processing a competition
