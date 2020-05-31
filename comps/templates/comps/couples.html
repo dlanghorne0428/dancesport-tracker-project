@@ -3,14 +3,14 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-8 offset-md-2">
+    <div class="col-12">
       <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
       <h3 class="text-center">Couples</h3>
     </div>
   </div>
 
   <div class="row align-items-start">
-    <div class="col-lg-8 offset-lg-2 border border-dark">
+    <div class="col-12 col-md-10 offset-md-1 col-lg-6 offset-lg-3 p-0 border border-dark">
       <table class="table table-bordered table-sm">
         {% for couple in page_obj %}
         <tr>

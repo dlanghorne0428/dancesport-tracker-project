@@ -3,14 +3,14 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-8 offset-md-2">
+    <div class="col-12">
       <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
       <h3 class="text-center">Dancers</h3>
     </div>
   </div>
 
   <div class="row align-items-start">
-    <div class="col-lg-4 offset-lg-3 border border-dark">
+    <div class="col-12 col-md-8 col-lg-4 offset-lg-3 border border-dark">
       <table class="table table-bordered table-sm">
         {% for dancer in page_obj %}
         <tr>
@@ -23,7 +23,7 @@
       {% include "rankings/pagination.html" %}
     </div>
 
-    <div class="col-lg-3 border border-dark">
+    <div class="col-12 col-md-4 col-lg-3 border border-dark">
       <h4 class="text-center">Filter</h4>
       <form method="get">
         {{ filter.form.as_p }}
