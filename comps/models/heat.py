@@ -167,7 +167,7 @@ class Heat(models.Model):
     def junior_heat(self):
         '''This function returns True if the description indicates a junior or youth heat.'''
         s = self.info
-        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or "YU" in s or "YT" in s or "Y " in s or\
+        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or "YU" in s or "YT" in s or s.startswith("Y") or\
            "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or "JU" in s or "JNR" in s or\
            "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or "Pre Teen" in s or \
            "High School" in s or "Elementary School" in s or \
