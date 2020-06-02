@@ -174,7 +174,7 @@ class Heat(models.Model):
            "-TB" in s or "Teddy Bear" in s or " TB" in s:
 
            # Under 21 heats are sometimes listed as youth, but should not be treated as juniors
-           if "U21" in s or "Under 21" in s:
+           if "U21" in s or "Under 21" in s or "Under-21" in s:
                 return False
            else:
                return True
