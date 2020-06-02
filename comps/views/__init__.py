@@ -18,4 +18,3 @@ from .load_heats import *
 from .load_scoresheets import *
 from .resolve_dancers import *
 from .resolve_mismatches import *
-from .upload_heatlist import *
