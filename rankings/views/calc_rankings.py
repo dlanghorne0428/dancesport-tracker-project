@@ -27,17 +27,19 @@ def calc_rankings(request):
 
     if request.method == "GET":
         page_number = request.GET.get('page')
-        print("Page Number is", page_number)
         heat_couple_type = request.GET.get('type')
+        if heat_couple_type is None:
+            heat_couple_type = "PRC"
         index = couple_type_choices.index(heat_couple_type)
         couple_type = couple_type_labels[index]
-        print("Couple_Type is", heat_couple_type, couple_type)
+
         heat_style = request.GET.get('style')
+        if heat_style is None:
+            heat_style = "SMOO"
         index = style_choices.index(heat_style)
         style = style_labels[index]
-        print("Style is", heat_style, style)
+
         last_name = request.GET.get('last_name')
-        print("Last name is", last_name)
     else:
         page_number = 1
         couple_type = request.POST.get("couple_type")
