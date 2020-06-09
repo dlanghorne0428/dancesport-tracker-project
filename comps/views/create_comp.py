@@ -8,11 +8,11 @@ def createcomp(request):
         return render(request, 'rankings/permission_denied.html')
 
     if request.method == "GET":
-        return render(request, 'comps/createcomp.html', {'form':CompForm()})
+        return render(request, 'comps/create_comp.html', {'form':CompForm()})
     else:
         try:
             form = CompForm(request.POST)
             form.save()
-            return redirect('all_comps')
+            return redirect('comps:all_comps')
         except ValueError:
-            return render(request, 'comps/createcomp.html', {'form':CompForm(), 'error': "Invalid data submitted."})
+            return render(request, 'comps/create_comp.html', {'form':CompForm(), 'error': "Invalid data submitted."})
