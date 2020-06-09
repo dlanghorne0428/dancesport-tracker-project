@@ -6,8 +6,11 @@
 <div class="row">
 
   {% if comp.logo != "" %}
-    <div class="col-12 p-0 text-center">
+    <div class="d-none d-md-block col-12 p-0 text-center">
       {% cloudinary comp.logo.public_id  height=324 width=576 crop="fit" %}
+    </div>
+    <div class="d-block d-md-none col-12 p-0 text-center">
+      {% cloudinary comp.logo.public_id  height=180 width=320 crop="fit" %}
     </div>
   {% endif %}
 </div>
