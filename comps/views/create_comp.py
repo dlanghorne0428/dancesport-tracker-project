@@ -3,7 +3,7 @@ from comps.models.comp import Comp
 from comps.forms import CompForm
 
 
-def createcomp(request):
+def create_comp(request):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
 
