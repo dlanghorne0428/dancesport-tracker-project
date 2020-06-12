@@ -12,7 +12,7 @@
 <div id="celery-result"></div>
 
 <div class="row">
-  <div class="col-12 text-center>
+  <div class="col-12 text-center">
       <a id="resolve_mismatches_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Unmatched Heats</a>
       <a id="view_heats_button" class="btn btn-primary disabled" role="button" href="{% url 'comps:comp_heats' comp.id %}">View Heats</a>
   </div>
@@ -36,11 +36,10 @@
     $( resultElement ).append(
       $('<p>').text('Processed ' + result[0] + " dancers. " + result[1] + " heats did not find a matching couple")
     );
-    if (result[1] == 0) {
-      $( '#view_heats_button' ).removeClass( "disabled" );
-    } else {
+    if (result[1] > 0) {
       $( '#resolve_mismatches_button' ).removeClass( "disabled" );
     }
+    $( '#view_heats_button' ).removeClass( "disabled" );
   }
 
   $(function () {
