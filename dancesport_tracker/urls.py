@@ -29,6 +29,7 @@ urlpatterns = [
     path('login/', views.loginuser, name="loginuser"),
     path('logout/', views.logoutuser, name="logoutuser"),
     path('rankings/', views.calc_rankings, name="calc_rankings"),
+    path('rankings/teachers', views.calc_teacher_rankings, name="calc_teacher_rankings"),
     path('scoring', views.scoring, name="scoring"),
     path('dancers/', views.all_dancers, name="all_dancers"),
     path('dancers/<int:dancer_pk>', views.view_dancer, name='view_dancer'),
