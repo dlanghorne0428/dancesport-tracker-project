@@ -1,7 +1,7 @@
 import requests
 from comps.scoresheet.results_processor import Results_Processor
 from comps.scoresheet.calc_points import calc_points
-from comps.models import HeatlistDancer
+from comps.models.heatlist_dancer import Heatlist_Dancer
 
 
 class NdcaPremEvent():
@@ -34,7 +34,7 @@ class NdcaPremResults(Results_Processor):
         self.comp_id = None
 
         # get access to format_name
-        self.hld = HeatlistDancer()
+        self.hld = Heatlist_Dancer()
 
 
     def get_comp_name(self, comp_id):
@@ -253,14 +253,16 @@ class NdcaPremResults(Results_Processor):
                     dance_count = 0
                 elif 'class="roundHeader">Second' in l:
                     print("Found Second Round")
-                    if self.heat_rounds != "R3":
+                    if self.heat.rounds != "R3":
+                        self.heat.rounds = "R32"
+                    else:
                         self.heat.rounds = "R2"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">First' in l:
                     print("Found First Round")
-                    if self.heat.rounds == "R3":
+                    if self.heat.rounds == "R32":
                         self.heat.rounds = "R321"
                     elif self.heat.rounds == "R2":
                         self.heat.rounds = "R21"

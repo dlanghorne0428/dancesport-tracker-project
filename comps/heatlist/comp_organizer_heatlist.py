@@ -2,7 +2,8 @@ import requests
 
 from django.db.models import Q
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -37,10 +38,6 @@ class CompOrgHeatlist(Heatlist):
     def load_heat(self, h, items, item_index, comp_ref):
 
         h.comp = comp_ref
-
-        # Start with the session
-        start_pos = items[item_index].find("-sess") + len("-sess") + 2
-        h.session = items[item_index][start_pos:]
 
         # get the heat number string and convert it to an integer
         start_pos = items[item_index+1].find("-heat") + len("-heat") + 2
@@ -162,7 +159,7 @@ class CompOrgHeatlist(Heatlist):
         competitors = response.text.split("},")
         for c in range(len(competitors) - 1):
             start_pos = competitors[c].find('"id')
-            d = HeatlistDancer()
+            d = Heatlist_Dancer()
             d.load_from_comp_org(competitors[c][start_pos:])
             try:
                 code_num = int(d.code)

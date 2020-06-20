@@ -3,14 +3,14 @@
 {% block content %}
 
   <div class="row">
-    <div class="col-4 offset-md-4">
+    <div class="col-12">
       <h2 class="text-center">Couples</h2>
     </div>
   </div>
 
   {{ error }}
   <div class="row">
-    <div class="col-8 offset-md-2">
+    <div class="col-12 col-lg-8 offset-lg-2 p-0">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
@@ -26,7 +26,7 @@
             <td>{{ couple.dancer_1 }}</td>
             <td>and</td>
             <td>{{ couple.dancer_2 }}</td>
-            <td><a href="{% url 'viewcouple' couple.id %}"">{{ couple.get_couple_type_display }}</a></td>
+            <td><a href="{% url 'view_couple' couple.id %}"">{{ couple.get_couple_type_display }}</a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -34,9 +34,11 @@
 
       {% include "rankings/pagination.html" %}
 
-      <div class="text-center my-3">
-        <a class="btn btn-primary" href="{% url 'createcouple' %}">Add Couple</a>
-      </div>
+      {% if show_admin_buttons %}
+        <div class="text-center my-3">
+          <a class="btn btn-primary" href="{% url 'create_couple' %}">Add Couple</a>
+        </div>
+      {% endif %}
     </div>
   </div>
 

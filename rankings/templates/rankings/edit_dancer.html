@@ -3,11 +3,11 @@
 {% block content %}
 
 <h2 class='text-center'>{{ dancer }}</h2>
-<h3 class='text-center'>{{ dancer.get_dancer_type_display }}</h3>
+<h3 class='text-center'>Dancer Category: {{ dancer.get_dancer_type_display }}</h3>
 <br />
 
 <div class="row">
-  <div class="col-2 offset-md-1 border border-dark">
+  <div class="col-4 offset-md-4 border border-dark">
     <h3 class="text-center">Edit Profile</h3>
     <p>{{ error }}</p>
 
@@ -36,35 +36,6 @@
         <input class="btn btn-danger" type="submit" name="submit" value="Delete Dancer" onclick="return confirm('Are you sure?')" />
       </div>
     </form>
-  </div>
-
-  <div class="col-8 border border-dark">
-    <h3 class="text-center">Dancer's Current Couples</h3>
-    <table class="table table-bordered table-sm">
-      <tr>
-        <th>Dancer 1</th>
-        <th></th>
-        <th>Dancer 2</th>
-        <th>Category</th>
-        <th>Action</th>
-      </tr>
-
-      {% for couple in couples %}
-      <tr>
-        <td>{{ couple.dancer_1 }}</td>
-        <td>and</td>
-        <td>{{ couple.dancer_2 }}</td>
-        <td>{{ couple.get_couple_type_display }}</td>
-        <td>
-          <a class="btn btn-primary btn-sm" href="{% url 'viewcouple' couple.id %}">View</a>
-          <a class="btn btn-secondary btn-sm" href="{% url 'editcouple' couple.id %}">Edit</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-    <div class="text-center mt-3">
-      <a class="btn btn-primary" href="{% url 'createcouple' %}">Add Couple</a>
-    </div>
   </div>
 </div>
 

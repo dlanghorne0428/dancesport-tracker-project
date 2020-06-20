@@ -103,6 +103,9 @@ celerybeat-schedule
 # Rope project settings
 .ropeproject
 
+# Heroku
+.env 
+
 # Mr Developer
 .mr.developer.cfg
 .project
@@ -148,3 +151,4 @@ Temporary Items
 .apdisk
 
 # End of https://www.gitignore.io/api/macos,django
+

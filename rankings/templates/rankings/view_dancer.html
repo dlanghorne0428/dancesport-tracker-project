@@ -1,0 +1,50 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+
+<h2 class='text-center'>{{ dancer }}</h2>
+<h3 class='text-center'>Dancer Category: {{ dancer.get_dancer_type_display }}</h3>
+<br />
+
+<div class="row">
+  <div class="col-12 col-lg-8 offset-lg-2 p-0 border border-dark">
+    <h3 class="text-center">Partnerships</h3>
+    <table class="table table-bordered table-sm">
+      <tr>
+        <th>Dancer 1</th>
+        <th></th>
+        <th>Dancer 2</th>
+        <th>Category</th>
+        <th>Action</th>
+      </tr>
+
+      {% for couple in couples %}
+      <tr>
+        <td>{{ couple.dancer_1 }}</td>
+        <td>and</td>
+        <td>{{ couple.dancer_2 }}</td>
+        <td>{{ couple.get_couple_type_display }}</td>
+        <td>
+          <a class="btn btn-primary btn-sm" href="{% url 'view_couple' couple.id %}">View</a>
+          {% if show_admin_buttons %}
+            <a class="btn btn-secondary btn-sm" href="{% url 'edit_couple' couple.id %}">Edit</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% if show_admin_buttons %}
+      <div class="text-center mt-3">
+        <a class="btn btn-primary" href="{% url 'create_couple' %}">Add Couple</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+
+
+
+
+
+
+{% endblock %}

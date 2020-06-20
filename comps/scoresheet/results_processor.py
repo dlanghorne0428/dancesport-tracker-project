@@ -1,5 +1,7 @@
 from comps.scoresheet.calc_points import calc_points
-from comps.models import HeatEntry, UnmatchedHeatEntry, HeatlistDancer
+from comps.models.heat_entry import Heat_Entry
+from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
+from comps.models.heatlist_dancer import Heatlist_Dancer
 
 
 class Results_Processor():
@@ -85,11 +87,11 @@ class Results_Processor():
 
 
     def build_heatlist_dancer(self, name):
-        dancers = HeatlistDancer.objects.filter(name=name)
+        dancers = Heatlist_Dancer.objects.filter(name=name)
         if dancers.count() > 0:
             d = dancers.first()
         else:
-            d = HeatlistDancer()
+            d = Heatlist_Dancer()
             d.name = name
             d.code = "LATE"
             d.save()
@@ -97,7 +99,7 @@ class Results_Processor():
 
 
     def build_late_entry(self, heat, shirt_number, couple_names, result, points=None):
-        late_entry = HeatEntry()
+        late_entry = Heat_Entry()
         late_entry.heat = heat
         late_entry.shirt_number = shirt_number
         late_entry.result = result
@@ -110,11 +112,11 @@ class Results_Processor():
         # need to create UnmatchedHeatEntry
         dancer = self.build_heatlist_dancer(couple_names[0])
         partner = self.build_heatlist_dancer(couple_names[1])
-        same_entries = UnmatchedHeatEntry.objects.filter(entry=late_entry, dancer=dancer, partner=partner)
+        same_entries = Unmatched_Heat_Entry.objects.filter(entry=late_entry, dancer=dancer, partner=partner)
         if same_entries.count() > 0:
             unmatched_entry = same_entries.first()
         else:
-            unmatched_entry = UnmatchedHeatEntry()
+            unmatched_entry = Unmatched_Heat_Entry()
             unmatched_entry.populate(late_entry, dancer, partner)
             print("LATE ENTRY" + str(unmatched_entry))
             unmatched_entry.save()

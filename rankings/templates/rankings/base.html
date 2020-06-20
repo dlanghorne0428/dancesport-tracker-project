@@ -12,12 +12,12 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">DanceSport Tracker</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="{% url 'home'%}">DanceSport Tracker</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="collapse navbar-collapse w-180 dual-collapse2" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">Home<span class="sr-only">(current)</span></a>
@@ -26,11 +26,32 @@
             <a class="nav-link" href="{% url 'all_dancers' %}">Dancers</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'all_couples' %}">Couples</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="{% url 'comps:all_comps' %}">Competitions</a>
           </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">Rankings</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'calc_rankings' %}">Couples</a>
+              <a class="dropdown-item" href="{% url 'calc_teacher_rankings' %}">Teachers</a>
+            </div>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="{% url 'calc_rankings' %}">Rankings</a>
+          </li> -->
+        </ul>
+      </div>
+      <div class="collapse navbar-collapse w-180 dual-collapse2" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
+            <li class="navbar-text">{{ user.username }}</li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logoutuser' %}">Logout</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'loginuser' %}">Login</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </nav>
@@ -39,9 +60,9 @@
 
 
       <div class="row">
-        <div class="col-8 offset-md-2">
-          <p class="small text-center">Styled with <a href="https://getbootstrap.com/"><strong>Bootstrap</strong></a></p>
-          <p class="small text-center">Powered by <a href="https://www.djangoproject.com/">Django</a>. Copyright 2005-2020 <a href="https://www.djangoproject.com/foundation">Django Software Foundation</a> and individual contributors.</p>
+        <div class="col-12">
+          <p class="small text-center mt-2 mb-0">Styled with <a href="https://getbootstrap.com/"><strong>Bootstrap</strong></a></p>
+          <p class="small text-center my-0">Powered by <a href="https://www.djangoproject.com/">Django</a>. Copyright 2005-2020 <a href="https://www.djangoproject.com/foundation">Django Software Foundation</a> and individual contributors.</p>
         </div>
       </div>
     </div>

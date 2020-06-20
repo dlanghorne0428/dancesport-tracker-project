@@ -1,15 +1,18 @@
 from django.core import serializers
 from django.shortcuts import render
-from comps.models import Comp, HeatlistDancer
+from comps.models.comp import Comp
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.tasks import process_heatlist_task
 
 
 def load_heats(request, comp_id):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
     comp_objects = Comp.objects.filter(pk=comp_id)
     if len(comp_objects) == 1:
         comp=comp_objects[0]
 
-    heatlist_dancers = HeatlistDancer.objects.all()
+    heatlist_dancers = Heatlist_Dancer.objects.all()
 
     comp_data = serializers.serialize("json", comp_objects)
     heatlist_dancer_data = serializers.serialize("json", heatlist_dancers)

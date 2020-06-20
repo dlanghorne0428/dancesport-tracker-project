@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-8 offset-md-2">
+  <div class="col-12">
     <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
     <h3 class="text-center">Heats</h3>
   </div>
@@ -12,23 +12,36 @@
 <div class="row align-items-start">
 
 
-  <div class="col-lg-9 border border-dark">
+  <div class="col-12 col-xl-10 offset-xl-1 px-0 border border-dark">
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
+          <th colspan="2" class="text-center d-none d-lg-table-cell">Time</th>
           <th>Category</th>
           <th>Number</th>
-          <th class="text-center">Time</th>
-          <th class="text-center">Description</th>
+          <th colspan="3" class="text-center">Description</th>
         </tr>
       </thead>
       <tbody>
+        <form class="mx-auto" method="get">
+          {% csrf_token %}
+          <tr class="table-primary">
+            <td class="text-center d-none d-lg-table-cell"><strong>Filter </strong></td>
+            <td class="text-center d-none d-lg-table-cell">Value: {{ filter.form.base_value }}</td>
+            <td class="text-center">{{ filter.form.category }}</td>
+            <td class="text-center">{{ filter.form.heat_number }}</td>
+            <td class="d-table-cell d-md-none"></td>
+            <td class="text-center d-none d-md-table-cell">{{ filter.form.style }}</td>
+            <td class="text-center">Info {{ filter.form.info }}</td>
+            <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="submit" value="Submit"/></td>
+          </tr>
+        </form>
         {% for heat in page_obj %}
         <tr>
-          <td>{{ heat.get_category_display }}</td>
+          <td colspan="2" class="text-center d-none d-lg-table-cell">{{ heat.time }}</td>
+          <td class="text-center">{{ heat.get_category_display }}</td>
           <td class="text-center">{{ heat.heat_number }}</td>
-          <td>{{ heat.time }}</td>
-          <td><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
+          <td colspan="3" class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -37,17 +50,6 @@
     {% include "rankings/pagination.html" %}
 
   </div>
-
-  <div class="col-lg-3 border border-dark">
-    <h4 class="text-center">Filter</h4>
-    <form method="get">
-      {{ filter.form.as_p }}
-      <div class="text-center mt-3">
-        <button class="btn btn-primary" type="submit">Submit</button>
-      </div>
-    </form>
-  </div>
-
 </div>
 
 

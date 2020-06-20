@@ -3,18 +3,18 @@
 
 {% block content %}
 
-<div class="col-8 offset-md-2">
-  <h1 class="text-center">2020 DanceSport Rankings</h1>
+<div class="col-12">
+  <h2 class="text-center">2020 DanceSport Rankings</h2>
 </div>
 
 <div class="row">
-
-  <form method="POST">
+<div class="col-12 col-lg-10 offset-lg-1 bg-primary">
+  <form class="mx-auto" method="POST">
     {% csrf_token %}
     <div class="form-row align-items-end">
-      <div class="form-group col offset-3">
-          <label for="couple_type">Couple Type</label>
-          <select class="form-control form-control-lg" id="couple_type" name="couple_type">
+      <div class="form-group col-3">
+          <label class="text-white" for="couple_type">Couple Type</label>
+          <select class="form-control" id="couple_type" name="couple_type">
               {% for c in couple_types %}
                 {% if c == selected_couple_type %}
                   <option selected value={{ c }}>{{ c }}</option>
@@ -24,9 +24,9 @@
               {% endfor %}
           </select>
       </div>
-      <div class="form-group col">
-          <label for="style">Style</label>
-          <select class="form-control form-control-lg" id="style" name="style">
+      <div class="form-group col-3">
+          <label class="text-white" for="style">Style</label>
+          <select class="form-control id="style" name="style">
               {% for s in styles %}
                 {% if s == selected_style %}
                   <option selected value={{ s }}>{{ s }}</option>
@@ -36,36 +36,31 @@
               {% endfor %}
           </select>
       </div>
-      <div class="form-group col">
-          <label for="last_name">Last Name Contains</label>
-          <input class="form-control-lg" id="last_name" name="last_name" type="text">
+      <div class="form-group col-4">
+          <label class="text-white"for="last_name">Last Name</label>
+          <input class="form-control" id="last_name" name="last_name" type="text">
       </div>
-      <div class="form-group col">
-        <input class="btn btn-primary btn-lg" type="submit" name="submit" value="Submit"/>
+      <div class="form-group col-2">
+        <input class="btn btn-info" type="submit" name="submit" value="Submit"/>
       </div>
     </div>
   </form>
 </div>
 
-<div class='progress-wrapper'>
-  <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
 </div>
-<div id="progress-bar-message">Waiting for progress to start...</div>
-
-<div id="celery-result"></div>
 
 <div class="row">
-  <div class="col-10 offset-1">
-    <table class="table table-bordered table-sm">
+  <div class="col-12 col-lg-10 offset-lg-1 px-0">
+    <table class="table table-bordered table-sm p-0">
       <thead class="thead-dark">
         <tr>
-          <th>Ranking</th>
+          <th class="text-center">Ranking</th>
           <th>Dancer 1</th>
           <th></th>
           <th>Dancer 2</th>
-          <th>Events</th>
-          <th>Total Points</th>
-          <th>Average</th>
+          <th class="text-center">Events</th>
+          <th class="text-center">Points</th>
+          <th class="text-center">Average</th>
         </tr>
       </thead>
       <tbody>
@@ -76,7 +71,7 @@
           <td>and</td>
           <td>{{ couple_stats.couple.dancer_2 }}</td>
           <td class="text-center">
-            <a  href="{% url 'viewcouple' couple_stats.couple.id %}">{{ couple_stats.event_count }}</a>
+            <a  href="{% url 'view_couple' couple_stats.couple.id %}">{{ couple_stats.event_count }}</a>
           </td>
           <td class="text-center">{{ couple_stats.total_points }}</td>
           <td class="text-center">{{ couple_stats.rating }}</td>

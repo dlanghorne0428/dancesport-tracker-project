@@ -1,7 +1,8 @@
 import json
 
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -26,17 +27,17 @@ class FileBasedHeatlist(Heatlist):
         '''Begin the process of reading heatsheet data from the common file format.'''
         self.filedata = fieldfile
         self.filedata.open(mode="rt")
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         self.comp_name = line.split(":")[1]
         #print(self.comp_name)
         # read past the line that says Dancers:
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         while True:
-            line = self.filedata.readline().strip()
+            line = self.filedata.readline().decode().strip()
             if line == "Heats":
                 break
             else:
-                d = HeatlistDancer()
+                d = Heatlist_Dancer()
                 d.load_from_file(line)
                 #d = Dancer(fields[0], fields[1])
                 self.dancers.append(d)
@@ -52,12 +53,12 @@ class FileBasedHeatlist(Heatlist):
 
         self.filedata = fieldfile
         self.filedata.open(mode="rt")
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         self.comp_name = line.split(":")[1]
         # read past the line that says Dancers:
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         while True:
-            line = self.filedata.readline().strip()
+            line = self.filedata.readline().decode().strip()
             if line == "Heats":
                 break
                 # leave the file open
@@ -83,7 +84,7 @@ class FileBasedHeatlist(Heatlist):
 
         # extract the heat time information
         time_fields = summary[self.TIME_COLUMN].split("@")
-        self.heat.session = time_fields[0]
+        #self.heat.session = time_fields[0]
         time_info = time_fields[1]
         heat_time_fields = time_info.split()
         day_of_week = heat_time_fields[0]
@@ -100,7 +101,7 @@ class FileBasedHeatlist(Heatlist):
     def get_next_dancer(self, dancer_index, comp_ref):
         '''Read heat information for the next dance from the common file format.
            Must be called after the file has alrady been opened.'''
-        line = self.filedata.readline().strip()
+        line = self.filedata.readline().decode().strip()
         fields = line.split(":")
         d = self.dancers[dancer_index]
         try:
@@ -110,7 +111,7 @@ class FileBasedHeatlist(Heatlist):
             num_heats = -1
             return None
         for index in range(num_heats):
-            line = self.filedata.readline().strip()
+            line = self.filedata.readline().decode().strip()
             heat_info = json.loads(line)
             couple_fields = heat_info[self.NAMES_COLUMN].split (" and ")
             shirt_number = heat_info[self.SHIRT_NUM_COLUMN]

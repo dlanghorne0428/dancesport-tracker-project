@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from comps.models import Comp, Heat, HeatEntry
+from comps.models.comp import Comp 
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 from comps.forms import CompForm, HeatForm
 from rankings.models import Couple
 
 
 def combine_heats(request, comp_id):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+
     comp = get_object_or_404(Comp, pk=comp_id)
     heats_in_comp = Heat.objects.filter(comp=comp).order_by('heat_number')
     current_heat_number = 0
@@ -28,7 +33,7 @@ def combine_heats(request, comp_id):
                             heat.remove_info_prefix()
                             print("Combine", heat.category, heat.heat_number, heat.info)
                             heat.save()
-                            matching_entries = HeatEntry.objects.filter(heat=match).order_by('shirt_number')
+                            matching_entries = Heat_Entry.objects.filter(heat=match).order_by('shirt_number')
                             for e in matching_entries:
                                 print(e.couple, e.code, e.shirt_number)
                                 e.heat = heat

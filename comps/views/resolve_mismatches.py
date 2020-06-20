@@ -1,15 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from comps.models import Comp, Heat, HeatEntry, UnmatchedHeatEntry, HeatlistDancer
+from comps.models.comp import Comp
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
+from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from rankings.models import Couple
 from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match
 
 
 def resolve_mismatches(request, comp_id, wider_search=0):
-    unmatched_entries = UnmatchedHeatEntry.objects.all().order_by('entry')
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    unmatched_entries = Unmatched_Heat_Entry.objects.all().order_by('entry')
     comp = get_object_or_404(Comp, pk=comp_id)
     if unmatched_entries.count() == 0:
         # all unmatched entries resolved, delete heatlist_dancer entries from database
-        heatlist_dancers = HeatlistDancer.objects.all().delete()
+        heatlist_dancers = Heatlist_Dancer.objects.all().delete()
         if comp.process_state == comp.SCORESHEETS_LOADED:
             comp.process_state = comp.RESULTS_RESOLVED
         else:
@@ -46,7 +52,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
                     if str(pm_couple) == couple_str:
-                        similar_unmatched = UnmatchedHeatEntry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
+                        similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
                         for e in similar_unmatched:
                             # update the heat entry with the selected couple
                             e.entry.couple = pm_couple

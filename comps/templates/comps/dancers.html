@@ -3,36 +3,43 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-8 offset-md-2">
+    <div class="col-12">
       <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
       <h3 class="text-center">Dancers</h3>
     </div>
   </div>
 
   <div class="row align-items-start">
-    <div class="col-lg-4 offset-lg-3 border border-dark">
+    <div class="col-12 col-lg-8 offset-lg-2 border border-dark px-0">
       <table class="table table-bordered table-sm">
-        {% for dancer in page_obj %}
-        <tr>
-          <td>{{ dancer.name_last}}, {{ dancer.name_first }} {{dancer.name_middle}}</td>
-          <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:dancer_heats' comp.id dancer.id %}">View Heats</a></td>
-        </tr>
-        {% endfor %}
+        <thead class="thead-dark">
+          <tr>
+            <th class="text-center">Name</th>
+            <th class="text-center">Category</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <form class="mx-auto" method="get">
+            {% csrf_token %}
+            <tr class="table-primary">
+              <td class="text-center"><strong>Filter </strong> {{ filter.form.name_last }}</td>
+              <td class="text-center">{{ filter.form.dancer_type }}</td>
+              <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="submit" value="Submit"/></td>
+            </tr>
+          </form>
+          {% for dancer in page_obj %}
+            <tr>
+              <td class="text-center">{{ dancer }}</td>
+              <td class="text-center">{{ dancer.get_dancer_type_display }}</td>
+              <td class="text-center"><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:dancer_heats' comp.id dancer.id %}">View Heats</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
       </table>
 
       {% include "rankings/pagination.html" %}
     </div>
-
-    <div class="col-lg-3 border border-dark">
-      <h4 class="text-center">Filter</h4>
-      <form method="get">
-        {{ filter.form.as_p }}
-        <div class="text-center mt-3">
-          <input class="btn btn-primary mx-auto" type="submit" value="Submit" />
-        </div>
-      </form>
-    </div>
-
   </div>
 
 

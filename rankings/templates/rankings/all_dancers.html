@@ -3,54 +3,51 @@
 {% block content %}
 
   <div class="row">
-    <div class="col-4 offset-md-4">
+    <div class="col-12">
       <h2 class="text-center">Dancers</h2>
     </div>
   </div>
 
   <div class="row align-items-start">
 
-    <div class="col-6 offset-1 border border-dark">
+    <div class="col-12 col-lg-8 offset-lg-2 border border-dark px-0">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
-            <th>Name</th>
-            <th>Category</th>
+            <th class="text-center">Name</th>
+            <th class="text-center">Category</th>
+            <th class="text-center">Action</th>
           </tr>
         </thead>
         <tbody>
+          <form class="mx-auto" method="get">
+            {% csrf_token %}
+            <tr class="table-primary">
+              <td class="text-center"><strong>Filter </strong> {{ filter.form.name_last }}</td>
+              <td class="text-center">{{ filter.form.dancer_type }}</td>
+              <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="submit" value="Submit"/></td>
+            </tr>
+          </form>
           {% for dancer in page_obj %}
           <tr>
-            <td>
-              <a href="{% url 'viewdancer' dancer.id %}">
-                {% if dancer.name_middle %}
-                  {{ dancer.name_last }}, {{ dancer.name_first }} {{ dancer.name_middle }}
-                {% else %}
-                  {{ dancer.name_last }}, {{ dancer.name_first }}
-                {% endif %}
-              </a>
-            </td>
-            <td>
-              {{ dancer.get_dancer_type_display }}
+            <td class="text-center">{{ dancer }}</td>
+            <td class="text-center">{{ dancer.get_dancer_type_display }}</td>
+            <td class="text-center">
+              <a class="btn btn-primary btn-sm" href="{% url 'view_dancer' dancer.id %}">View</a>
+              {% if show_admin_buttons %}
+                <a class="btn btn-secondary btn-sm" href="{% url 'edit_dancer' dancer.id %}">Edit</a>
+              {% endif %}
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       {% include "rankings/pagination.html" %}
-      <div class="text-center mt-3">
-        <a class="btn btn-primary" href="{% url 'createdancer' %}">Add Dancer</a>
-      </div>
-    </div>
-
-    <div class="col-4 border border-dark">
-      <h4 class="text-center">Filter</h4>
-      <form method="get">
-        {{ filter.form.as_p }}
-      <div class="text-center">
-        <button class="btn btn-primary" type="submit">Submit</button>
-      </div>
-      </form>
+      {% if show_admin_buttons %}
+        <div class="text-center mt-2">
+          <a class="btn btn-primary" href="{% url 'create_dancer' %}">Add Dancer</a>
+        </div>
+      {% endif %}
     </div>
 
   </div>

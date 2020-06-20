@@ -17,20 +17,23 @@
     <div class="alert alert-info text-center" role="alert">
       {{ first_entry.dancer.name }} and {{ first_entry.partner.name }}
     </div>
-    <form method="POST">
-      {% csrf_token %}
-      <label for="couples">Choose a couple:</label>
-      <select id="couples" name="couple">
-        {% for match in possible_matches %}
-        <option value="{{ match }}">{{ match.dancer_1 }} and {{ match.dancer_2 }}, {{ match.couple_type }}</option>
-        {% endfor %}
-      </select>
-      <br /><br />
-      <input class="btn btn-primary" type="submit" name="submit" value="Submit">
-      <input class="btn btn-primary" type="submit" name="submit" value="Widen Search">
-      <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
-      <input class="btn btn-warning" type="submit" name="submit" value="Delete">
-    </form>
+    <div class="text-center">
+      <form method="POST">
+        {% csrf_token %}
+        <label for="couples">Choose a couple:</label>
+        <select id="couples" name="couple">
+          {% for match in possible_matches %}
+          <option value="{{ match }}">{{ match.dancer_1 }} and {{ match.dancer_2 }}, {{ match.couple_type }}</option>
+          {% endfor %}
+        </select>
+        <br /><br />
+        <input class="btn btn-primary" type="submit" name="submit" value="Submit">
+        <input class="btn btn-primary" type="submit" name="submit" value="Widen Search">
+        <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
+        <input class="btn btn-warning" type="submit" name="submit" value="Delete">
+        </form>
+      </div>
+
   </div>
 </div>
 

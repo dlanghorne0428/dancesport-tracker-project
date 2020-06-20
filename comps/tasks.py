@@ -9,7 +9,9 @@ from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
 from .scoresheet.comp_organizer_results import CompOrgResults
 from .scoresheet.ndca_prem_results import NdcaPremResults
-from .models import Comp, Heat, HeatEntry
+from comps.models.comp import Comp
+from comps.models.heat import Heat
+from comps.models.heat_entry import Heat_Entry
 import time
 
 
@@ -26,6 +28,7 @@ def process_heatlist_task(self, comp_data, heatlist_data):
 
     if comp.heatsheet_file:
         heatlist = FileBasedHeatlist()
+        print("Using Heatlist File")
         heatlist.load(comp.heatsheet_file, heatlist_dancers)
     else:
         if comp.url_data_format == Comp.COMP_MNGR:
@@ -42,10 +45,10 @@ def process_heatlist_task(self, comp_data, heatlist_data):
         the_name = heatlist.get_next_dancer(index, comp)
         if the_name is None:
             break
-        progress_recorder.set_progress(index, num_dancers, description=the_name)
+        progress_recorder.set_progress(index + 1, num_dancers, description=the_name)
 
     unmatched_entries = heatlist.complete_processing()
-    result = [index, unmatched_entries]
+    result = [num_dancers, unmatched_entries]
     if unmatched_entries == 0:
         comp.process_state = comp.HEAT_ENTRIES_MATCHED
     else:
@@ -75,10 +78,10 @@ def process_scoresheet_task(self, comp_data):
         index = 0
         progress_recorder.set_progress(0, num_heats, description="Accessing website for results")
         scoresheet.open(comp.scoresheet_url)
-        
+
         for heat in heats_to_process:
             index += 1
-            entries_in_event = HeatEntry.objects.filter(heat=heat)
+            entries_in_event = Heat_Entry.objects.filter(heat=heat)
             if entries_in_event.count() > 0:
                 heat_result = scoresheet.determine_heat_results(entries_in_event)
                 if heat_result is None:

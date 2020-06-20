@@ -1,19 +1,19 @@
 from django.forms import ModelForm
-from .models import Comp
+from .models.comp import Comp
 
 class CompForm(ModelForm):
     class Meta:
         model = Comp
         fields = ['title', 'location', 'start_date', 'end_date', 'logo', 'url_data_format', 'heatsheet_url', 'scoresheet_url']
 
-from .models import Heat
+from .models.heat import Heat
 class HeatForm(ModelForm):
     class Meta:
         model = Heat
         fields = ['info', 'heat_number', 'extra', 'style', 'base_value']
 
-from .models import HeatEntry
+from .models.heat_entry import Heat_Entry
 class HeatEntryForm(ModelForm):
     class Meta:
-        model = HeatEntry
+        model = Heat_Entry
         fields = ['shirt_number', 'result', 'points']

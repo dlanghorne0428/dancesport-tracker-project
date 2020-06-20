@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-8 offset-md-2">
+  <div class="col-12">
     <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
     <h3 class="text-center">Heats for {{ dancer }}</h3>
   </div>
@@ -12,13 +12,13 @@
 <div class="row align-items-start">
 
 
-  <div class="col-lg-10 offset-lg-1 border border-dark">
+  <div class="col-12 col-lg-10 offset-lg-1 p-0 border border-dark">
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
           <th>Category</th>
           <th>Number</th>
-          <th class="text-center">Time</th>
+          <th class="text-center d-none d-md-table-cell">Time</th>
           <th class="text-center">Description</th>
         </tr>
       </thead>
@@ -27,7 +27,7 @@
         <tr>
           <td>{{ heat.get_category_display }}</td>
           <td class="text-center">{{ heat.heat_number }}</td>
-          <td>{{ heat.time }}</td>
+          <td class="d-none d-md-table-cell">{{ heat.time }}</td>
           <td><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
         </tr>
         {% endfor %}

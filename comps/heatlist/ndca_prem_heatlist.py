@@ -2,7 +2,8 @@ import requests
 import html
 
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -58,13 +59,6 @@ class NdcaPremHeatlist(Heatlist):
             # split the heat information into fields
             cols = line.split("</td>")
             for c in cols:
-                # find the session
-                start_pos = c.find("-sess")
-                if start_pos > -1:
-                    start_pos += len("-sess") + 2
-                    h.session = c[start_pos:]
-                    continue
-
                 # find the heat time
                 start_pos = c.find("-time-round")
                 if start_pos > -1:
@@ -169,7 +163,7 @@ class NdcaPremHeatlist(Heatlist):
             if 'class="team"' in competitors[c]:
                 continue
             safe = html.unescape(competitors[c])
-            d = HeatlistDancer()
+            d = Heatlist_Dancer()
             d.load_from_ndca_premier(safe)
             try:
                 code_num = int(d.code)

@@ -3,7 +3,8 @@ import requests
 
 from django.db.models import Q
 from rankings.models import Couple, Dancer
-from comps.models import Heat, HeatEntry, HeatlistDancer, UnmatchedHeatEntry
+from comps.models.heat import Heat
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -44,14 +45,11 @@ class CompMngrHeatlist(Heatlist):
         h.rounds = "F"      # assume final only
         if len(line) > 0:           # if line is not empty, parse it to obtain other properites
             fields = line.split("<td>")
-            # get the session number, heat number, and multi-round info
+            # get the heat number, and multi-round info
             heat_time = fields[1].split("</td>")[0]
             if "@" in heat_time:
                 heat_time_fields = heat_time.split("@")
-                h.session = heat_time_fields[0]
                 heat_time = heat_time_fields[1]
-            else:
-                h.session = ""
             if "<br>" in heat_time:
                 time_session_fields = heat_time.split("<br>")
                 heat_time = time_session_fields[0]
@@ -104,7 +102,7 @@ class CompMngrHeatlist(Heatlist):
             self.line_index += 1
             # if the line has "Show Entries", we can extract the name of a dancer
             if "Show entries" in line:
-                dancer = HeatlistDancer()
+                dancer = Heatlist_Dancer()
                 dancer.load_from_comp_mngr(line.strip())
                 self.dancers.append(dancer)
             # if we see the line that says "size="", extract the name of the competition
