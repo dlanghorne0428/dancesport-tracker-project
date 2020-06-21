@@ -10,3 +10,4 @@ django-filter
 requests
 Pillow
 whitenoise
+django-bmemcached==0.3.0
