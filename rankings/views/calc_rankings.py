@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from rankings.models import Dancer, Couple
@@ -40,6 +41,9 @@ def calc_rankings(request):
         style = style_labels[index]
 
         last_name = request.GET.get('last_name')
+
+        cache_key = heat_couple_type + "-" + heat_style
+
     else:
         page_number = 1
         couple_type = request.POST.get("couple_type")
@@ -53,32 +57,40 @@ def calc_rankings(request):
         last_name = request.POST.get("last_name")
         if last_name is not None:
             url_string += "&last_name=" + last_name
-        print("POST", url_string)
         return redirect(url_string)
 
-    couples = Couple.objects.filter(couple_type=heat_couple_type)
-    couple_stats = list()
-    for c in couples:
-        stats = {'couple': c, 'event_count': 0, 'total_points': Decimal(0.00), 'rating': Decimal(0.00), index: 0}
-        couple_stats.append(stats)
+    # try to read the ranking data from the cache
+    couple_stats = cache.get(cache_key)
 
-    for cs in couple_stats:
-        entries = Heat_Entry.objects.filter(couple=cs['couple']).filter(heat__style=heat_style)
-        for e in entries:
-            if e.points is not None:
-                cs['event_count'] += 1
-                cs['total_points'] += e.points
-        if cs['event_count'] > 0:
-            cs['total_points'] = round(cs['total_points'], 2)
-            cs['rating'] = round(cs['total_points'] / cs['event_count'], 2)
+    if couple_stats is None:
+        # cache miss - calculate rankings and store in cache
+        couples = Couple.objects.filter(couple_type=heat_couple_type)
+        couple_stats = list()
+        for c in couples:
+            stats = {'couple': c, 'event_count': 0, 'total_points': Decimal(0.00), 'rating': Decimal(0.00), index: 0}
+            couple_stats.append(stats)
 
-    couple_stats.sort(key=itemgetter('rating'), reverse=True)
-    while couple_stats[-1]['event_count'] == 0:
-        couple_stats.pop()
-        if len(couple_stats) == 0:
-            break
-    for i in range(len(couple_stats)):
-        couple_stats[i]['index'] = i + 1
+        for cs in couple_stats:
+            entries = Heat_Entry.objects.filter(couple=cs['couple']).filter(heat__style=heat_style)
+            for e in entries:
+                if e.points is not None:
+                    cs['event_count'] += 1
+                    cs['total_points'] += e.points
+            if cs['event_count'] > 0:
+                cs['total_points'] = round(cs['total_points'], 2)
+                cs['rating'] = round(cs['total_points'] / cs['event_count'], 2)
+
+        couple_stats.sort(key=itemgetter('rating'), reverse=True)
+        while couple_stats[-1]['event_count'] == 0:
+            couple_stats.pop()
+            if len(couple_stats) == 0:
+                break
+        for i in range(len(couple_stats)):
+            couple_stats[i]['index'] = i + 1
+
+        cache.set(cache_key, couple_stats)
+
+    # filter for last name and paginate the rankings
     if last_name is not None:
         if len(last_name) > 0:
             couple_stats = list(filter(lambda dancer: last_name.lower() in dancer['couple'].dancer_1.name_last.lower()  or \
