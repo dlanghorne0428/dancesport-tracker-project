@@ -2,11 +2,11 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from rankings.models import Dancer, Couple
+from rankings.tasks import calc_couple_ratings
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from operator import itemgetter
-from decimal import Decimal
 
 
 def calc_rankings(request):
@@ -60,35 +60,15 @@ def calc_rankings(request):
         return redirect(url_string)
 
     # try to read the ranking data from the cache
+    print("looking for " + cache_key)
     couple_stats = cache.get(cache_key)
 
     if couple_stats is None:
         # cache miss - calculate rankings and store in cache
-        couples = Couple.objects.filter(couple_type=heat_couple_type)
-        couple_stats = list()
-        for c in couples:
-            stats = {'couple': c, 'event_count': 0, 'total_points': Decimal(0.00), 'rating': Decimal(0.00), index: 0}
-            couple_stats.append(stats)
-
-        for cs in couple_stats:
-            entries = Heat_Entry.objects.filter(couple=cs['couple']).filter(heat__style=heat_style)
-            for e in entries:
-                if e.points is not None:
-                    cs['event_count'] += 1
-                    cs['total_points'] += e.points
-            if cs['event_count'] > 0:
-                cs['total_points'] = round(cs['total_points'], 2)
-                cs['rating'] = round(cs['total_points'] / cs['event_count'], 2)
-
-        couple_stats.sort(key=itemgetter('rating'), reverse=True)
-        while couple_stats[-1]['event_count'] == 0:
-            couple_stats.pop()
-            if len(couple_stats) == 0:
-                break
-        for i in range(len(couple_stats)):
-            couple_stats[i]['index'] = i + 1
-
-        cache.set(cache_key, couple_stats)
+        #couple_stats = calc_couple_ratings(heat_couple_type, heat_style, cache_key)
+        calc_couple_ratings.delay(heat_couple_type, heat_style, cache_key)
+        return render(request, 'rankings/calc_rankings.html', {'page_obj': None, 'styles': style_labels, 'selected_style': style,
+                                                          'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
 
     # filter for last name and paginate the rankings
     if last_name is not None:

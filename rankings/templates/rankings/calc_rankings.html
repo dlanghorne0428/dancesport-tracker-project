@@ -1,5 +1,4 @@
 {% extends "rankings/base.html" %}
-{% load static %}
 
 {% block content %}
 
@@ -83,33 +82,5 @@
   </div>
 
 </div>
-
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'celery_progress/celery_progress.js' %}"></script>
-<script>
-  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
-
-  function customProgress(progressBarElement, progressBarMessageElement, progress) {
-      progressBarElement.style.backgroundColor = '#68a9ef';
-      progressBarElement.style.width = progress.percent + "%";
-      var description = progress.description || "";
-      progressBarMessageElement.innerHTML = 'Processing: ' + description + ' - couple ' + progress.current + ' of ' + progress.total;
-    }
-
-  function customResult(resultElement, result) {
-    $( resultElement ).append(
-      $('<p>').text('Processed ' + result[0] + " couples.")
-    );
-  }
-
-  $(function () {
-    CeleryProgressBar.initProgressBar(progressUrl, {
-      onProgress: customProgress,
-      onResult: customResult,
-    })
-  });
-</script>
 
 {% endblock %}

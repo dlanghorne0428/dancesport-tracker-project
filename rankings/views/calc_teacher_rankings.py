@@ -54,7 +54,7 @@ def calc_teacher_rankings(request):
         teacher_stats = list()
         for t in teachers:
             if Couple.objects.filter(couple_type="PAC").filter(dancer_2=t).count() > 0:
-                stats = {'teacher': t, 'event_count': 0, 'total_points': Decimal(0.00), 'rating': Decimal(0.00), index: 0}
+                stats = {'teacher': t, 'event_count': 0, 'total_points': Decimal(0.00), 'rating': Decimal(0.00), 'index': 0}
                 teacher_stats.append(stats)
 
         possible_matching_entries = Heat_Entry.objects.filter(couple__couple_type="PAC").filter(heat__style=heat_style)
