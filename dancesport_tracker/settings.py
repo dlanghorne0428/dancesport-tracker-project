@@ -131,7 +131,7 @@ CACHES = {
         # disables expiration.
         'TIMEOUT': 15*60,  # was None
 
-        'LOCATION': servers,
+        'LOCATION': servers,  # for production
 
         'OPTIONS': {
             'username': username,
@@ -140,13 +140,14 @@ CACHES = {
     }
 }
 
-# caches for local development
-#CACHES = {
-#    'default': {
-#        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-#        'TIMEOUT': 15*60,
-#    }
-#}
+#caches for local development
+# CACHES = {
+#   'default': {
+#       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#       'TIMEOUT': 15*60,
+#       'LOCATION': '127.0.0.1:11211',
+#   }
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -162,7 +163,6 @@ USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
@@ -173,8 +173,6 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-#CELERY_BROKER_URL = 'redis://localhost'
-#CELERY_RESULT_BACKEND = 'redis://localhost/0'
 CELERY_BROKER_URL = os.environ['REDIS_URL']
 CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
 
