@@ -1,7 +1,7 @@
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
-from rankings.models import Dancer, Couple
+from rankings.models import Couple
 from rankings.tasks import calc_couple_ratings
 from comps.models.comp import Comp
 from comps.models.heat import Heat
@@ -65,9 +65,8 @@ def calc_rankings(request):
 
     if couple_stats is None:
         # cache miss - calculate rankings and store in cache
-        #couple_stats = calc_couple_ratings(heat_couple_type, heat_style, cache_key)
-        calc_couple_ratings.delay(heat_couple_type, heat_style, cache_key)
-        return render(request, 'rankings/calc_rankings.html', {'page_obj': None, 'styles': style_labels, 'selected_style': style,
+        result = calc_couple_ratings.delay(heat_couple_type, heat_style, cache_key)
+        return render(request, 'rankings/calc_ranking_progress.html', context={'task_id': result.task_id, 'styles': style_labels, 'selected_style': style,
                                                           'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
 
     # filter for last name and paginate the rankings

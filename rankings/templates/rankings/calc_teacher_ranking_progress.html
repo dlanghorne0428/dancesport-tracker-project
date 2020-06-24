@@ -1,0 +1,88 @@
+{% extends "rankings/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="col-12">
+  <h2 class="text-center">2020 DanceSport Instructor Rankings</h2>
+</div>
+
+<div class="row">
+  <div class="col-12 col-lg-10 offset-lg-1 bg-primary">
+    <form class="mx-auto" method="POST">
+      {% csrf_token %}
+      <div class="form-row align-items-end">
+        <!-- <div class="form-group col-3">
+            <label class="text-white" for="couple_type">Couple Type</label>
+            <select class="form-control" id="couple_type" name="couple_type">
+                {% for c in couple_types %}
+                  {% if c == selected_couple_type %}
+                    <option selected value={{ c }}>{{ c }}</option>
+                  {% else %}
+                    <option value={{ c }}>{{ c }}</option>
+                  {% endif %}
+                {% endfor %}
+            </select>
+        </div> -->
+        <div class="form-group col-3">
+            <label class="text-white" for="style">Style</label>
+            <select class="form-control id="style" name="style">
+                {% for s in styles %}
+                  {% if s == selected_style %}
+                    <option selected value={{ s }}>{{ s }}</option>
+                  {% else %}
+                    <option value={{ s }}>{{ s }}</option>
+                  {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group col-4">
+            <label class="text-white"for="last_name">Last Name</label>
+            <input class="form-control" id="last_name" name="last_name" type="text">
+        </div>
+        <div class="form-group col-2">
+          <input id="view_results_button" class="btn btn-info" type="submit" hidden name="submit" value="View"/>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class='progress-wrapper col-12 col-lg-10 offset-lg-1 px-0'>
+    <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+  </div>
+</div>
+
+<div id="progress-bar-message" class="text-center">Waiting for progress to start...</div>
+
+<div id="celery-result" class="text-center"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+<script>
+  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+  function customResult(resultElement, result) {
+    $( resultElement ).append(
+      $('<p>').text('Rankings are ready for viewing')
+    );
+    $( '#view_results_button' ).removeAttr( "hidden" );
+  }
+
+  function customProgress(progressBarElement, progressBarMessageElement, progress) {
+      progressBarElement.style.backgroundColor = '#68a9ef';
+      progressBarElement.style.width = progress.percent + "%";
+      progressBarMessageElement.innerHTML = 'Processing: ' + progress.current + ' of ' + progress.total;
+    }
+
+  $(function () {
+    CeleryProgressBar.initProgressBar(progressUrl, {
+      onProgress: customProgress,
+      onResult: customResult,
+    })
+  });
+</script>
+
+{% endblock %}

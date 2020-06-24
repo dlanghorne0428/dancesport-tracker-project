@@ -1,7 +1,7 @@
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
-from rankings.models import Dancer, Couple
+from rankings.tasks import calc_teacher_ratings
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
@@ -49,34 +49,9 @@ def calc_teacher_rankings(request):
     teacher_stats = cache.get(cache_key)
 
     if teacher_stats is None:
-
-        teachers = Dancer.objects.filter(dancer_type="PRO")
-        teacher_stats = list()
-        for t in teachers:
-            if Couple.objects.filter(couple_type="PAC").filter(dancer_2=t).count() > 0:
-                stats = {'teacher': t, 'event_count': 0, 'total_points': Decimal(0.00), 'rating': Decimal(0.00), 'index': 0}
-                teacher_stats.append(stats)
-
-        possible_matching_entries = Heat_Entry.objects.filter(couple__couple_type="PAC").filter(heat__style=heat_style)
-        for ts in teacher_stats:
-            entries = possible_matching_entries.filter(couple__dancer_2=ts['teacher'])
-            for e in entries:
-                if e.points is not None:
-                    ts['event_count'] += 1
-                    ts['total_points'] += e.points
-            if ts['event_count'] > 0:
-                ts['total_points'] = round(ts['total_points'], 2)
-                ts['rating'] = round(ts['total_points'] / ts['event_count'], 2)
-
-        teacher_stats.sort(key=itemgetter('rating'), reverse=True)
-        while teacher_stats[-1]['event_count'] == 0:
-            teacher_stats.pop()
-            if len(teacher_stats) == 0:
-                break
-        for i in range(len(teacher_stats)):
-            teacher_stats[i]['index'] = i + 1
-
-        cache.set(cache_key, teacher_stats)
+        # cache miss - calculate rankings and store in cache
+        result = calc_teacher_ratings.delay(heat_style, cache_key)
+        return render(request, 'rankings/calc_teacher_ranking_progress.html', context={'task_id': result.task_id, 'styles': style_labels, 'selected_style': style})
 
     # filter by last name if necessary and paginate the results
     if last_name is not None:
