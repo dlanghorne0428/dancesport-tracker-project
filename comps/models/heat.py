@@ -120,7 +120,7 @@ class Heat(models.Model):
             self.style = Heat.LATIN
         elif "Standard" in s or "Ballroom" in s or "Balroom" in s or "Ballrom" in s:
             self.style = Heat.STANDARD
-        elif "Nightclub" in s or "Night Club" in s or "NightClub" in s or "Niteclub" in s or "Nite Club" in s or "Caribbean" in s:
+        elif "Nightclub" in s or "Night Club" in s or "NightClub" in s or "Niteclub" in s or "Nite Club" in s or "Caribbean" in s or "Club Dance" in s:
             self.style = Heat.NIGHTCLUB
         elif "Country" in s:
             self.style = Heat.COUNTRY
