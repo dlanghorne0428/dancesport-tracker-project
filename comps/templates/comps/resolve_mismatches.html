@@ -27,9 +27,15 @@
           {% endfor %}
         </select>
         <br /><br />
-        <input class="btn btn-primary" type="submit" name="submit" value="Submit">
+        <input class="btn btn-primary" type="submit" name="submit" value="Select">
         <input class="btn btn-primary" type="submit" name="submit" value="Widen Search">
-        <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
+        <span class="dropdown">
+          <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Add</button>
+          <span class="dropdown-menu">
+            <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.dancer.name }}">
+            <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.partner.name }}">
+          </span>
+        </span>
         <input class="btn btn-warning" type="submit" name="submit" value="Delete">
         </form>
       </div>

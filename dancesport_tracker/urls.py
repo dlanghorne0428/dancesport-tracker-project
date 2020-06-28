@@ -35,11 +35,14 @@ urlpatterns = [
     path('dancers/<int:dancer_pk>', views.view_dancer, name='view_dancer'),
     path('dancers/edit/<int:dancer_pk>', views.edit_dancer, name='edit_dancer'),
     path('dancers/create/', views.create_dancer, name='create_dancer'),
+    path('dancers/create/<str:name_str>', views.create_dancer, name='create_dancer'),
     path('couples/', views.all_couples, name="all_couples"),
     path('couples/<int:couple_pk>', views.view_couple, name='view_couple'),
     path('couples/<int:couple_pk>/combine/<int:couple2_pk>', views.combine_couples, name='combine_couples'),
     path('couples/edit/<int:couple_pk>', views.edit_couple, name='edit_couple'),
     path('couples/create/', views.create_couple, name='create_couple'),
+    path('couples/create/<int:position>/<int:dancer_pk>', views.create_couple, name='create_couple'),
+    #path('couples/create/<str:name_str>', views.create_couple, name='create_couple'),
     path('comps/', include('comps.urls')),
 ]
 

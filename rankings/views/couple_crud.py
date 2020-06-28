@@ -14,16 +14,26 @@ from rankings.forms import CoupleForm
 # UD: edit_couple and combine_couples
 ################################################
 
-def create_couple(request):
+def create_couple(request, position= None, dancer_pk=None):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     if request.method == "GET":
-        return render(request, 'rankings/create_couple.html', {'form':CoupleForm()})
+        if position is None:
+            return render(request, 'rankings/create_couple.html', {'form':CoupleForm()})
+        elif position == 1:
+            data = {'dancer_1': dancer_pk,
+                    'couple_type': Couple.PRO_AM_COUPLE}
+        else:  #position == 2:
+            data = {'dancer_2': dancer_pk,
+                    'couple_type': Couple.PRO_AM_COUPLE}
+
+        f = CoupleForm(data)
+        return render(request, 'rankings/create_couple.html', {'form':f})
     else:
         try:
             form = CoupleForm(request.POST)
-            form.save()
-            return redirect('all_couples')
+            couple_instance = form.save()
+            return redirect('view_dancer', couple_instance.dancer_1.id)
         except ValueError:
             return render(request, 'rankings/create_couple.html', {'form':CoupleForm(), 'error': "Invalid data submitted."})
 
@@ -46,10 +56,14 @@ def view_couple(request, couple_pk):
     couple = get_object_or_404(Couple, pk=couple_pk)
     all_comps = Comp.objects.all().order_by('-start_date')
     comps_for_couple = list()
+    comps_with_mismatches = list()
     for comp in all_comps:
         if Heat_Entry.objects.filter(heat__comp=comp).filter(couple=couple).count() > 0:
             comps_for_couple.append(comp)
-    return render(request, 'rankings/view_couple.html', {'couple': couple, 'comps_for_couple': comps_for_couple, 'show_admin_buttons': show_admin_buttons})
+        if comp.process_state in [Comp.HEATS_LOADED, Comp.SCORESHEETS_LOADED]:
+            comps_with_mismatches.append(comp)
+    return render(request, 'rankings/view_couple.html', {'couple': couple, 'comps_for_couple': comps_for_couple,
+                                                         'comps_with_mismatches': comps_with_mismatches,'show_admin_buttons': show_admin_buttons})
 
 
 def combine_couples(request, couple_pk, couple2_pk):
