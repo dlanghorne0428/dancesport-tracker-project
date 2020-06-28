@@ -34,8 +34,12 @@
       {% endfor %}
     </table>
     {% if show_admin_buttons %}
-      <div class="text-center mt-3">
-        <a class="btn btn-primary" href="{% url 'create_couple' %}">Add Couple</a>
+      <div class="text-center mt-3 dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Add Couple</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'create_couple' 1 dancer.id %}">As Dancer 1</a>
+          <a class="dropdown-item" href="{% url 'create_couple' 2 dancer.id %}">As Dancer 2</a>
+        </div>
       </div>
     {% endif %}
   </div>
