@@ -24,6 +24,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         return redirect("comps:comp_heats", comp_id)
     else:
         first_unmatched = unmatched_entries.first()
+        print("Searching level", wider_search)
         if wider_search == 0:
             possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
         elif wider_search == 1:
@@ -41,17 +42,13 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                                                                      'entries_remaining': unmatched_entries.count()})
         else: # POST
             submit = request.POST.get("submit")
-            if submit.startswith("Dancer"):
-                name_str = submit[len("Dancer: "):]
-                return redirect('create_dancer', name_str)
-            elif submit.startswith("Couple"):
-                name_str = submit[len("Couple: "):]
-                return redirect('create_couple', name_str)
+            if submit == "Reset":
+                return redirect('comps:heats', comp_id)
             elif submit == "Widen Search":
                 if wider_search < 2:
                     wider_search += 1
                 return redirect('comps:resolve_mismatches', comp_id = comp_id, wider_search=wider_search)
-            elif submit == "Select":
+            elif submit == "Submit":
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
                     if str(pm_couple) == couple_str:

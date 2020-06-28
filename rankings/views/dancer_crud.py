@@ -1,7 +1,6 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
-from rankings.couple_matching import split_name
 from rankings.models import Dancer, Couple
 from rankings.forms import DancerForm
 from rankings.filters import DancerFilter
@@ -13,26 +12,16 @@ from rankings.filters import DancerFilter
 # UD: edit_dancer
 ################################################
 
-def create_dancer(request, name_str=None):
+def create_dancer(request):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     if request.method == "GET":
-        if name_str is None:
-            return render(request, 'rankings/create_dancer.html', {'form':DancerForm()})
-        else:
-            name_last, name_first, name_middle = split_name(name_str)
-            data = {
-                'name_last': name_last,
-                'name_first': name_first,
-                'name_middle': name_middle
-            }
-            f = DancerForm(data)
-            return render(request, 'rankings/create_dancer.html', {'form':f})
+        return render(request, 'rankings/create_dancer.html', {'form':DancerForm()})
     else:
         try:
             form = DancerForm(request.POST)
-            dancer_instance = form.save()
-            return redirect('view_dancer', dancer_instance.id)
+            form.save()
+            return redirect('all_dancers')
         except ValueError:
             return render(request, 'rankings/create_dancer.html', {'form':DancerForm(), 'error': "Invalid data submitted."})
 
