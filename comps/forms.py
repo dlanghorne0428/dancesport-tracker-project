@@ -10,7 +10,7 @@ from .models.heat import Heat
 class HeatForm(ModelForm):
     class Meta:
         model = Heat
-        fields = ['info', 'heat_number', 'extra', 'style', 'base_value']
+        fields = ['info', 'category', 'heat_number', 'extra', 'style', 'base_value']
 
 from .models.heat_entry import Heat_Entry
 class HeatEntryForm(ModelForm):
