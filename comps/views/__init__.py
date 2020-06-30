@@ -3,6 +3,7 @@ from .combine_heats import *
 from .comp_detail import *
 from .comp_heats import *
 from .create_comp import *
+from .create_heat import *
 from .couples import *
 from .dancers import *
 from .couple_heats import *
