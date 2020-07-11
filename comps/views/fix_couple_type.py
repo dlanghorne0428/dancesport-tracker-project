@@ -4,6 +4,10 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from rankings.models import Couple
 
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def fix_couple_type(request, comp_id, count=0):
     if not request.user.is_superuser:
@@ -34,7 +38,7 @@ def fix_couple_type(request, comp_id, count=0):
                                 couple_str = request.POST.get("couple")
                                 for mc in matching_couples:
                                     if str(mc) == couple_str and mc.couple_type == heat_couple_type:
-                                        print("Found match: ", mc.dancer_1, mc.dancer_2, mc.couple_type)
+                                        logger.debug("Found match: " + str(mc.dancer_1) + ' ' + str(mc.dancer_2) + ' ' + str(mc.couple_type))
                                         e.couple = mc
                                         e.save()
                                         return redirect ('comps:fix_couple_type', comp_id, count)

@@ -7,6 +7,12 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from rankings.forms import CoupleForm
 
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
+
 ################################################
 # CRUD Views for Couple objects
 # C:  create_couple
@@ -95,6 +101,6 @@ def edit_couple(request, couple_pk):
             except ValueError:
                 return render(request, 'rankings/view_couple.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Couple":
-            print("Deleting", str(couple))
+            logger.debug("Deleting " + str(couple))
             couple.delete()
             return redirect ('all_couples')

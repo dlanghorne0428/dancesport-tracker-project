@@ -4,6 +4,11 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from rankings.models import Couple
 
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 def fix_dup_entries(request, comp_id):
     if not request.user.is_superuser:
@@ -17,7 +22,7 @@ def fix_dup_entries(request, comp_id):
             dup_entries = entries.filter(couple=e.couple)
             if dup_entries.count() > 1:
                 if request.method == "GET":
-                    print(heat.category, heat.heat_number, heat.info, e.shirt_number)
+                    logger.debug(str(heat.category) + ' ' + str(heat.heat_number) + ' ' + str(heat.info) + ' ' + str(e.shirt_number))
                     return render(request, 'comps/fix_entries.html', {'heat': heat, 'entries': entries, 'targeted_entry': e})
                 else: #POST
                     submit = request.POST.get("submit")
@@ -26,7 +31,7 @@ def fix_dup_entries(request, comp_id):
                     elif submit == "Delete Entry":
                         e.delete()
                         if len(entries) == 1:
-                            print("deleted only entry in this heat, deleting heat")
+                            logger.info("deleted only entry, deleting heat " + str(heat.id))
                             heat.delete()
                             return redirect ('comps:comp_heats', comp_id)
                         else:

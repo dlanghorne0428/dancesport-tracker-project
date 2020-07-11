@@ -1,3 +1,8 @@
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 def pro_heat_level(info):
     '''Based on the information about this pro heat, return the level.
@@ -48,7 +53,7 @@ def non_pro_heat_level(info, multi_dance=True):
         return 25
     else:
         if multi_dance:
-            print("Unknown level for heat", info)
+            logger.warning("Unknown level for heat " + info)
         # zero values can be found with a filter and fixed
         return 0
         #return 15

@@ -1,9 +1,13 @@
 import time
+import logging
 from datetime import date, datetime, timezone, timedelta
 from django.db import models
 from comps.models.comp import Comp
 from rankings.models import Couple
 from comps.scoresheet.calc_points import pro_heat_level, non_pro_heat_level
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class Heat(models.Model):
@@ -127,9 +131,8 @@ class Heat(models.Model):
         elif "Cabaret" in s or "Theatre" in s or "Theater" in s or "Exhibition" in s:
             self.style = Heat.CABARET
         else:
-            #TODO: ask user?
             if self.multi_dance():
-                print("Unknown style for heat", s)
+                logger.warning("Unknown style for heat", s)
             self.style = Heat.UNKNOWN
 
 
@@ -140,12 +143,12 @@ class Heat(models.Model):
             isoweekday = days_of_week.index(day_of_week_str) + 1
             heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
         except:
-            print(str(self), "Warning in day of week:", day_of_week_str)
+            logger.warning(str(self) + " day of week: " + day_of_week_str)
             heat_date = self.comp.start_date
         try:
             time_of_day = time.strptime(time_str, "%I:%M%p")
         except:
-            print(str(self), "Warning in time of day:", time_str)
+            logger.warning(str(self) + " time of day: " + stime_str)
             time_of_day = time.strptime("0:0", "%H:%M")
         tz = timezone(offset=timedelta(hours=0))  # avoid warnings about naive time, treat all times as UTC
                                                  # could try to get smarter about where comp was located, but why?

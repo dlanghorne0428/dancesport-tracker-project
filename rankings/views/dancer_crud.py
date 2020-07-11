@@ -6,6 +6,12 @@ from rankings.models import Dancer, Couple
 from rankings.forms import DancerForm
 from rankings.filters import DancerFilter
 
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
+
 ################################################
 # CRUD Views for Dancer objects
 # C:  create_dancer
@@ -74,6 +80,6 @@ def edit_dancer(request, dancer_pk):
             except ValueError:
                 return render(request, 'rankings/edit_dancer.html', {'dancer': dancer, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Dancer":
-            print("Deleting", str(dancer))
+            logger.debug("Deleting " + str(dancer))
             dancer.delete()
             return redirect ('all_dancers')
