@@ -1,4 +1,8 @@
+import logging
 from django.db import models
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class Heatlist_Dancer(models.Model):
@@ -26,7 +30,7 @@ class Heatlist_Dancer(models.Model):
             if len(fields) == 2:
                 return fields[1] + ', '  + fields[0]
             else:
-                print("format needed:", orig_name)
+                debug.info("format needed:", orig_name)
                 self.formatting_needed = True
                 return None
         else:
@@ -71,7 +75,7 @@ class Heatlist_Dancer(models.Model):
             else:
                 self.name = new_name
         else:
-            print("Error - invalid code")
+            logger.error("Error - invalid code")
 
 
     def load_from_ndca_premier(self, line):

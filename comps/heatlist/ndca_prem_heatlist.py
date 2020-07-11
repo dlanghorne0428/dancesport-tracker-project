@@ -1,3 +1,4 @@
+import logging
 import requests
 import html
 
@@ -5,6 +6,9 @@ from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class NdcaPremHeatlist(Heatlist):
@@ -116,7 +120,7 @@ class NdcaPremHeatlist(Heatlist):
         if len(fields)  == 2:
             rows = fields[1].split("</tr>")
             if len(rows) <= 1:
-                print("Error parsing heat rows")
+                logger.error("Error parsing heat rows")
             row_index = 0
             partner = None
             # parse all the rows with heat information
@@ -141,7 +145,7 @@ class NdcaPremHeatlist(Heatlist):
                 row_index += 1
 
         else:
-            print("Error parsing heat data")
+            logger.error("Error parsing heat data")
 
 
     ############### OVERRIDDEN METHODS  #######################################################
@@ -156,7 +160,7 @@ class NdcaPremHeatlist(Heatlist):
 
         # open this URL to obtain a list of dancers
         url = "http://www.ndcapremier.com/scripts/competitors.asp?cyi=" + self.comp_id
-        print(url)
+        logger.info(url)
         response = requests.get(url)
         competitors = response.text.split("</a>")
         for c in range(len(competitors) - 1):
@@ -170,7 +174,7 @@ class NdcaPremHeatlist(Heatlist):
                 if d.code != "0":
                     self.dancers.append(d)
             except:
-                print("Invalid competitor", d.name, d.code)
+                logger.error("Invalid competitor " +  d.name + " " + d.code)
 
 
     def load(self, url, heatlist_dancers):

@@ -1,7 +1,12 @@
 import requests
+import logging
+
 from comps.scoresheet.results_processor import Results_Processor
 from comps.scoresheet.calc_points import calc_points
 from comps.models.heatlist_dancer import Heatlist_Dancer
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class NdcaPremEvent():
@@ -94,7 +99,7 @@ class NdcaPremResults(Results_Processor):
                 break
         else:
             # couple not found, create a late entry
-            print("Could not find", partner_name, "and", dancer_name)
+            logger.warning("Late entry: could not find " + partner_name + " and " + dancer_name)
             couple_names = [dancer_name_list[0], partner_name_list[0]]
             self.build_late_entry(self.heat, shirt_number, couple_names, result_str)
 
@@ -126,7 +131,7 @@ class NdcaPremResults(Results_Processor):
                 placement = int(e.result)
                 accum_value = 0
             e.points = calc_points(self.heat.base_value, placement, num_competitors=self.entries_in_event, rounds=self.heat.rounds, accum=int(accum_value))
-            #print(str(e.couple) + " finish " + e.result + " for " + str(e.points) + " points")
+            logger.debug(str(e.couple) + " finish " + e.result + " for " + str(e.points) + " points")
             e.save()
             return e.result
         else:
@@ -226,7 +231,7 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_semifinal:
                 # if we find a semifinal, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
-                    print("Found semi-final")
+                    logger.info("Found semi-final")
                     self.heat.rounds = "S"
                     looking_for_semifinal = False
                     looking_for_final_dance = True
@@ -236,7 +241,7 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_quarterfinal:
                 # if we find a quarter final, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
-                    print("Found quarter-final")
+                    logger.info("Found quarter-final")
                     self.heat.rounds = "Q"
                     looking_for_quarterfinal = False
                     looking_for_final_dance = True
@@ -246,13 +251,13 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_prelim_round:
                 # if we find an earlier round, set the rounds and look for the results of this round
                 if 'class="roundHeader">Third' in l:
-                    print("Found Third Round")
+                    logger.info("Found Third Round")
                     self.heat.rounds = "R3"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">Second' in l:
-                    print("Found Second Round")
+                    logger.info("Found Second Round")
                     if self.heat.rounds != "R3":
                         self.heat.rounds = "R32"
                     else:
@@ -261,7 +266,7 @@ class NdcaPremResults(Results_Processor):
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">First' in l:
-                    print("Found First Round")
+                    logger.info("Found First Round")
                     if self.heat.rounds == "R32":
                         self.heat.rounds = "R321"
                     elif self.heat.rounds == "R2":
@@ -322,7 +327,7 @@ class NdcaPremResults(Results_Processor):
         for late_entry in self.late_entries:
             temp_result = self.update_scoring(late_entry)
             if temp_result is not None:
-                print("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
+                logger.warning("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
                 if event_result is None:
                     event_result = temp_result
 
@@ -338,7 +343,7 @@ class NdcaPremResults(Results_Processor):
                     event_name = entries.first().heat.info
                     for event in self.events:
                         if event.name == event_name:
-                            #print("Processing " + event.name)
+                            logger.debug("Processing " + event.name)
                             event_result = self.process_scoresheet_for_event(entries, event)
                             if event_result is not None:
                                 for entry in entries:
@@ -348,12 +353,12 @@ class NdcaPremResults(Results_Processor):
                             return event_result
 
                     else:
-                        print("ERROR: Could not find event", event_name)
+                        logger.error("Could not find event " + event_name)
                         return None
             else: # all entries have results already
                 return None
         else:
-            print("ERROR: No entries in event", event.name)
+            logger.warning("No entries in event " + event.name)
             return None
 
 
@@ -384,5 +389,5 @@ class NdcaPremResults(Results_Processor):
             for e in event_lines:
                 if len(e) > 0:
                     event = NdcaPremEvent(e)
-                    #print(event.name + " " +  event.id)
+                    logger.debug(event.name + " " +  event.id)
                     self.events.append(event)

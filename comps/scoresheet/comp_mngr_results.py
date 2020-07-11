@@ -1,5 +1,9 @@
+import logging
 import requests
 from comps.scoresheet.results_processor import Results_Processor
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class CompMngrResults(Results_Processor):
@@ -40,7 +44,7 @@ class CompMngrResults(Results_Processor):
         start_pos = line.find("value=") + len("value=") + 1
         end_pos = line.find('"', start_pos)  # add 1 to get past first quote
         value = line[start_pos:end_pos]
-        #print("Key:", key, "Value: ", value)
+        logger.debug("Key: " +  key + " Value: " + value)
         self.payload[key] = value
 
 
@@ -56,7 +60,7 @@ class CompMngrResults(Results_Processor):
             # get the URL from the <form> tag
             if "<form" in line:
                 self.find_url(line)
-                print(self.url)
+                logger.debug(self.url)
             # get payload fields from the input tag
             if "<input" in line:
                 self.find_payload_field(line)
@@ -67,7 +71,7 @@ class CompMngrResults(Results_Processor):
            and returns it to the calling routine for processing.'''
         # build the payload.
         search_string = entry.code + "=" + str(entry.couple.dancer_1)
-        #print(search_string)
+        logger.debug(search_string)
         self.payload["PERSON_LIST"] = search_string
 
         # Make the HTML request as if the button was clicked on the form.
