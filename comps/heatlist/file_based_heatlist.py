@@ -1,13 +1,9 @@
 import json
-import logging
 
 from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 class FileBasedHeatlist(Heatlist):
@@ -33,7 +29,7 @@ class FileBasedHeatlist(Heatlist):
         self.filedata.open(mode="rt")
         line = self.filedata.readline().decode().strip()
         self.comp_name = line.split(":")[1]
-        logger.info(self.comp_name)
+        #print(self.comp_name)
         # read past the line that says Dancers:
         line = self.filedata.readline().decode().strip()
         while True:
@@ -111,7 +107,7 @@ class FileBasedHeatlist(Heatlist):
         try:
             num_heats = int(fields[-1])
         except:
-            logger.error("Dancer: " + str(dancer_index) + " Heat count not found in " + line)
+            print("Error: Dancer:", dancer_index, "Heat count not found in ", line)
             num_heats = -1
             return None
         for index in range(num_heats):
@@ -125,18 +121,18 @@ class FileBasedHeatlist(Heatlist):
                     partner_name = couple_fields[0]
                 p = self.find_dancer(partner_name)
             else:
-                logger.warning("No partner found in " + str(couple_fields))
+                print("No partner found in ", couple_fields)
                 p = None
             if p is not None:
                 if p.name > d.name:
                     self.heat = Heat()
                     self.load_heat(heat_info, comp_ref)
                     h = self.add_heat_to_database(self.heat, comp_ref)
+                    #print(self.heat.category, self.heat.heat_number, d.name, p.name, shirt_number)
                     if h is not None:
-                        logger.debug(self.heat.category + " " + str(self.heat.heat_number) + " " + d.name + " " + p.name + " " + shirt_number)
                         self.build_heat_entry(h, d, p, shirt_number)
 
-        logger.debug("Index: " +  dancer_index +  " Name " +  d.name + " Heats " +  str(num_heats))
+        #print("Index:", dancer_index, "Name", d.name, "Heats", num_heats)
         return d.name
 
 

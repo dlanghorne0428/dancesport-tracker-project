@@ -4,11 +4,6 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from rankings.models import Couple
 
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
 
 def fix_null_entries(request, comp_id):
     if not request.user.is_superuser:
@@ -21,7 +16,7 @@ def fix_null_entries(request, comp_id):
         for e in entries:
             if e.couple is None:
                 if request.method == "GET":
-                    logger.debug(heat.category, heat.heat_number, heat.info, e.shirt_number)
+                    print(heat.category, heat.heat_number, heat.info, e.shirt_number)
                     return render(request, 'comps/fix_entries.html', {'heat': heat, 'entries': entries, 'targeted_entry': e})
                 else: #POST
                     submit = request.POST.get("submit")
@@ -30,7 +25,7 @@ def fix_null_entries(request, comp_id):
                     elif submit == "Delete Entry":
                         e.delete()
                         if len(entries) == 1:
-                            logger.info("deleted only entry, deleting heat " + str(heat.id))
+                            print("deleted only entry in this heat, deleting heat")
                             heat.delete()
                             return redirect ('comps:comp_heats', comp_id)
                         else:

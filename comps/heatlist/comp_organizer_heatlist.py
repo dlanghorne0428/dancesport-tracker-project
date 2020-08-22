@@ -1,4 +1,3 @@
-import logging
 import requests
 
 from django.db.models import Q
@@ -6,9 +5,6 @@ from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 class CompOrgHeatlist(Heatlist):
@@ -86,7 +82,7 @@ class CompOrgHeatlist(Heatlist):
             day_of_week = time_fields[0]
             h.set_time(time_string, day_of_week)
         else:
-            logger.error("Invalid time format " + str(time_fields))
+            print("Invalid time format", time_fields)
 
         start_pos = items[item_index+4].find("-desc") + len("-desc") + 2
         h.info = items[item_index+4][start_pos:]
@@ -102,7 +98,7 @@ class CompOrgHeatlist(Heatlist):
         # split them into a list
         items = heat_data.split("</td>")
         if len(items) <= 1:
-            logger.error("Error parsing heat")
+            print("Error parsing heat")
         item_index = 0
         # process all the list items
         while item_index < len(items):
@@ -112,7 +108,7 @@ class CompOrgHeatlist(Heatlist):
                 if len(p_string) > 0:
                     partner = self.find_dancer(p_string)
                     if partner is None:
-                        logger.warning("No partner found " + p_string)
+                        print("No partner found", p_string)
                     # partner found, go to next item
                     item_index += 1
 
@@ -156,7 +152,7 @@ class CompOrgHeatlist(Heatlist):
 
         # save this string for later use
         self.base_url = url[:end_pos] + "/scripts/heatlist_scrape.php?comp=" + self.comp_name
-        logger.info(self.base_url)
+        #print(self.base_url)
 
         # open the base URL to extract a list of dancers
         response = requests.get(self.base_url)
@@ -170,7 +166,7 @@ class CompOrgHeatlist(Heatlist):
                 if d.code != "0":
                     self.dancers.append(d)
             except:
-                logger.warning("Invalid competitor " + d.name + " " +  d.code)
+                print("Invalid competitor", d.name, d.code)
 
 
     def load(self, url, heatlist_dancers):
@@ -192,7 +188,7 @@ class CompOrgHeatlist(Heatlist):
         # save this string for later use in URL access
         end_pos = url.find("/pages")
         self.base_url = url[:end_pos] + "/scripts/heatlist_scrape.php?comp=" + self.comp_name
-        logger.debug(self.base_url)
+        print(self.base_url)
 
 
     def get_next_dancer(self, dancer_index, comp_ref):

@@ -6,15 +6,9 @@ from comps.models.heat_entry import Heat_Entry
 from rankings.models import Dancer
 from rankings.filters import DancerFilter
 
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
-
 def dancers(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
-    logger.debug(comp.process_state)
+    print(comp.process_state)
     if comp.process_state in [Comp.DANCERS_LOADED, Comp.DANCER_NAMES_FORMATTED, Comp.HEATS_LOADED]:
         return redirect ('comps:resolve_dancers', comp_id)
     else:

@@ -13,10 +13,6 @@ from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 import time
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 @shared_task(bind=True)
@@ -32,7 +28,7 @@ def process_heatlist_task(self, comp_data, heatlist_data):
 
     if comp.heatsheet_file:
         heatlist = FileBasedHeatlist()
-        logger.debug("Using Heatlist File")
+        print("Using Heatlist File")
         heatlist.load(comp.heatsheet_file, heatlist_dancers)
     else:
         if comp.url_data_format == Comp.COMP_MNGR:
@@ -89,14 +85,14 @@ def process_scoresheet_task(self, comp_data):
             if entries_in_event.count() > 0:
                 heat_result = scoresheet.determine_heat_results(entries_in_event)
                 if heat_result is None:
-                    logger.warning("No results for " + str(heat))
+                    print("No results for " + str(heat))
                 else:
                     for e in entries_in_event:
                         if e.result == "DNP":
-                            logger.warning("Deleting " + str(e))
+                            print("Deleting", e)
                             e.delete()
             else:
-                logger.error("No entries in " + str(heat))
+                print("No entries in " + str(heat))
 
             heat_str = heat.get_category_display() + " " + str(heat.heat_number)
             progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)

@@ -3,11 +3,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
 from comps.models.heatlist_dancer import Heatlist_Dancer
 
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
 
 def resolve_dancers(request, comp_id):
     if not request.user.is_superuser:
@@ -24,7 +19,7 @@ def resolve_dancers(request, comp_id):
         for index in range(len(heatlist_dancers)):
             if current_name.name == heatlist_dancers[index].name:
                 page_number = index // 16 + 1
-                logger.debug("Page Number is " + str(page_number))
+                print("Page Number is", page_number)
                 break
         if submit == "Delete":
             current_name.formatting_needed = False
@@ -33,7 +28,7 @@ def resolve_dancers(request, comp_id):
             new_name = request.POST.get("spelling")
             current_name.name = new_name
             current_name.formatting_needed = False
-            logger.debug(current_name.name)
+            print(current_name.name)
             current_name.save()
 
         # find next name to format

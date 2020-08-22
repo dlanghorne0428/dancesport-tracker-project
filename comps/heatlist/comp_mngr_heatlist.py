@@ -1,5 +1,4 @@
 import string
-import logging
 import requests
 
 from django.db.models import Q
@@ -7,9 +6,6 @@ from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.heatlist.heatlist import Heatlist
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 class CompMngrHeatlist(Heatlist):
@@ -65,7 +61,7 @@ class CompMngrHeatlist(Heatlist):
                 day_of_week = time_fields[1]
                 h.set_time(time_string, day_of_week)
             else:
-                logger.error("Invalid time format")
+                print("Invalid time format")
 
             # get the heat info
             h.info = fields[4].split("</td>")[0]
@@ -112,10 +108,10 @@ class CompMngrHeatlist(Heatlist):
             # if we see the line that says "size="", extract the name of the competition
             if 'size=' in line:
                 self.comp_name = self.get_comp_name(line.strip())
-                logger.debug("Comp Name = " + self.comp_name)
+                #print("Comp Name =", self.comp_name)
             # if we see the closing </table> tag, we have found all the dancers
             if "/table" in line:
-                logger.debug("Found " + str(len(self.dancers)) +  " dancers")
+                #print("Found", len(self.dancers), "dancers")
                 found_last_dancer = True
             # once we have found the last dancer, stop after finding the closing </div> tag
             if "/div" in line:
@@ -125,6 +121,7 @@ class CompMngrHeatlist(Heatlist):
     def load(self, url, heatlist_dancers):
         for d in heatlist_dancers:
             self.dancers.append(d)
+            #print(d.name)
 
         # open the file and skip all the lines until last dancer is found
         response = requests.get(url)
@@ -136,7 +133,7 @@ class CompMngrHeatlist(Heatlist):
             self.line_index += 1
             # if we see the closing </table> tag, we have found all the dancers
             if "/table" in line:
-                logger.debug("Found " + str(len(self.dancers)) +  " dancers")
+                #print("Found", len(self.dancers), "dancers")
                 found_last_dancer = True
             # once we have found the last dancer, stop after finding the closing </div> tag
             if "/div" in line:

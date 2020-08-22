@@ -3,11 +3,6 @@ from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
 
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
 
 class Results_Processor():
     '''This is a base class for processing scoresheets.'''
@@ -37,8 +32,8 @@ class Results_Processor():
            followed by a space, then the couple names. This routine
            extracts and returns the shirt number.'''
         fields = competitor.split()
-        if len(fields) != 2:
-            logger.warning("field error" + str(competitor))
+        # if len(fields) != 2:
+        #     print("error", fields)
         return fields[0]
 
 
@@ -72,7 +67,7 @@ class Results_Processor():
         entrant_fields = competitor.split()
         # if there is a space in one of the names, there are more than 2 fields
         if len(entrant_fields) != 2:
-            logger.info("Split on Space Error " + str(entrant_fields))
+            #print("Split on Space Error", entrant_fields)
             i = 0
             # in this case, get past the numeric characters of the shirt number
             # to find the start of the couple names
@@ -87,7 +82,7 @@ class Results_Processor():
             # this is the normal flow, split on the slash to get each name
             couple_names = entrant_fields[1].split("/")
             if len(couple_names) != 2:
-                logger.warning("Split on Slash Error " + str(couple_names))
+                print("Split on Slash Error", couple_names)
         return couple_names
 
 
@@ -123,7 +118,7 @@ class Results_Processor():
         else:
             unmatched_entry = Unmatched_Heat_Entry()
             unmatched_entry.populate(late_entry, dancer, partner)
-            logger.warning("LATE ENTRY" + str(unmatched_entry))
+            print("LATE ENTRY" + str(unmatched_entry))
             unmatched_entry.save()
 
 
@@ -206,7 +201,7 @@ class Results_Processor():
                         temp_result = "Semis"
                         result_index = -2
                         rounds = "S"
-                        logger.warning("Found Semis unexpectedly")
+                        print("Found Semis unexpectedly")
                 elif "<td>" in line:
                     count += 1
 
@@ -255,7 +250,7 @@ class Results_Processor():
                                     elif e.result == temp_result:
                                         break
                                     else:
-                                        logger.warning(str(e.heat.heat_number) + " Same shirt # - new result: " + str(e.couple) + ' ' + e.result + ' ' + temp_result + ' ' + str(accum))
+                                        print(e.heat.heat_number, "Same shirt # - new result:", e.couple, e.result, temp_result, accum)
                                         e.result = temp_result
 
                             # If we get here, we didn't find an entry on the heatsheet that matches
@@ -305,7 +300,7 @@ class Results_Processor():
                                 elif e.result == result_place:
                                     break
                                 else:
-                                    logger.warning(str(e.heat.heat_number) + " Same number - new result: " + str(e.couple.dancer_1) + ' ' + str(e.couple.dancer_2) + ' ' + e.result + ' ' + str(result_place))
+                                    print(e.heat.heat_number, "Same number - new result:", e.couple.dancer_1, e.couple.dancer_2, e.result, result_place)
                                     e.result = str(result_place)
                                     break
 
@@ -314,7 +309,7 @@ class Results_Processor():
                             if len(couple_names) > 1:
                                 self.build_late_entry(e.heat, shirt_number=shirt_number, result=str(result_place), couple_names=couple_names)
                             else:
-                                logger.error("Error in couple " +  str(couple_names))
+                                print("Error in couple", couple_names)
 
                         # reset for next line of the scoresheet
                         count = 0
@@ -329,13 +324,13 @@ class Results_Processor():
                         if e.points is None and len(e.result) > 0:
                             e.points = calc_points(level, int(e.result), num_competitors=self.entries_in_event, rounds=rounds)
                         if e.points is not None:
-                            logger.debug(str(e) + ' ' + e.result + ' ' + str(e.points))
+                            #print(e, e.result, e.points)
                             e.save()
                     for late_entry in self.late_entries:
                         if late_entry.points is None:
                             late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
                             late_entry.save()
-                            logger.warning("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
+                            print("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
                     break;
 
             # We get here if we aren't in any of the "looking" states
@@ -369,7 +364,7 @@ class Results_Processor():
             elif heat_string in line and "QUARTER-FINAL" in line.upper() and ("<p>" in line or "<h3>" in line):
                 temp_result = "quarters"    # indicate which round we are in
                 result_index = -1      # use this to pull values from the points table
-                logger.info("Found Quarterfinals")
+                #print("Found Quarterfinals")
                 # if we haven't seen a prelim round, set rounds indicator to quarters
                 if rounds == "F":
                     rounds = "Q"
@@ -380,7 +375,7 @@ class Results_Processor():
             elif heat_string in line and "SEMI-FINAL" in line.upper() and ("<p>" in line or "<h3>" in line):
                 temp_result = "Semis"
                 result_index = -2
-                logger.info("Found Semifinals")
+                #print("Found Semifinals")
                 if rounds == "F":
                     rounds = "S"
                 heat_info_from_scoresheet = self.get_heat_info(line, heat_string, "Semi-final")
@@ -392,7 +387,7 @@ class Results_Processor():
                 # if this is a single dance event, we can look for the results now
                 if event == "Single Dance":
                     result = "Finals"
-                    logger.info("Found Finals - single dance")
+                    #print("Found Finals - single dance")
                     looking_for_result_column = True
                 else:
                     looking_for_recall_column = True  # this may not be the final on some websites
@@ -400,7 +395,7 @@ class Results_Processor():
             # If this is the Final of a Multi-Dance event, we process the Final Summary
             elif result == "Finals" and "Final summary" in line and ("<p>" in line or "<h3>" in line):
                 if event == "Multi-Dance":
-                    logger.info("Found Finals")
+                    #print("Found Finals")
                     looking_for_result_column = True
 
             elif "Place" in line and "<th>" in line:
@@ -421,11 +416,11 @@ class Results_Processor():
         for e in entries:
             # if we don't already know the result for this entry
             if len(e.result) == 0:
-                logger.debug(str(e) + " Code: " + e.code)
+                #print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
                 loop_count += 1
                 if loop_count > 1:
-                    logger.info("Reading Scoresheet for " + e.heat.get_category_display() + " " + str(e.heat.heat_number) + " " + str(e.couple))
+                    print("Reading Scoresheet for " + e.heat.get_category_display() + " " + str(e.heat.heat_number) + " " + str(e.couple))
                 self.response = self.get_scoresheet(e)
                 result = self.process_response(entries, e)
                 if result is not None:

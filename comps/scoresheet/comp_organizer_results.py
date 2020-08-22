@@ -1,9 +1,5 @@
 import requests
-import logging
 from comps.scoresheet.results_processor import Results_Processor
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 class CompOrgResults(Results_Processor):
@@ -38,13 +34,13 @@ class CompOrgResults(Results_Processor):
                 start_pos += len("getResultsCompetitors('")
                 end_pos = l.find("')", start_pos)
                 self.comp_name = l[start_pos:end_pos]
-                logger.debug(self.comp_name)
+                #print(self.comp_name)
                 break
 
         # build a base_url that can be used to grab results for individual dancers
         end_pos = url.find("/pages")
         self.base_url = url[:end_pos] + "/co/scripts/results_scrape2.php?comp=" + self.comp_name
-        logger.info(self.base_url)
+        print(self.base_url)
 
 
     def get_scoresheet(self, entry):
@@ -52,7 +48,7 @@ class CompOrgResults(Results_Processor):
            and returns it to the calling routine for processing.'''
         # build the request field based on the numeric code found in the entry
         url = self.base_url + "&id=" + entry.code
-        logger.debug("Requesting " + url)
+        #print("Requesting", url)
 
         # Make the HTML request and the data is returned as text.
         return requests.get(url)

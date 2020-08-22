@@ -8,11 +8,6 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from operator import itemgetter
 
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
 
 def calc_rankings(request):
     couple_types = Couple.COUPLE_TYPE_CHOICES
@@ -65,7 +60,7 @@ def calc_rankings(request):
         return redirect(url_string)
 
     # try to read the ranking data from the cache
-    logger.debug("looking for " + cache_key)
+    print("looking for " + cache_key)
     couple_stats = cache.get(cache_key)
 
     if couple_stats is None:

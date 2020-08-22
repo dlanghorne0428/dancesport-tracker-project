@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import sys
 import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -91,8 +90,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'dst_db',
-        'USER': 'dlanghorne',  # 'david'
-        'PASSWORD': 'Elephant1234', # 'sag48602' 
+        'USER': 'dlanghorne',
+        'PASSWORD': 'Elephant1234',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -118,66 +117,36 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # caches for production
-servers = os.environ['MEMCACHIER_SERVERS']
-username = os.environ['MEMCACHIER_USERNAME']
-password = os.environ['MEMCACHIER_PASSWORD']
-
-CACHES = {
-    'default': {
-        # Use django-bmemcached
-        'BACKEND': 'django_bmemcached.memcached.BMemcached',
-
-        # TIMEOUT is not the connection timeout! It's the default expiration
-        # timeout that should be applied to keys! Setting it to `None`
-        # disables expiration.
-        'TIMEOUT': 15*60,  # was None
-
-        'LOCATION': servers,  # for production
-
-        'OPTIONS': {
-            'username': username,
-            'password': password,
-        }
-    }
-}
-
-#caches for local development
+# servers = os.environ['MEMCACHIER_SERVERS']
+# username = os.environ['MEMCACHIER_USERNAME']
+# password = os.environ['MEMCACHIER_PASSWORD']
+#
 # CACHES = {
-#   'default': {
-#       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#       'TIMEOUT': 15*60,
-#       'LOCATION': '127.0.0.1:11211',
-#   }
+#     'default': {
+#         # Use django-bmemcached
+#         'BACKEND': 'django_bmemcached.memcached.BMemcached',
+#
+#         # TIMEOUT is not the connection timeout! It's the default expiration
+#         # timeout that should be applied to keys! Setting it to `None`
+#         # disables expiration.
+#         'TIMEOUT': 15*60,  # was None
+#
+#         'LOCATION': servers,  # for production
+#
+#         'OPTIONS': {
+#             'username': username,
+#             'password': password,
+#         }
+#     }
 # }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'simple': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'strm':  sys.stdout,
-            'formatter': 'simple'
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-            'propagate': False,
-        },
-    },
+#caches for local development
+CACHES = {
+  'default': {
+      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      'TIMEOUT': 15*60,
+      'LOCATION': '127.0.0.1:11211',
+  }
 }
 
 # Internationalization

@@ -3,11 +3,6 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from comps.forms import HeatForm
 
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
 
 def edit_heat(request, heat_id):
     if not request.user.is_superuser:
@@ -28,6 +23,6 @@ def edit_heat(request, heat_id):
             except ValueError:
                 return render(request, 'comps/edit_heat.html', {'heat': heat, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Heat":
-            logger.debug("Deleting " + str(heat) + ' ' + heat.info)
+            print("Deleting", heat, heat.info)
             heat.delete()
             return redirect ('comps:comp_heats', comp_id)

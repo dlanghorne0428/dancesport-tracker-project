@@ -7,11 +7,6 @@ from comps.models.heatlist_dancer import Heatlist_Dancer
 from rankings.models import Couple
 from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match
 
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
 
 def resolve_mismatches(request, comp_id, wider_search=0):
     if not request.user.is_superuser:
@@ -65,7 +60,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                             # update the heat entry with the selected couple
                             e.entry.couple = pm_couple
                             e.entry.code = pm_code
-                            logger.debug(str(e.entry))
+                            #print(e.entry)
                             e.entry.save()
                             e.delete()
                         break
