@@ -34,12 +34,24 @@
       {% endfor %}
     </table>
     {% if show_admin_buttons %}
-      <div class="text-center mt-3 dropdown">
-        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Add Couple</button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="{% url 'create_couple' 1 dancer.id %}">As Dancer 1</a>
-          <a class="dropdown-item" href="{% url 'create_couple' 2 dancer.id %}">As Dancer 2</a>
-        </div>
+      <div class="text-center my-3">
+        <span class="dropdown">
+          <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Add Couple</button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'create_couple' 1 dancer.id %}">As Dancer 1</a>
+            <a class="dropdown-item" href="{% url 'create_couple' 2 dancer.id %}">As Dancer 2</a>
+          </div>
+        </span>
+        {% if comps_with_mismatches %}
+          <span class="dropdown">
+            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Go to Comp</button>
+            <span class="dropdown-menu">
+              {% for comp in comps_with_mismatches %}
+                <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id%}">{{comp.title}}</a>
+              {% endfor %}
+            </span>
+          </span>
+        {% endif %}
       </div>
     {% endif %}
   </div>

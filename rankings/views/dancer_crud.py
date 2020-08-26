@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from comps.models.comp import Comp
 from rankings.couple_matching import split_name
 from rankings.models import Dancer, Couple
 from rankings.forms import DancerForm
@@ -51,10 +52,16 @@ def all_dancers(request):
 def view_dancer(request, dancer_pk):
     # only show add and edit buttons for valid users
     show_admin_buttons = request.user.is_superuser
+    all_comps = Comp.objects.all().order_by('-start_date')
+    comps_with_mismatches = list()
+    for comp in all_comps:
+        if comp.process_state in [Comp.HEATS_LOADED, Comp.SCORESHEETS_LOADED]:
+            comps_with_mismatches.append(comp)
 
     dancer = get_object_or_404(Dancer, pk=dancer_pk)
     couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1')
-    return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'couples': couples, 'show_admin_buttons': show_admin_buttons})
+    return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'couples': couples,
+                                                         'comps_with_mismatches': comps_with_mismatches, 'show_admin_buttons': show_admin_buttons})
 
 
 def edit_dancer(request, dancer_pk):
