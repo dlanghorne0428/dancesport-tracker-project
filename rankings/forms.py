@@ -8,8 +8,8 @@ class DancerForm(ModelForm):
         fields = ['name_first', 'name_middle', 'name_last', 'dancer_type']
 
 class CoupleForm(ModelForm):
-    dancer_1 = ModelChoiceField(queryset=Dancer.objects.order_by('name_last'))
-    dancer_2 = ModelChoiceField(queryset=Dancer.objects.order_by('name_last'))
+    dancer_1 = ModelChoiceField(queryset=Dancer.objects.all())
+    dancer_2 = ModelChoiceField(queryset=Dancer.objects.all())
     # couple_type_field = models.CharField(max_length = 3, choices=Couple.COUPLE_TYPE_CHOICES)
     class Meta:
         model = Couple
