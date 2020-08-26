@@ -77,34 +77,37 @@ def find_couple_first_letter_match(dancer, partner, dancer_only=True):
     return partial_matching_couples
 
 
-def find_couple_exact_match(heatlist_dancer, heatlist_partner, couple_type):
+def find_dancer_exact_match(heatlist_dancer):
     dancer_last, dancer_first, dancer_middle = split_name(heatlist_dancer.name)
-    partner_last, partner_first, partner_middle = split_name(heatlist_partner.name)
     try:
         dancer = Dancer.objects.get(name_last = dancer_last, name_first = dancer_first, name_middle = dancer_middle)
+        return dancer
     except:
-        return (None, None)
-    try:
-        partner = Dancer.objects.get(name_last = partner_last, name_first = partner_first, name_middle = partner_middle)
-    except:
-        return (None, None)
+        return None
 
-    couples = Couple.objects.filter(dancer_1 = dancer, dancer_2 = partner, couple_type = couple_type)
-    matches = couples.count()
-    if matches > 1:
-        print("Error: multiple matches for", heatlist_dancer.name, "and", heatlist_partner.name)
-        print(matches)
+
+def find_couple_exact_match(heatlist_dancer, heatlist_partner, couple_type):
+    dancer = find_dancer_exact_match(heatlist_dancer)
+    partner = find_dancer_exact_match(heatlist_partner)
+    if dancer is None or partner is None:
         return (None, None)
-    elif matches == 1:
-        return (couples.first(), heatlist_dancer.code)
     else:
-        couples = Couple.objects.filter(dancer_2 = dancer, dancer_1 = partner, couple_type = couple_type)
+        couples = Couple.objects.filter(dancer_1 = dancer, dancer_2 = partner, couple_type = couple_type)
         matches = couples.count()
         if matches > 1:
             print("Error: multiple matches for", heatlist_dancer.name, "and", heatlist_partner.name)
             print(matches)
             return (None, None)
         elif matches == 1:
-            return (couples.first(), heatlist_partner.code)
+            return (couples.first(), heatlist_dancer.code)
         else:
-            return (None, None)
+            couples = Couple.objects.filter(dancer_2 = dancer, dancer_1 = partner, couple_type = couple_type)
+            matches = couples.count()
+            if matches > 1:
+                print("Error: multiple matches for", heatlist_dancer.name, "and", heatlist_partner.name)
+                print(matches)
+                return (None, None)
+            elif matches == 1:
+                return (couples.first(), heatlist_partner.code)
+            else:
+                return (None, None)
