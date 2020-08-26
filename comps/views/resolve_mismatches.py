@@ -35,6 +35,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
             possible_couples = list()
             for i in range(len(possible_matches)):
                 possible_couples.append(possible_matches[i][0])
+            possible_couples.sort()
             return render(request, "comps/resolve_mismatches.html", {'comp':comp, 'first_entry': first_unmatched,
                                                                      'possible_matches': possible_couples,
                                                                      'couple_type': first_unmatched.entry.heat.couple_type(),
