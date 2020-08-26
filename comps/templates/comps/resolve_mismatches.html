@@ -36,6 +36,17 @@
             <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.partner.name }}">
           </span>
         </span>
+        <span class="dropdown">
+          <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Go</button>
+          <span class="dropdown-menu">
+            {% if dancer_match %}
+              <a class="dropdown-item" href="{% url 'view_dancer' dancer_match.id %}">Dancer: {{ first_entry.dancer.name }}</a>
+            {% endif %}
+            {% if partner_match %}
+              <a class="dropdown-item" href="{% url 'view_dancer' partner_match.id %}">Dancer: {{ first_entry.partner.name }}</a>
+            {% endif %}
+          </span>
+        </span>
         <input class="btn btn-warning" type="submit" name="submit" value="Delete">
         </form>
       </div>

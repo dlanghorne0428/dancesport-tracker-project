@@ -5,7 +5,7 @@ from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from rankings.models import Couple
-from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match
+from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match
 
 
 def resolve_mismatches(request, comp_id, wider_search=0):
@@ -24,6 +24,8 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         return redirect("comps:comp_heats", comp_id)
     else:
         first_unmatched = unmatched_entries.first()
+        dancer_match = find_dancer_exact_match(first_unmatched.dancer)
+        partner_match = find_dancer_exact_match(first_unmatched.partner)
         if wider_search == 0:
             possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
         elif wider_search == 1:
@@ -37,6 +39,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 possible_couples.append(possible_matches[i][0])
             possible_couples.sort()
             return render(request, "comps/resolve_mismatches.html", {'comp':comp, 'first_entry': first_unmatched,
+                                                                     'dancer_match': dancer_match, 'partner_match': partner_match,
                                                                      'possible_matches': possible_couples,
                                                                      'couple_type': first_unmatched.entry.heat.couple_type(),
                                                                      'entries_remaining': unmatched_entries.count()})
