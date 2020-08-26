@@ -28,6 +28,12 @@ class Dancer(models.Model):
         else:
             return self.name_last + ", " + self.name_first
 
+    def __lt__(self, d):
+        if self.name_last == d.name_last:
+            return self.name_first < d.name_first
+        else:
+            return self.name_last < d.name_last
+
 
 class Couple(models.Model):
     dancer_1 = models.ForeignKey('Dancer', on_delete=models.CASCADE, related_name="leader_or_student")
@@ -54,3 +60,9 @@ class Couple(models.Model):
 
     def __str__(self):
         return self.dancer_1.__str__() + " and " + self.dancer_2.__str__()
+
+    def __lt__(self, c):
+        if self.dancer_1 == c.dancer_1:
+            return self.dancer_2 < c.dancer_2
+        else:
+            return self.dancer_1 < c.dancer_1

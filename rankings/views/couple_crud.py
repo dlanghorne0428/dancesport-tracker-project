@@ -42,7 +42,7 @@ def all_couples(request):
     # only show add button for valid users
     show_admin_buttons = request.user.is_superuser
 
-    couples = Couple.objects.order_by("dancer_1__name_last")
+    couples = Couple.objects.order_by("dancer_1")
     paginator = Paginator(couples, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

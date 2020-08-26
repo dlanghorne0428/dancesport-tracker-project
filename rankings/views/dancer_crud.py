@@ -42,7 +42,7 @@ def all_dancers(request):
     # only show add and edit buttons for valid users
     show_admin_buttons = request.user.is_superuser
 
-    f = DancerFilter(request.GET, queryset=Dancer.objects.order_by('name_last'))
+    f = DancerFilter(request.GET, queryset=Dancer.objects.all())
     paginator = Paginator(f.qs, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
