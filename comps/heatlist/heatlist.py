@@ -45,16 +45,16 @@ class Heatlist():
 
 
     def add_heat_to_database(self, heat, comp_ref):
-        if heat.category == Heat.PRO_HEAT or heat.multi_dance():
-            heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number, info=heat.info)
-            if heats_in_database.count() > 0:
-                h = heats_in_database.first()
-            else:
-                h = heat
-                h.save()   # save the heat into the database
-            return h
-        else: # not a heat that we care about
-            return None
+        #if heat.category == Heat.PRO_HEAT or heat.multi_dance():
+        heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number, info=heat.info)
+        if heats_in_database.count() > 0:
+            h = heats_in_database.first()
+        else:
+            h = heat
+            h.save()   # save the heat into the database
+        return h
+        #else: # not a heat that we care about
+        #    return None
 
 
     def build_heat_entry(self, heat, dancer, partner, shirt_number):
