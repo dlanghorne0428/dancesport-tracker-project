@@ -14,14 +14,19 @@
 </div>
 
 <div class="row">
+
   <div class="col-sm-12 col-md-6 col-lg-4">
     <div class="card border-primary text-center">
       <!-- <img src="..." class="card-img-top" alt="..."> -->
       <div class="card-body">
-        <h5 class="card-title">Dancers</h5>
-        <p class="card-text">Find a dancer by name and view their partnerships.</p>
-        <p class="card-text">View the competition results for each partnership.</p>
-        <a href="{% url 'all_dancers' %}" class="btn btn-primary">Go</a>
+        <h5 class="card-title">Competitions</h5>
+        <h6 class="card-text">Current Competitions</h6>
+        {% for comp in current_comps %}
+          <a class="card-text" href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a>
+        {% endfor %}
+        <h6 class="card-text mt-2">Find a previous competition.</h6>
+        <p class="card-text">View the dancers, couples, heatlists, and results of all multi-dance heats.</p>
+        <a href="{% url 'comps:all_comps' %}" class="btn btn-primary">Go</a>
       </div>
     </div>
   </div>
@@ -30,10 +35,10 @@
     <div class="card border-primary text-center">
       <!-- <img src="..." class="card-img-top" alt="..."> -->
       <div class="card-body">
-        <h5 class="card-title">Competitions</h5>
-        <p class="card-text">Find a competition.</p>
-        <p class="card-text">View the dancers, couples, and results of all multi-dance heats.</p>
-        <a href="{% url 'comps:all_comps' %}" class="btn btn-primary">Go</a>
+        <h5 class="card-title">Dancers</h5>
+        <p class="card-text">Find a dancer by name and view their partnerships.</p>
+        <p class="card-text">View the competition results for each partnership.</p>
+        <a href="{% url 'all_dancers' %}" class="btn btn-primary">Go</a>
       </div>
     </div>
   </div>
