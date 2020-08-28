@@ -20,10 +20,12 @@
       <!-- <img src="..." class="card-img-top" alt="..."> -->
       <div class="card-body">
         <h5 class="card-title">Competitions</h5>
-        <h6 class="card-text">Current Competitions</h6>
-        {% for comp in current_comps %}
-          <a class="card-text" href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a>
-        {% endfor %}
+        {% if current_comps %}
+          <h6 class="card-text">Current Competitions</h6>
+          {% for comp in current_comps %}
+            <a class="card-text" href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a>
+          {% endfor %}
+        {% endif %}
         <h6 class="card-text mt-2">Find a previous competition.</h6>
         <p class="card-text">View the dancers, couples, heatlists, and results of all multi-dance heats.</p>
         <a href="{% url 'comps:all_comps' %}" class="btn btn-primary">Go</a>
