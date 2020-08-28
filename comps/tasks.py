@@ -81,21 +81,25 @@ def process_scoresheet_task(self, comp_data):
 
         for heat in heats_to_process:
             index += 1
-            entries_in_event = Heat_Entry.objects.filter(heat=heat)
-            if entries_in_event.count() > 0:
-                heat_result = scoresheet.determine_heat_results(entries_in_event)
-                if heat_result is None:
-                    print("No results for " + str(heat))
+            if heat.category == Heat.PRO_HEAT or heat.multi_dance():
+                entries_in_event = Heat_Entry.objects.filter(heat=heat)
+                if entries_in_event.count() > 0:
+                    heat_result = scoresheet.determine_heat_results(entries_in_event)
+                    if heat_result is None:
+                        print("No results for " + str(heat))
+                    else:
+                        for e in entries_in_event:
+                            if e.result == "DNP":
+                                print("Deleting", e)
+                                e.delete()
                 else:
-                    for e in entries_in_event:
-                        if e.result == "DNP":
-                            print("Deleting", e)
-                            e.delete()
-            else:
-                print("No entries in " + str(heat))
+                    print("No entries in " + str(heat))
 
-            heat_str = heat.get_category_display() + " " + str(heat.heat_number)
-            progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)
+                heat_str = heat.get_category_display() + " " + str(heat.heat_number)
+                progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)
+
+            else:  # don't score freestyles, and delete those heats
+                heat.delete()
 
         unmatched_entries = len(scoresheet.late_entries)
         result = [index, unmatched_entries]
