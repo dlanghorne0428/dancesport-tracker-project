@@ -34,6 +34,9 @@ class Dancer(models.Model):
         else:
             return self.name_last < d.name_last
 
+    class Meta:
+        ordering = ["name_last", "name_first"]
+
 
 class Couple(models.Model):
     dancer_1 = models.ForeignKey('Dancer', on_delete=models.CASCADE, related_name="leader_or_student")
