@@ -45,4 +45,7 @@ class Heat_Entry(models.Model):
 
 
     def __str__(self):
-        return str(self.heat) + ": " + str(self.couple)
+        if self.couple is None:
+            return str(self.heat)
+        else:
+            return str(self.heat) + ": " + str(self.couple)

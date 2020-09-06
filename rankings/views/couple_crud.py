@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
-from rankings.models import Couple
+from rankings.models import Couple, Dancer
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
@@ -14,24 +14,20 @@ from rankings.forms import CoupleForm
 # UD: edit_couple and combine_couples
 ################################################
 
-def create_couple(request, position= None, dancer_pk=None):
+def create_couple(request, couple_type = None, dancer_pk=None, dancer_position= None):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     if request.method == "GET":
-        if position is None:
-            return render(request, 'rankings/create_couple.html', {'form':CoupleForm()})
-        elif position == 1:
-            data = {'dancer_1': dancer_pk,
-                    'couple_type': Couple.PRO_AM_COUPLE}
-        else:  #position == 2:
-            data = {'dancer_2': dancer_pk,
-                    'couple_type': Couple.PRO_AM_COUPLE}
+        if dancer_position is None:
+            f = CoupleForm()
+        else:
+            dancer = get_object_or_404(Dancer, pk=dancer_pk)
+            f = CoupleForm(couple_type=couple_type, dancer_position= dancer_position, dancer_id = dancer_pk, dancer_type = dancer.dancer_type)
 
-        f = CoupleForm(data)
         return render(request, 'rankings/create_couple.html', {'form':f})
     else:
         try:
-            form = CoupleForm(request.POST)
+            form = CoupleForm(data=request.POST)
             couple_instance = form.save()
             return redirect('view_dancer', couple_instance.dancer_1.id)
         except ValueError:
@@ -89,7 +85,7 @@ def edit_couple(request, couple_pk):
         submit = request.POST.get("submit")
         if submit == "Save":
             try:
-                form = CoupleForm(request.POST, instance=couple)
+                form = CoupleForm(data=request.POST, instance=couple)
                 form.save()
                 return redirect('all_couples')
             except ValueError:
