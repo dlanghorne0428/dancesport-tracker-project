@@ -14,3 +14,55 @@ class CoupleForm(ModelForm):
     class Meta:
         model = Couple
         fields = ['dancer_1', 'dancer_2', 'couple_type']
+
+    def __init__(self, couple_type=None, dancer_position = None, dancer_id = None, dancer_type = None, **kwargs):
+        super(CoupleForm, self).__init__(**kwargs)
+        if couple_type is None:
+            pass
+        else:
+            self.fields['couple_type'].initial = couple_type
+            if couple_type == Couple.PRO_COUPLE:
+                if dancer_position == 1:
+                    self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    self.fields['dancer_1'].initial = dancer_id
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                else:
+                    self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    self.fields['dancer_2'].initial = dancer_id
+            elif couple_type == Couple.PRO_AM_COUPLE:
+                if dancer_position == 1:
+                    self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
+                    self.fields['dancer_1'].initial = dancer_id
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                else:
+                    self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    self.fields['dancer_2'].initial = dancer_id
+            elif couple_type == Couple.AMATEUR_COUPLE:
+                if dancer_position == 1:
+                    self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
+                    self.fields['dancer_1'].initial = dancer_id
+                    self.fields['dancer_2'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
+                else:
+                    self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
+                    self.fields['dancer_2'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
+                    self.fields['dancer_2'].initial = dancer_id
+            elif couple_type == Couple.JR_PRO_AM_COUPLE:
+                if dancer_position == 1:
+                    self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
+                    self.fields['dancer_1'].initial = dancer_id
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                else:
+                    self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    self.fields['dancer_2'].initial = dancer_id
+            else:  #couple_type == Couple.JUNIOR_AMATEUR
+                if dancer_position == 1:
+                    self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
+                    self.fields['dancer_1'].initial = dancer_id
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
+                else:
+                    self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
+                    self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
+                    self.fields['dancer_2'].initial = dancer_id
