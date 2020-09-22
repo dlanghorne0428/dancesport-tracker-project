@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-4 offset-md-4">
-    <h2 class="text-centered">Create Competition</h2>
+  <div class="col-12">
+    <h2 class="text-center">Create Competition</h2>
 
-    <h4 class="text-centered">{{ error }}</h4>
+    <h4 class="text-center">{{ error }}</h4>
 
-    <form method="POST">
+    <form class="text-center" method="POST">
       {% csrf_token %}
       {{ form.as_p }}
       <button class="btn btn-primary" type="submit">Create</button>

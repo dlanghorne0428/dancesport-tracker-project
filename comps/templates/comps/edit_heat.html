@@ -14,7 +14,7 @@
     <h3 class="text-center">Edit Heat Data</h3>
     <p>{{ error }}</p>
 
-    <form method="POST">
+    <form class="text-center" method="POST">
       {% csrf_token %}
       {{ form.as_p }}
       <input class="btn btn-primary" type="submit" name="submit" value = "Save"/>
