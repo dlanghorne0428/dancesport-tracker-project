@@ -22,9 +22,11 @@
         <h5 class="card-title">Competitions</h5>
         {% if current_comps %}
           <h6 class="card-text">Current Competitions</h6>
-          {% for comp in current_comps %}
-            <a class="card-text" href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a>
-          {% endfor %}
+          <ul class="list-group">
+            {% for comp in current_comps %}
+              <li class="list-group-item"><a href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></li>
+            {% endfor %}
+          </ul>
         {% endif %}
         <h6 class="card-text mt-2">Find a previous competition.</h6>
         <p class="card-text">View the dancers, couples, heatlists, and results of all multi-dance heats.</p>
