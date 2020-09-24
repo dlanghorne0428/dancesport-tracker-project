@@ -39,14 +39,14 @@
           <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Add Couple</button>
           <div class="dropdown-menu">
             {% if dancer.dancer_type == 'PRO' %}
-              <a class="dropdown-item" href="{% url 'create_couple' 'PRC' dancer.id 1 %}">PRO: As Dancer 1</a>
-              <a class="dropdown-item" href="{% url 'create_couple' 'PRC' dancer.id 2 %}">PRO: As Dancer 2</a>
               <a class="dropdown-item" href="{% url 'create_couple' 'PAC' dancer.id 2 %}">Pro-Am Couple</a>
               <a class="dropdown-item" href="{% url 'create_couple' 'JPC' dancer.id 2 %}">Jr. Pro-Am Couple</a>
+              <a class="dropdown-item" href="{% url 'create_couple' 'PRC' dancer.id 1 %}">PRO: As Dancer 1</a>
+              <a class="dropdown-item" href="{% url 'create_couple' 'PRC' dancer.id 2 %}">PRO: As Dancer 2</a>
             {% elif dancer.dancer_type == 'AM' %}
-              <a class="dropdown-item" href="{% url 'create_couple' 'AMC' dancer.id 1 %}">As Dancer 1</a>
-              <a class="dropdown-item" href="{% url 'create_couple' 'AMC' dancer.id 2 %}">As Dancer 2</a>
               <a class="dropdown-item" href="{% url 'create_couple' 'PAC' dancer.id 1 %}">Pro-Am Couple</a>
+              <a class="dropdown-item" href="{% url 'create_couple' 'AMC' dancer.id 1 %}">Amateur: As Dancer 1</a>
+              <a class="dropdown-item" href="{% url 'create_couple' 'AMC' dancer.id 2 %}">Amateur: As Dancer 2</a>
             {% else %}  <!-- Junior -->
               <a class="dropdown-item" href="{% url 'create_couple' 'JAC' dancer.id 1 %}">JR-JR: As Dancer 1</a>
               <a class="dropdown-item" href="{% url 'create_couple' 'JAC' dancer.id 2 %}">JR-JR: As Dancer 2</a>
