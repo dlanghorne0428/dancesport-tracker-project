@@ -4,6 +4,11 @@
 
 <h2 class='text-center'>{{ dancer }}</h2>
 <h3 class='text-center'>Dancer Category: {{ dancer.get_dancer_type_display }}</h3>
+{% if show_admin_buttons %}
+  <div class="text-center">
+    <a class="btn btn-secondary btn-sm" href="{% url 'edit_dancer' dancer.id %}">Edit Category</a>
+  </div>
+{% endif %}
 <br />
 
 <div class="row">
