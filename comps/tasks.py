@@ -90,7 +90,7 @@ def process_scoresheet_task(self, comp_data):
                     else:
                         for e in entries_in_event:
                             if e.result == "DNP":
-                                print("Deleting", e)
+                                print("Deleting " + str(e))
                                 e.delete()
                 else:
                     print("No entries in " + str(heat))

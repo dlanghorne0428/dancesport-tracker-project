@@ -118,7 +118,7 @@ class Results_Processor():
         else:
             unmatched_entry = Unmatched_Heat_Entry()
             unmatched_entry.populate(late_entry, dancer, partner)
-            print("LATE ENTRY" + str(unmatched_entry))
+            print("LATE ENTRY " + str(unmatched_entry))
             unmatched_entry.save()
 
 
@@ -330,7 +330,7 @@ class Results_Processor():
                         if late_entry.points is None:
                             late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
                             late_entry.save()
-                            print("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
+                            #print("LATE ENTRY SCORING: " + late_entry.result + " " + str(late_entry.points))
                     break;
 
             # We get here if we aren't in any of the "looking" states
@@ -419,8 +419,8 @@ class Results_Processor():
                 #print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
                 loop_count += 1
-                if loop_count > 1:
-                    print("Reading Scoresheet for " + e.heat.get_category_display() + " " + str(e.heat.heat_number) + " " + str(e.couple))
+                # if loop_count > 1:
+                #     print("Reading Scoresheet for " + e.heat.get_category_display() + " " + str(e.heat.heat_number) + " " + str(e.couple))
                 self.response = self.get_scoresheet(e)
                 result = self.process_response(entries, e)
                 if result is not None:

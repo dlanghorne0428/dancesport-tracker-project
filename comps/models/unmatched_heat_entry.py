@@ -21,4 +21,4 @@ class Unmatched_Heat_Entry(models.Model):
 
 
     def __str__(self):
-        return str(self.entry) + "Names: "+ str(self.dancer) + " and  " + str(self.partner)
+        return str(self.entry) + " Names: "+ str(self.dancer) + " and  " + str(self.partner)
