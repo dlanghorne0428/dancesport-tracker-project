@@ -120,7 +120,10 @@ class CompOrgHeatlist(Heatlist):
                         # build heat object, which takes up the next five items
                         heat = Heat()
                         self.load_heat(heat, items, item_index, comp_ref)
-                        h = self.add_heat_to_database(heat, comp_ref)
+                        if "Solo Star" in heat.info:
+                            h = None
+                        else:
+                            h = self.add_heat_to_database(heat, comp_ref)
                         if h is not None:
                             start_pos = items[item_index+3].find("-numb") + len("-numb") + 2
                             shirt_number = items[item_index+3][start_pos:]
@@ -152,7 +155,7 @@ class CompOrgHeatlist(Heatlist):
 
         # save this string for later use
         self.base_url = url[:end_pos] + "/scripts/heatlist_scrape.php?comp=" + self.comp_name
-        #print(self.base_url)
+        print(self.base_url)
 
         # open the base URL to extract a list of dancers
         response = requests.get(self.base_url)

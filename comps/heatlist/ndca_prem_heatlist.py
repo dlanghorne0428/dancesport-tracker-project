@@ -132,7 +132,10 @@ class NdcaPremHeatlist(Heatlist):
                             # if this row is the start of a new heat, create a new heat object
                             heat = Heat()
                             self.load_heat(heat, rows[row_index], comp_ref)
-                            h = self.add_heat_to_database(heat, comp_ref)
+                            if "Solo Star" in heat.info:
+                                h = None
+                            else:
+                                h = self.add_heat_to_database(heat, comp_ref)
                             if h is not None:
                                 # this format doesn't store shirt numbers, use code instead
                                 self.build_heat_entry(h, dancer, partner, shirt_number=dancer.code)

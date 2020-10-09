@@ -145,6 +145,8 @@ class CompMngrHeatlist(Heatlist):
         # turn that heat info into an object and add it to the database
         heat = Heat()
         self.load_heat(heat, category_str, line, comp_ref)
+        if "Solo Star" in heat.info:
+            return None
         return self.add_heat_to_database(heat, comp_ref)
 
 
