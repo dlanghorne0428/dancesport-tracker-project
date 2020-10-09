@@ -55,19 +55,25 @@ def resolve_mismatches(request, comp_id, wider_search=0):
             elif submit == "Select":
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
-                    if str(pm_couple) == couple_str:
+                    if str(pm_couple) == couple_str and pm_couple.couple_type == first_unmatched.entry.heat.couple_type():
                         similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
                         for e in similar_unmatched:
-                            # update the heat entry with the selected couple
-                            e.entry.couple = pm_couple
-                            e.entry.code = pm_code
-                            #print(e.entry)
-                            e.entry.save()
-                            e.delete()
+                            if pm_couple.couple_type == e.entry.heat.couple_type():
+                                # update the heat entry with the selected couple
+                                e.entry.couple = pm_couple
+                                e.entry.code = pm_code
+                                #print(e.entry)
+                                e.entry.save()
+                                e.delete()
                         break
                 return redirect("comps:heat", first_unmatched.entry.heat.id)
             elif submit == "Delete":
                 # deleting the heat entry that this unmatched entry points to will also delete all the unmatched entries
                 # that point to the same entry.
-                first_unmatched.entry.delete()
+                the_couple_type = first_unmatched.entry.heat.couple_type()
+                similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
+                for e in similar_unmatched:
+                    if the_couple_type == e.entry.heat.couple_type():
+                        e.delete()
+                #first_unmatched.entry.delete()
                 return redirect("comps:heat", first_unmatched.entry.heat.id)
