@@ -123,8 +123,11 @@ class NdcaPremResults(Results_Processor):
                 e.result = "round 1"
                 placement = -10
             else:
-                placement = int(e.result)
-                accum_value = 0
+                try:
+                    placement = int(e.result)
+                    accum_value = 0
+                except:
+                    return None
             e.points = calc_points(self.heat.base_value, placement, num_competitors=self.entries_in_event, rounds=self.heat.rounds, accum=int(accum_value))
             #print(str(e.couple) + " finish " + e.result + " for " + str(e.points) + " points")
             e.save()
