@@ -32,8 +32,12 @@
         <span class="dropdown">
           <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Add</button>
           <span class="dropdown-menu">
-            <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.dancer.name }}">
-            <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.partner.name }}">
+            {% if not dancer_match %}
+              <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.dancer.name }}">
+            {% endif %}
+            {% if not partner_match %}
+              <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.partner.name }}">
+            {% endif %}
           </span>
         </span>
         <span class="dropdown">
