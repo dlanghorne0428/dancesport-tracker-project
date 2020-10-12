@@ -77,7 +77,8 @@ def edit_dancer(request, dancer_pk):
             try:
                 form = DancerForm(request.POST, instance=dancer)
                 form.save()
-                return redirect('all_dancers')
+                return redirect('view_dancer', dancer.id)
+                # return redirect('all_dancers')
             except ValueError:
                 return render(request, 'rankings/edit_dancer.html', {'dancer': dancer, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Dancer":

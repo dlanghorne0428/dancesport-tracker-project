@@ -87,7 +87,8 @@ def edit_couple(request, couple_pk):
             try:
                 form = CoupleForm(data=request.POST, instance=couple)
                 form.save()
-                return redirect('all_couples')
+                return redirect('view_couple', couple_pk)
+                #return redirect('all_couples')
             except ValueError:
                 return render(request, 'rankings/view_couple.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Couple":
