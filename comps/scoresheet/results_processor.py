@@ -297,7 +297,7 @@ class Results_Processor():
                                 if len(e.result) == 0:
                                     e.result = str(result_place)
                                     break
-                                elif e.result == result_place:
+                                elif e.result == str(result_place):
                                     break
                                 else:
                                     print(e.heat.heat_number, "Same number - new result:", e.couple.dancer_1, e.couple.dancer_2, e.result, result_place)
