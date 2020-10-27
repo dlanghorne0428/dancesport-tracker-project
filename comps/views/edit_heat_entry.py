@@ -14,9 +14,14 @@ def edit_heat_entry(request, entry_id):
         form = HeatEntryForm(instance=entry)
         return render(request, 'comps/edit_heat_entry.html', {'entry': entry, 'form':form})
     else:
-        try:
-            form = HeatEntryForm(request.POST, instance=entry)
-            form.save()
+        submit = request.POST.get("submit")
+        if submit == "Delete Entry":
+            entry.delete()
             return redirect('comps:heat', entry.heat.id)
-        except ValueError:
-            return render(request, 'comps/edit_heat_entry.html', {'form':form, 'error': "Invalid data submitted."})
+        else:
+            try:
+                form = HeatEntryForm(request.POST, instance=entry)
+                form.save()
+                return redirect('comps:heat', entry.heat.id)
+            except ValueError:
+                return render(request, 'comps/edit_heat_entry.html', {'form':form, 'error': "Invalid data submitted."})
