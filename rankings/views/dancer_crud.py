@@ -59,7 +59,7 @@ def view_dancer(request, dancer_pk):
             comps_with_mismatches.append(comp)
 
     dancer = get_object_or_404(Dancer, pk=dancer_pk)
-    couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1')
+    couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1', 'dancer_2')
     return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'couples': couples,
                                                          'comps_with_mismatches': comps_with_mismatches, 'show_admin_buttons': show_admin_buttons})
 
