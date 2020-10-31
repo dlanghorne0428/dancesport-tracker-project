@@ -15,9 +15,11 @@ class Heat(models.Model):
     # Each category has a separate sequence of heat numbers
     PRO_HEAT = 'PH'
     NORMAL_HEAT = 'NH'
+    SOLO = "SO"
     CATEGORY_CHOICES = [
         (PRO_HEAT, "Pro heat"),
         (NORMAL_HEAT, "Heat"),
+        (SOLO, "Solo"),
     ]
     category = models.CharField(max_length = 2, choices = CATEGORY_CHOICES, default = NORMAL_HEAT)
     heat_number = models.IntegerField()
@@ -167,7 +169,8 @@ class Heat(models.Model):
     def junior_heat(self):
         '''This function returns True if the description indicates a junior or youth heat.'''
         s = self.info
-        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s or "-LY" in s or "YU" in s or "YT" in s or s.startswith("Y") or\
+        s_upper = s.upper()
+        if "-Y" in s or "YY" in s or "Youth" in s or "YH" in s_upper or "-LY" in s or "YU" in s or "YT" in s or s.startswith("Y") or\
            "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or "JU" in s or "JNR" in s or\
            "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or "Pre Teen" in s or \
            "High School" in s or "Elementary School" in s or \
