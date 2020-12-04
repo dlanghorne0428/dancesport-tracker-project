@@ -81,6 +81,8 @@ class CompMngrHeatlist(Heatlist):
             num_chars = len("</td>")
             h.extra = fields[3][i:-num_chars]
             h.extra = h.extra.replace("Ballroom ", "")
+            if len(h.extra) >= 20:
+                h.extra = h.extra[:18] + h.extra[-1]
 
     ################# READING THE HEATLIST HTML FILE ################################
     # These methods process the HTML data file in CompMngr heatlist format
