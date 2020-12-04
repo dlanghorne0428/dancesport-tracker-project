@@ -160,7 +160,7 @@ class Heat(models.Model):
         if "Amateur" in self.comp.title:
             return True
         s = self.info
-        if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s:
+        if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s or "Fordney" in s:
             return True
         else:
             return False
@@ -174,7 +174,7 @@ class Heat(models.Model):
            "-J" in s or "JR" in s or "J1" in s or "J2" in s or "Junior" in s or "JU" in s or "JNR" in s or\
            "PT" in s or "Preteen" in s or "P1" in s or "P2" in s or "Pre-Teen" in s or "Pre Teen" in s or \
            "High School" in s or "Elementary School" in s or \
-           "-TB" in s or "Teddy Bear" in s or " TB" in s:
+           "-TB" in s or "Teddy Bear" in s or " TB" in s or "TB " in s:
 
            # Under 21 heats are sometimes listed as youth, but should not be treated as juniors
            if "U21" in s or "Under 21" in s or "Under-21" in s:
