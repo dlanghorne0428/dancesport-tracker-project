@@ -79,10 +79,14 @@ class NdcaPremResults(Results_Processor):
         dancer_name = sub_fields[0][first_space+1:]
         for s in range(1, len(dancer_name.split())):
             dancer_name_list.append(self.hld.format_name(orig_name=dancer_name, simple=False, split_on=s))
+        if len(dancer_name_list) == 0:
+            dancer_name_list.append(dancer_name)
         partner_name_list = list()
         partner_name = sub_fields[1]
         for s in range(1, len(partner_name.split())):
             partner_name_list.append(self.hld.format_name(orig_name=partner_name, simple=False, split_on=s))
+        if len(partner_name_list) == 0:
+            partner_name_list.append(partner_name)
 
         # look for this couple in the entries and add the result and shirt number
         for entry in entries:
