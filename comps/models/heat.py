@@ -160,7 +160,7 @@ class Heat(models.Model):
         if "Amateur" in self.comp.title:
             return True
         s = self.info
-        if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s or "Fordney" in s:
+        if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s or "Fordney" in s or "MLA" in s:
             return True
         else:
             return False
