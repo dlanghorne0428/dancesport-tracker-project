@@ -55,6 +55,13 @@
         <a id="view_heats_button" class="btn btn-info" role="button" href="{% url 'comps:comp_heats' comp.id %}">View Heats</a>
     </div>
   </div>
+  {% if show_load_buttons %}
+    <div class="row">
+      <div class="col-12 text-center">
+          <a id="clear_comp_button" class="btn btn-warning" role="button" onclick="return confirm('Are you sure?')" href="{% url 'comps:clear_comp' comp.id %}">Clear Comp Data</a>
+      </div>
+    </div>
+  {% endif %}
 {% endif %}
 
 {% endblock %}
