@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.all_comps, name="all_comps"),
     path('create/', views.create_comp, name='create_comp'),
     path('<int:comp_id>/', views.comp_detail, name="comp_detail"),
+    path('<int:comp_id>/clear', views.clear_comp, name="clear_comp"),
     path('<int:comp_id>/heats', views.comp_heats, name="comp_heats"),
     path('<int:comp_id>/heats/?dancer=<int:dancer_id>', views.dancer_heats, name="dancer_heats"),
     path('<int:comp_id>/heats/?couple=<int:couple_id>', views.couple_heats, name="couple_heats"),
