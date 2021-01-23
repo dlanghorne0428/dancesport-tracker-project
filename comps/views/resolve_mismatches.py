@@ -52,13 +52,13 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 if wider_search < 2:
                     wider_search += 1
                 return redirect('comps:resolve_mismatches', comp_id = comp_id, wider_search=wider_search)
-            elif submit == "Select":
+            elif submit == "Select" or submit == "Override Type":
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
-                    if str(pm_couple) == couple_str and pm_couple.couple_type == first_unmatched.entry.heat.couple_type():
+                    if str(pm_couple) == couple_str and (pm_couple.couple_type == first_unmatched.entry.heat.couple_type() or submit == "Override Type"):
                         similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
                         for e in similar_unmatched:
-                            if pm_couple.couple_type == e.entry.heat.couple_type():
+                            if pm_couple.couple_type == e.entry.heat.couple_type() or submit == "Override Type":
                                 # update the heat entry with the selected couple
                                 e.entry.couple = pm_couple
                                 e.entry.code = pm_code
