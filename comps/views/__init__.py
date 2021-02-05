@@ -9,6 +9,7 @@ from .couples import *
 from .couple_heats import *
 from .dancers import *
 from .dancer_heats import *
+from .edit_comp import *
 from .edit_heat import *
 from .edit_heat_entry import *
 from .fix_couple_type import *
