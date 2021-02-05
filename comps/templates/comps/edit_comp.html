@@ -1,0 +1,19 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <h2 class="text-center">Edit Competition</h2>
+
+    <h4 class="text-center">{{ error }}</h4>
+
+    <form class="text-center" method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input class="btn btn-primary" type="submit" name="submit" value = "Save" onclick="return confirm('Are you sure?')"/>
+      <input class="btn btn-danger" type="submit" name="submit" value="Cancel" />
+    </form>
+  </div>
+</div>
+
+{% endblock %}

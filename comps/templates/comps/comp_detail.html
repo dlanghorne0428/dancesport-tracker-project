@@ -58,6 +58,7 @@
   {% if show_load_buttons %}
     <div class="row">
       <div class="col-12 text-center">
+          <a id="edit_compo_button" class="btn btn-warning" role="button" href="{% url 'comps:edit_comp' comp.id %}">Edit Comp</a>
           <a id="clear_comp_button" class="btn btn-warning" role="button" onclick="return confirm('Are you sure?')" href="{% url 'comps:clear_comp' comp.id %}">Clear Comp Data</a>
       </div>
     </div>
