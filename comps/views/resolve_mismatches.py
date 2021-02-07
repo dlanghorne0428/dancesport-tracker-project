@@ -47,7 +47,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
             submit = request.POST.get("submit")
             if submit.startswith("Dancer"):
                 name_str = submit[len("Dancer: "):]
-                return redirect('create_dancer', name_str)
+                return redirect('create_dancer', name_str, comp_id)
             elif submit == "Widen Search":
                 if wider_search < 2:
                     wider_search += 1
