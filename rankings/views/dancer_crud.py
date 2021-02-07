@@ -14,7 +14,7 @@ from rankings.filters import DancerFilter
 # UD: edit_dancer
 ################################################
 
-def create_dancer(request, name_str=None):
+def create_dancer(request, name_str=None, comp_pk=None):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     if request.method == "GET":
@@ -33,7 +33,10 @@ def create_dancer(request, name_str=None):
         try:
             form = DancerForm(request.POST)
             dancer_instance = form.save()
-            return redirect('view_dancer', dancer_instance.id)
+            if comp_pk is None:
+                return redirect('view_dancer', dancer_instance.id)
+            else:
+                return redirect('comps:resolve_mismatches', comp_pk)
         except ValueError:
             return render(request, 'rankings/create_dancer.html', {'form':DancerForm(), 'error': "Invalid data submitted."})
 
