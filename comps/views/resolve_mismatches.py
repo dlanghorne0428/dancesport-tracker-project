@@ -48,6 +48,22 @@ def resolve_mismatches(request, comp_id, wider_search=0):
             if submit.startswith("Dancer"):
                 name_str = submit[len("Dancer: "):]
                 return redirect('create_dancer', name_str, comp_id)
+
+            elif submit.startswith("Couple"):
+                couple_type = first_unmatched.entry.heat.couple_type()
+                start_pos = len("Couple: ")
+                end_pos = submit.find(" and ")
+                name_str = submit[start_pos:end_pos]
+                print("Name:", name_str, "match:", first_unmatched.dancer,"**")
+                if name_str == first_unmatched.dancer.name:
+                    dancer_id = dancer_match.id
+                    partner_id = partner_match.id
+                else:
+                    dancer_id = partner_match.id
+                    partner_id = dancer_match.id
+
+                return redirect('create_couple', couple_type, dancer_id, 1, partner_id)
+
             elif submit == "Widen Search":
                 if wider_search < 2:
                     wider_search += 1
