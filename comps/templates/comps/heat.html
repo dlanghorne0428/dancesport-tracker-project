@@ -39,9 +39,17 @@
         <tbody>
           {% for entry in item.entries %}
           <tr>
-            <td>{{ entry.couple.dancer_1 }}</td>
+            {% if entry.couple.dancer_1 %}
+              <td><a href="{% url 'view_dancer' entry.couple.dancer_1.id %}">{{ entry.couple.dancer_1 }}</a></td>
+            {% else %}
+              <td>TBD</td>
+            {% endif %}
             <td>and</td>
-            <td>{{ entry.couple.dancer_2 }}</td>
+            {% if entry.couple.dancer_2 %}
+              <td><a href="{% url 'view_dancer' entry.couple.dancer_2.id %}">{{ entry.couple.dancer_2 }}</a></td>
+            {% else %}
+              <td>TBD</td>
+            {% endif %}
             <td class="text-center d-none d-md-table-cell">{{ entry.shirt_number }}</td>
             {% if entry.result|length > 0 %}
               <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
