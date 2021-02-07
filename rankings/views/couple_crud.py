@@ -14,15 +14,21 @@ from rankings.forms import CoupleForm
 # UD: edit_couple and combine_couples
 ################################################
 
-def create_couple(request, couple_type = None, dancer_pk=None, dancer_position= None):
+def create_couple(request, couple_type = None, dancer_pk=None, dancer_position= None, partner_pk=None):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     if request.method == "GET":
         if dancer_position is None:
             f = CoupleForm()
-        else:
+        elif partner_pk is None:
+            print("partner id is None")
             dancer = get_object_or_404(Dancer, pk=dancer_pk)
             f = CoupleForm(couple_type=couple_type, dancer_position= dancer_position, dancer_id = dancer_pk, dancer_type = dancer.dancer_type)
+        else:
+            print("Partner ID:", partner_pk)
+            dancer = get_object_or_404(Dancer, pk=dancer_pk)
+            partner = get_object_or_404(Dancer, pk=partner_pk)
+            f = CoupleForm(couple_type=couple_type, dancer_position= dancer_position, dancer_id = dancer_pk, dancer_type = dancer.dancer_type, partner_id = partner_pk)
 
         return render(request, 'rankings/create_couple.html', {'form':f})
     else:

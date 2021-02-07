@@ -23,7 +23,7 @@
         <label for="couples">Choose a couple:</label>
         <select id="couples" name="couple">
           {% for match in possible_matches %}
-          <option value="{{ match }}">{{ match.dancer_1 }} and {{ match.dancer_2 }}, {{ match.couple_type }}</option>
+            <option value="{{ match }}">{{ match.dancer_1 }} and {{ match.dancer_2 }}, {{ match.couple_type }}</option>
           {% endfor %}
         </select>
         <br /><br />
@@ -33,11 +33,16 @@
         <span class="dropdown">
           <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Add</button>
           <span class="dropdown-menu">
-            {% if not dancer_match %}
-              <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.dancer.name }}">
-            {% endif %}
-            {% if not partner_match %}
-              <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.partner.name }}">
+            {% if dancer_match and partner_match %}
+              <input class="dropdown-item" type="submit" name="submit" value="Couple: {{ first_entry.dancer.name }} and {{ first_entry.partner.name }}">
+              <input class="dropdown-item" type="submit" name="submit" value="Couple: {{ first_entry.partner.name }} and {{ first_entry.dancer.name }}">
+            {% else %}
+              {% if not dancer_match %}
+                <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.dancer.name }}">
+              {% endif %}
+              {% if not partner_match %}
+                <input class="dropdown-item" type="submit" name="submit" value="Dancer: {{ first_entry.partner.name }}">
+              {% endif %}
             {% endif %}
           </span>
         </span>

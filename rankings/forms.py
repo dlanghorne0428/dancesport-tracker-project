@@ -15,7 +15,7 @@ class CoupleForm(ModelForm):
         model = Couple
         fields = ['dancer_1', 'dancer_2', 'couple_type']
 
-    def __init__(self, couple_type=None, dancer_position = None, dancer_id = None, dancer_type = None, **kwargs):
+    def __init__(self, couple_type=None, dancer_position = None, dancer_id = None, dancer_type = None, partner_id = None, **kwargs):
         super(CoupleForm, self).__init__(**kwargs)
         if couple_type is None:
             pass
@@ -26,6 +26,8 @@ class CoupleForm(ModelForm):
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
                     self.fields['dancer_1'].initial = dancer_id
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    if partner_id is not None:
+                        self.fields['dancer_2'].initial = partner_id
                 else:
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
@@ -35,6 +37,8 @@ class CoupleForm(ModelForm):
                     self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
                     self.fields['dancer_1'].initial = dancer_id
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    if partner_id is not None:
+                        self.fields['dancer_2'].initial = partner_id
                 else:
                     self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
@@ -44,6 +48,8 @@ class CoupleForm(ModelForm):
                     self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
                     self.fields['dancer_1'].initial = dancer_id
                     self.fields['dancer_2'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
+                    if partner_id is not None:
+                        self.fields['dancer_2'].initial = partner_id
                 else:
                     self.fields['dancer_1'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
                     self.fields['dancer_2'].queryset = Dancer.objects.exclude(dancer_type=Dancer.PRO)
@@ -53,6 +59,8 @@ class CoupleForm(ModelForm):
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
                     self.fields['dancer_1'].initial = dancer_id
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
+                    if partner_id is not None:
+                        self.fields['dancer_2'].initial = partner_id
                 else:
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
@@ -62,6 +70,8 @@ class CoupleForm(ModelForm):
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
                     self.fields['dancer_1'].initial = dancer_id
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
+                    if partner_id is not None:
+                        self.fields['dancer_2'].initial = partner_id
                 else:
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
