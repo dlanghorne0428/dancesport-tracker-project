@@ -74,6 +74,18 @@ def combine_couples(request, couple_pk, couple2_pk):
     return redirect('view_couple', couple_pk)
 
 
+def flip_couple(request, couple_pk):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    couple = get_object_or_404(Couple, pk=couple_pk)
+    temp = couple.dancer_1
+    couple.dancer_1 = couple.dancer_2
+    couple.dancer_2 = temp
+    print(couple)
+    couple.save()
+    return redirect('view_couple', couple_pk)
+
+
 def edit_couple(request, couple_pk):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')

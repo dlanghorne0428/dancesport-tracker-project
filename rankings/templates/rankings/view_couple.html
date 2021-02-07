@@ -30,6 +30,7 @@
     {% if show_admin_buttons %}
       <div class="text-center my-3">
         <a class="btn btn-primary" href="{% url 'edit_couple' couple.id %}">Edit Couple</a>
+        <a class="btn btn-primary" href="{% url 'flip_couple' couple.id %}">Flip Couple</a>
         {% if comps_with_mismatches %}
           <span class="dropdown">
             <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Go to Comp</button>
