@@ -23,6 +23,6 @@ def edit_heat(request, heat_id):
             except ValueError:
                 return render(request, 'comps/edit_heat.html', {'heat': heat, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Heat":
-            print("Deleting " + heat + " " + heat.info)
+            print("Deleting " + str(heat) + " " + heat.info)
             heat.delete()
             return redirect ('comps:comp_heats', comp_id)

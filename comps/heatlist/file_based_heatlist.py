@@ -107,7 +107,7 @@ class FileBasedHeatlist(Heatlist):
         try:
             num_heats = int(fields[-1])
         except:
-            print("Error: Dancer: " + dancer_index + " Heat count not found in " + line)
+            print("Error: Dancer: " + str(dancer_index) + " Heat count not found in " + line)
             num_heats = -1
             return None
         for index in range(num_heats):
@@ -121,7 +121,7 @@ class FileBasedHeatlist(Heatlist):
                     partner_name = couple_fields[0]
                 p = self.find_dancer(partner_name)
             else:
-                print("No partner found in " + couple_fields)
+                print("No partner found in " + str(couple_fields))
                 p = None
             if p is not None:
                 if p.name > d.name:

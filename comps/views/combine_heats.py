@@ -22,8 +22,8 @@ def combine_heats(request, comp_id):
             for match in possible_matches:
                 if heat.info_prefix() == match.info_prefix():
                     if request.method == "GET":
-                        print("Found " + heat.category + " " + heat.heat_number + " " + heat.info)
-                        print("Match! " + match.category + " " + match.heat_number + " " + match.info)
+                        print("Found " + heat.category + " " + str(heat.heat_number) + " " + heat.info)
+                        print("Match! " + match.category + " " + str(match.heat_number) + " " + match.info)
                         return render(request, 'comps/combine_heats.html', {'heats': (heat, match)})
                     else:  # POST
                         submit = request.POST.get("submit")
@@ -35,7 +35,7 @@ def combine_heats(request, comp_id):
                             heat.save()
                             matching_entries = Heat_Entry.objects.filter(heat=match).order_by('shirt_number')
                             for e in matching_entries:
-                                print(e.couple + " " + e.code +  " + e.shirt_number)
+                                print(e.couple + " " + e.code + " " + e.shirt_number)
                                 e.heat = heat
                                 print(e.heat.info)
                                 e.save()

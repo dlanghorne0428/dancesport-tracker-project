@@ -18,7 +18,7 @@ def split_name(name):
             # TODO: what if two middle names?
             return (name_fields[0], first_fields[0], first_fields[1])
     else:
-        print("could not split name: " +  name)
+        print("could not split name: " +  str(name))
         return(name, '', '')
 
 

@@ -82,7 +82,7 @@ class CompOrgHeatlist(Heatlist):
             day_of_week = time_fields[0]
             h.set_time(time_string, day_of_week)
         else:
-            print("Invalid time format " + time_fields)
+            print("Invalid time format " + str(time_fields))
 
         start_pos = items[item_index+4].find("-desc") + len("-desc") + 2
         h.info = items[item_index+4][start_pos:]

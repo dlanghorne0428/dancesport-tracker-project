@@ -54,7 +54,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 start_pos = len("Couple: ")
                 end_pos = submit.find(" and ")
                 name_str = submit[start_pos:end_pos]
-                print("Name: " + name_str + " match: " + first_unmatched.dancer,"**")
+                print("Name: " + name_str + " match: " + first_unmatched.dancer.name,"**")
                 if name_str == first_unmatched.dancer.name:
                     dancer_id = dancer_match.id
                     partner_id = partner_match.id

@@ -8,7 +8,6 @@ from rankings.filters import DancerFilter
 
 def couples(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
-    # print(comp.process_state)
     if comp.process_state in [Comp.DANCERS_LOADED, Comp.DANCER_NAMES_FORMATTED, Comp.HEATS_LOADED]:
         return redirect ('comps:resolve_dancers', comp_id)
     else:
