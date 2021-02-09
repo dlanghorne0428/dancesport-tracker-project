@@ -98,7 +98,7 @@ class NdcaPremResults(Results_Processor):
                 break
         else:
             # couple not found, create a late entry
-            print("Could not find", partner_name, "and", dancer_name)
+            print("Could not find " + partner_name + " and " + dancer_name)
             couple_names = [dancer_name_list[0], partner_name_list[0]]
             self.build_late_entry(self.heat, shirt_number, couple_names, result_str)
 
@@ -233,7 +233,7 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_semifinal:
                 # if we find a semifinal, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
-                    print("Found semi-final")
+                    #print("Found semi-final")
                     self.heat.rounds = "S"
                     looking_for_semifinal = False
                     looking_for_final_dance = True
@@ -243,7 +243,7 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_quarterfinal:
                 # if we find a quarter final, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
-                    print("Found quarter-final")
+                    #print("Found quarter-final")
                     self.heat.rounds = "Q"
                     looking_for_quarterfinal = False
                     looking_for_final_dance = True
@@ -253,13 +253,13 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_prelim_round:
                 # if we find an earlier round, set the rounds and look for the results of this round
                 if 'class="roundHeader">Third' in l:
-                    print("Found Third Round")
+                    #print("Found Third Round")
                     self.heat.rounds = "R3"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">Second' in l:
-                    print("Found Second Round")
+                    #print("Found Second Round")
                     if self.heat.rounds != "R3":
                         self.heat.rounds = "R32"
                     else:
@@ -268,7 +268,7 @@ class NdcaPremResults(Results_Processor):
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">First' in l:
-                    print("Found First Round")
+                    #print("Found First Round")
                     if self.heat.rounds == "R32":
                         self.heat.rounds = "R321"
                     elif self.heat.rounds == "R2":
@@ -355,12 +355,12 @@ class NdcaPremResults(Results_Processor):
                             return event_result
 
                     else:
-                        print("ERROR: Could not find event", event_name)
+                        print("ERROR: Could not find event " + event_name)
                         return None
             else: # all entries have results already
                 return None
         else:
-            print("ERROR: No entries in event", event.name)
+            print("ERROR: No entries in event " + event.name)
             return None
 
 

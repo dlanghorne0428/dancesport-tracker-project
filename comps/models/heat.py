@@ -131,7 +131,7 @@ class Heat(models.Model):
         else:
             #TODO: ask user?
             if self.multi_dance():
-                print("Unknown style for heat", s)
+                print("Unknown style for heat " + s)
             self.style = Heat.UNKNOWN
 
 
@@ -142,12 +142,12 @@ class Heat(models.Model):
             isoweekday = days_of_week.index(day_of_week_str) + 1
             heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
         except:
-            print(str(self), "Warning in day of week:", day_of_week_str)
+            print(str(self), "Warning in day of week: " + day_of_week_str)
             heat_date = self.comp.start_date
         try:
             time_of_day = time.strptime(time_str, "%I:%M%p")
         except:
-            print(str(self), "Warning in time of day:", time_str)
+            print(str(self), "Warning in time of day: " + time_str)
             time_of_day = time.strptime("0:0", "%H:%M")
         tz = timezone(offset=timedelta(hours=0))  # avoid warnings about naive time, treat all times as UTC
                                                  # could try to get smarter about where comp was located, but why?

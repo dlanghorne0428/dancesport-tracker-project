@@ -82,7 +82,7 @@ class Results_Processor():
             # this is the normal flow, split on the slash to get each name
             couple_names = entrant_fields[1].split("/")
             if len(couple_names) != 2:
-                print("Split on Slash Error", couple_names)
+                print("Split on Slash Error " + couple_names)
         return couple_names
 
 
@@ -250,7 +250,7 @@ class Results_Processor():
                                     elif e.result == temp_result:
                                         break
                                     else:
-                                        print(e.heat.heat_number, "Same shirt # - new result:", e.couple, e.result, temp_result, accum)
+                                        print(e.heat.heat_number +  " Same shirt # - new result: " + e.couple + " " + e.result + " " + temp_result + " " + accum)
                                         e.result = temp_result
 
                             # If we get here, we didn't find an entry on the heatsheet that matches
@@ -300,7 +300,7 @@ class Results_Processor():
                                 elif e.result == str(result_place):
                                     break
                                 else:
-                                    print(e.heat.heat_number, "Same number - new result:", e.couple.dancer_1, e.couple.dancer_2, e.result, result_place)
+                                    print(e.heat.heat_number + " Same number - new result: " + " " + e.couple.dancer_1 + " " + e.couple.dancer_2 + " " + e.result + " " + result_place)
                                     e.result = str(result_place)
                                     break
 
@@ -309,7 +309,7 @@ class Results_Processor():
                             if len(couple_names) > 1:
                                 self.build_late_entry(e.heat, shirt_number=shirt_number, result=str(result_place), couple_names=couple_names)
                             else:
-                                print("Error in couple", couple_names)
+                                print("Error in couple " + " " + couple_names)
 
                         # reset for next line of the scoresheet
                         count = 0
@@ -399,7 +399,7 @@ class Results_Processor():
                     looking_for_result_column = True
 
             elif "Place" in line and "<th>" in line:
-                print("Found a table header with Place", line)
+                print("Found a table header with Place " + line)
 
         # Return which level of results we were able to find on this dancer's scoresheet
         # If they were eliminated before the finals, the final results will not appear,

@@ -19,7 +19,7 @@ def resolve_dancers(request, comp_id):
         for index in range(len(heatlist_dancers)):
             if current_name.name == heatlist_dancers[index].name:
                 page_number = index // 16 + 1
-                print("Page Number is", page_number)
+                # print("Page Number is", page_number)
                 break
         if submit == "Delete":
             current_name.formatting_needed = False
@@ -28,7 +28,7 @@ def resolve_dancers(request, comp_id):
             new_name = request.POST.get("spelling")
             current_name.name = new_name
             current_name.formatting_needed = False
-            print(current_name.name)
+            # print(current_name.name)
             current_name.save()
 
         # find next name to format

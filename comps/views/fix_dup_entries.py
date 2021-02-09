@@ -17,7 +17,7 @@ def fix_dup_entries(request, comp_id):
             dup_entries = entries.filter(couple=e.couple)
             if dup_entries.count() > 1:
                 if request.method == "GET":
-                    print(heat.category, heat.heat_number, heat.info, e.shirt_number)
+                    #print(heat.category, heat.heat_number, heat.info, e.shirt_number)
                     return render(request, 'comps/fix_entries.html', {'heat': heat, 'entries': entries, 'targeted_entry': e})
                 else: #POST
                     submit = request.POST.get("submit")

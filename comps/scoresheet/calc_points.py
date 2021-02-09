@@ -48,7 +48,7 @@ def non_pro_heat_level(info, multi_dance=True):
         return 25
     else:
         if multi_dance:
-            print("Unknown level for heat", info)
+            print("Unknown level for heat " + info)
         # zero values can be found with a filter and fixed
         return 0
         #return 15

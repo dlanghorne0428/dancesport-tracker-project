@@ -173,7 +173,7 @@ class NdcaPremHeatlist(Heatlist):
                 if d.code != "0":
                     self.dancers.append(d)
             except:
-                print("Invalid competitor", d.name, d.code)
+                print("Invalid competitor " + d.name + " " + d.code)
 
 
     def load(self, url, heatlist_dancers):

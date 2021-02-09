@@ -18,7 +18,7 @@ def split_name(name):
             # TODO: what if two middle names?
             return (name_fields[0], first_fields[0], first_fields[1])
     else:
-        print("could not split name:", name)
+        print("could not split name: " +  name)
         return(name, '', '')
 
 
@@ -51,7 +51,7 @@ def find_couple_partial_match(dancer, partner):
     dancer_last, dancer_first, dancer_middle = split_name(dancer.name)
     partner_last, partner_first, partner_middle = split_name(partner.name)
     partial_matching_couples = list()
-    
+
     dancers = Dancer.objects.filter(name_last = dancer_last)
     partial_matches = find_last_name_matches(dancers, dancer.code, partner.code)
     for p in partial_matches:
@@ -101,7 +101,7 @@ def find_couple_exact_match(heatlist_dancer, heatlist_partner, couple_type):
         couples = Couple.objects.filter(dancer_1 = dancer, dancer_2 = partner, couple_type = couple_type)
         matches = couples.count()
         if matches > 1:
-            print("Error: multiple matches for", heatlist_dancer.name, "and", heatlist_partner.name)
+            print("Error: multiple matches for " + heatlist_dancer.name +  " and " + heatlist_partner.name)
             print(matches)
             return (None, None)
         elif matches == 1:
@@ -110,7 +110,7 @@ def find_couple_exact_match(heatlist_dancer, heatlist_partner, couple_type):
             couples = Couple.objects.filter(dancer_2 = dancer, dancer_1 = partner, couple_type = couple_type)
             matches = couples.count()
             if matches > 1:
-                print("Error: multiple matches for", heatlist_dancer.name, "and", heatlist_partner.name)
+                print("Error: multiple matches for " + heatlist_dancer.name + " and " + heatlist_partner.name)
                 print(matches)
                 return (None, None)
             elif matches == 1:

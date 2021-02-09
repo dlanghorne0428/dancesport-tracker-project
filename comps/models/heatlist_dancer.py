@@ -26,7 +26,7 @@ class Heatlist_Dancer(models.Model):
             if len(fields) == 2:
                 return fields[1] + ', '  + fields[0]
             else:
-                print("format needed:", orig_name)
+                print("format needed: " + orig_name)
                 self.formatting_needed = True
                 return None
         else:

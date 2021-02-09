@@ -82,7 +82,7 @@ class CompOrgHeatlist(Heatlist):
             day_of_week = time_fields[0]
             h.set_time(time_string, day_of_week)
         else:
-            print("Invalid time format", time_fields)
+            print("Invalid time format " + time_fields)
 
         start_pos = items[item_index+4].find("-desc") + len("-desc") + 2
         h.info = items[item_index+4][start_pos:]
@@ -108,7 +108,7 @@ class CompOrgHeatlist(Heatlist):
                 if len(p_string) > 0:
                     partner = self.find_dancer(p_string)
                     if partner is None:
-                        print("No partner found", p_string)
+                        print("No partner found " + p_string)
                     # partner found, go to next item
                     item_index += 1
 
@@ -169,7 +169,7 @@ class CompOrgHeatlist(Heatlist):
                 if d.code != "0":
                     self.dancers.append(d)
             except:
-                print("Invalid competitor", d.name, d.code)
+                print("Invalid competitor " + d.name + " " + d.code)
 
 
     def load(self, url, heatlist_dancers):

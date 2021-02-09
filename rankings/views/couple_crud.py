@@ -25,7 +25,7 @@ def create_couple(request, couple_type = None, dancer_pk=None, dancer_position= 
             dancer = get_object_or_404(Dancer, pk=dancer_pk)
             f = CoupleForm(couple_type=couple_type, dancer_position= dancer_position, dancer_id = dancer_pk, dancer_type = dancer.dancer_type)
         else:
-            print("Partner ID:", partner_pk)
+            print("Partner ID: " + partner_pk)
             dancer = get_object_or_404(Dancer, pk=dancer_pk)
             partner = get_object_or_404(Dancer, pk=partner_pk)
             f = CoupleForm(couple_type=couple_type, dancer_position= dancer_position, dancer_id = dancer_pk, dancer_type = dancer.dancer_type, partner_id = partner_pk)
@@ -110,6 +110,6 @@ def edit_couple(request, couple_pk):
             except ValueError:
                 return render(request, 'rankings/view_couple.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Couple":
-            print("Deleting", str(couple))
+            print("Deleting " + str(couple))
             couple.delete()
             return redirect ('all_couples')
