@@ -60,7 +60,6 @@ def calc_rankings(request):
         return redirect(url_string)
 
     # try to read the ranking data from the cache
-    print("looking for " + cache_key)
     couple_stats = cache.get(cache_key)
 
     if couple_stats is None:
