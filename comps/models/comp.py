@@ -17,10 +17,12 @@ class Comp(models.Model):
     COMP_MNGR = 'CM'
     COMP_ORG = 'CO'
     NDCA_PREM = 'ND'
+    O2CM = "O2"
     DATA_FORMAT_CHOICES = [
         (COMP_MNGR, 'Comp Manager'),
         (COMP_ORG, 'Comp Organizer'),
         (NDCA_PREM , 'NDCA Premier'),
+        (O2CM, 'O2cm.com')
     ]
     url_data_format = models.CharField(
         max_length=2,
