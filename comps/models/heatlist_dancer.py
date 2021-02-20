@@ -90,6 +90,17 @@ class Heatlist_Dancer(models.Model):
         self.code = fields[0][pos+1:-1]
 
 
+    def load_from_o2cm(self, line):
+        '''This method populates the object from a line of text from a heatlist in o2cm.com format.'''
+        # find the dancer's name
+        fields = line.split(">")
+        self.name = fields[1]
+
+        # find the ID code for this dancer
+        pos = fields[0].find("VALUE=") + len("VALUE=")
+        self.code = fields[0][pos+1:-1]
+
+
     def load_from_file(self, line):
         '''This method populates the object from a line of text from a heatlist in custom file format.'''
         # find the dancer's name

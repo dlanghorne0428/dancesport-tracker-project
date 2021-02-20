@@ -135,7 +135,7 @@ class Heat(models.Model):
             self.style = Heat.UNKNOWN
 
 
-    def set_time(self, time_str, day_of_week_str):
+    def set_time(self, time_str, day_of_week_str, time_format="%I:%M%p"):
         comp_start_date = self.comp.start_date.isocalendar()
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         try:
@@ -145,9 +145,9 @@ class Heat(models.Model):
             print(str(self), "Warning in day of week: " + day_of_week_str)
             heat_date = self.comp.start_date
         try:
-            time_of_day = time.strptime(time_str, "%I:%M%p")
+            time_of_day = time.strptime(time_str, time_format)
         except:
-            print(str(self), "Warning in time of day: " + time_str)
+            print(str(self), "Warning in time of day: " + time_str + "!")
             time_of_day = time.strptime("0:0", "%H:%M")
         tz = timezone(offset=timedelta(hours=0))  # avoid warnings about naive time, treat all times as UTC
                                                  # could try to get smarter about where comp was located, but why?

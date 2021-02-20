@@ -6,6 +6,7 @@ from comps.heatlist.file_based_heatlist import FileBasedHeatlist
 from comps.heatlist.comp_mngr_heatlist import CompMngrHeatlist
 from comps.heatlist.comp_organizer_heatlist import CompOrgHeatlist
 from comps.heatlist.ndca_prem_heatlist import NdcaPremHeatlist
+from comps.heatlist.o2cm_heatlist import O2cmHeatlist
 
 
 def load_dancers(request, comp_id):
@@ -29,6 +30,8 @@ def load_dancers(request, comp_id):
             heatlist = CompMngrHeatlist()
         elif comp.url_data_format == Comp.NDCA_PREM:
             heatlist = NdcaPremHeatlist()
+        elif comp.url_data_format == Comp.O2CM:
+            heatlist = O2cmHeatlist()
         else: # CompOrganizer for now
             heatlist = CompOrgHeatlist()
 
