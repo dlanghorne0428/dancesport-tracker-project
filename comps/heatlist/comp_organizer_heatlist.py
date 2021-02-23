@@ -26,13 +26,17 @@ class CompOrgHeatlist(Heatlist):
     ######################################################################################
     def get_partner(self, line):
         '''This method searches for the partner's name on the given line.'''
+        #print("looking for partner: " + line)
         if "class='partner'" in line:
             start_pos = line.find("with ") + len("with ")
             substr = line[start_pos:]
             stripped = substr.strip()
-            return stripped
-        else:
-            return None
+            if len(stripped) > 0:
+                return stripped
+            else:
+                return ""
+
+        return None
 
 
     def load_heat(self, h, items, item_index, comp_ref):
@@ -49,9 +53,9 @@ class CompOrgHeatlist(Heatlist):
                 break
         # get the heat category
         category_string = number_string[:index]
-        if category_string in ["Solo ", "Formation ", "Team match "]:
+        if category_string in ["Formation ", "Team match "]:
             h.heat_number = -1  # indicate an error
-            return None
+            h.category = None
         elif category_string == "Pro heat ":
             h.category = Heat.PRO_HEAT
         elif category_string == "Heat ":
@@ -100,6 +104,7 @@ class CompOrgHeatlist(Heatlist):
         if len(items) <= 1:
             print("Error parsing heat")
         item_index = 0
+        partner = None
         # process all the list items
         while item_index < len(items):
             # check if this item specifies a partner name
@@ -108,10 +113,13 @@ class CompOrgHeatlist(Heatlist):
                 if len(p_string) > 0:
                     partner = self.find_dancer(p_string)
                     if partner is None:
-                        print("No partner found " + p_string)
+                        print(dancer.name + " No partner found " + p_string)
                     # partner found, go to next item
-                    item_index += 1
-
+                else:
+                    partner = None
+                    print(dancer.name + " No partner found")
+                    
+                item_index += 1
 
             # no partner, check if this item has the start of a new heat
             elif "heatlist-sess" in items[item_index]:
@@ -121,13 +129,15 @@ class CompOrgHeatlist(Heatlist):
                         heat = Heat()
                         self.load_heat(heat, items, item_index, comp_ref)
                         if "Solo Star" in heat.info:
-                            h = None
-                        else:
+                            heat.category = None
+                        if heat.category is not None:
                             h = self.add_heat_to_database(heat, comp_ref)
-                        if h is not None:
                             start_pos = items[item_index+3].find("-numb") + len("-numb") + 2
                             shirt_number = items[item_index+3][start_pos:]
                             self.build_heat_entry(h, dancer, partner, shirt_number)
+                    else:
+                        print("Skipping: " + dancer.name + " greater than " + partner.name)
+                        print("index:" + str(item_index) + " items length: " + str(len(items)))
                 item_index += 5
 
             else:
@@ -141,6 +151,7 @@ class CompOrgHeatlist(Heatlist):
     def open(self, url):
         '''This method obtains the name of the competition and a list of all the dancers.'''
         #extract comp name from URL
+        print("URL", url)
         response = requests.get(url)
         lines = response.text.splitlines()
         for l in lines:
@@ -149,6 +160,7 @@ class CompOrgHeatlist(Heatlist):
                 # var cmid = "beachbash2019";
                 # extract the name from between the quotes
                 self.comp_name = l.split('= "')[1][:-2]
+                print(self.comp_name)
                 break
 
         end_pos = url.find("/pages")
@@ -160,6 +172,7 @@ class CompOrgHeatlist(Heatlist):
         # open the base URL to extract a list of dancers
         response = requests.get(self.base_url)
         competitors = response.text.split("},")
+        print("Competitors = " + str(len(competitors)))
         for c in range(len(competitors) - 1):
             start_pos = competitors[c].find('"id')
             d = Heatlist_Dancer()
