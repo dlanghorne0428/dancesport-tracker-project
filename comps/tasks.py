@@ -10,6 +10,7 @@ from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
 from .scoresheet.comp_organizer_results import CompOrgResults
 from .scoresheet.ndca_prem_results import NdcaPremResults
+from .scoresheet.o2cm_results import O2cmResults
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
@@ -72,6 +73,8 @@ def process_scoresheet_task(self, comp_data):
             scoresheet = CompMngrResults()
         elif comp.url_data_format == Comp.NDCA_PREM:
              scoresheet = NdcaPremResults()
+        elif comp.url_data_format == Comp.O2CM:
+              scoresheet = O2cmResults()
         else: # CompOrganizer for now
              scoresheet = CompOrgResults()
 
@@ -102,6 +105,7 @@ def process_scoresheet_task(self, comp_data):
                 progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)
 
             else:  # don't score freestyles, and delete those heats
+                print("Deleting heat " + str(heat))
                 heat.delete()
 
         unmatched_entries = len(scoresheet.late_entries)
