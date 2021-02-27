@@ -105,7 +105,7 @@ def process_scoresheet_task(self, comp_data):
                 progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)
 
             else:  # don't score freestyles, and delete those heats
-                print("Deleting heat " + str(heat))
+                #print("Deleting heat " + str(heat))
                 heat.delete()
 
         unmatched_entries = len(scoresheet.late_entries)
