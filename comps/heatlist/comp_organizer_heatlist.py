@@ -118,7 +118,7 @@ class CompOrgHeatlist(Heatlist):
                 else:
                     partner = None
                     print(dancer.name + " No partner found")
-                    
+
                 item_index += 1
 
             # no partner, check if this item has the start of a new heat
@@ -136,8 +136,9 @@ class CompOrgHeatlist(Heatlist):
                             shirt_number = items[item_index+3][start_pos:]
                             self.build_heat_entry(h, dancer, partner, shirt_number)
                     else:
-                        print("Skipping: " + dancer.name + " greater than " + partner.name)
-                        print("index:" + str(item_index) + " items length: " + str(len(items)))
+                        #print("Skipping: " + dancer.name + " greater than " + partner.name)
+                        #print("index:" + str(item_index) + " items length: " + str(len(items)))
+                        pass
                 item_index += 5
 
             else:
