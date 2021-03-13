@@ -4,6 +4,21 @@
 
 <h2 class='text-center'>{{ dancer }}</h2>
 <h3 class='text-center'>Dancer Category: {{ dancer.get_dancer_type_display }}</h3>
+{% if dancer.dancer_type == "PRO" %}
+  {% if comp_rating > 0 %}
+    <h4 class='text-center'>Pro Competition Rating: {{ comp_rating }}</h4>
+  {% endif %}
+  {% if pro_am_rating > 0 %}
+    <h4 class='text-center'>Instructor Rating: {{ pro_am_rating }}</h4>
+  {% endif %}
+{% else %}
+  {% if comp_rating > 0 %}
+    <h4 class='text-center'>Amateur Competition Rating: {{ comp_rating }}</h4>
+  {% endif %}
+  {% if pro_am_rating > 0 %}
+    <h4 class='text-center'>Student Rating: {{ pro_am_rating }}</h4>
+  {% endif %}
+{% endif %}
 {% if show_admin_buttons %}
   <div class="text-center">
     <a class="btn btn-secondary btn-sm" href="{% url 'edit_dancer' dancer.id %}">Edit Profile</a>
@@ -19,21 +34,23 @@
         <th>Dancer 1</th>
         <th></th>
         <th>Dancer 2</th>
-        <th>Category</th>
+        <th class='text-center'>Category</th>
+        <th class='text-center'>Rating</th>
         <th>Action</th>
       </tr>
 
-      {% for couple in couples %}
+      {% for p in partnerships %}
       <tr>
-        <td>{{ couple.dancer_1 }}</td>
+        <td>{{ p.couple.dancer_1 }}</td>
         <td>and</td>
-        <td>{{ couple.dancer_2 }}</td>
-        <td>{{ couple.get_couple_type_display }}</td>
+        <td>{{ p.couple.dancer_2 }}</td>
+        <td class='text-center'>{{ p.couple.get_couple_type_display }}</td>
+        <td class='text-center'>{{ p.rating }}</td>
         <td>
-          <a class="btn btn-primary btn-sm" href="{% url 'view_couple' couple.id %}">View</a>
+          <a class="btn btn-primary btn-sm" href="{% url 'view_couple' p.couple.id %}">View</a>
           {% if show_admin_buttons %}
-            <a class="btn btn-secondary btn-sm" href="{% url 'edit_couple' couple.id %}">Edit</a>
-            <a class="btn btn-secondary btn-sm" href="{% url 'flip_couple' couple.id %}">Flip</a>
+            <a class="btn btn-secondary btn-sm" href="{% url 'edit_couple' p.couple.id %}">Edit</a>
+            <a class="btn btn-secondary btn-sm" href="{% url 'flip_couple' p.couple.id %}">Flip</a>
           {% endif %}
         </td>
       </tr>

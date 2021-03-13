@@ -6,6 +6,7 @@ from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from rankings.forms import CoupleForm
+from rankings.rating_stats import couple_stats
 
 ################################################
 # CRUD Views for Couple objects
@@ -57,6 +58,7 @@ def view_couple(request, couple_pk):
 
     couple = get_object_or_404(Couple, pk=couple_pk)
     all_comps = Comp.objects.all().order_by('-start_date')
+    stats = couple_stats(couple)
     comps_for_couple = list()
     comps_with_mismatches = list()
     for comp in all_comps:
@@ -64,7 +66,7 @@ def view_couple(request, couple_pk):
             comps_for_couple.append(comp)
         if comp.process_state in [Comp.HEATS_LOADED, Comp.SCORESHEETS_LOADED]:
             comps_with_mismatches.append(comp)
-    return render(request, 'rankings/view_couple.html', {'couple': couple, 'comps_for_couple': comps_for_couple,
+    return render(request, 'rankings/view_couple.html', {'couple': couple, 'comps_for_couple': comps_for_couple, 'rating': stats['rating'],
                                                          'comps_with_mismatches': comps_with_mismatches,'show_admin_buttons': show_admin_buttons})
 
 
