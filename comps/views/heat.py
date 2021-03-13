@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from comps.forms import HeatForm
-from rankings.couple_stats import couple_stats
+from rankings.rating_stats import couple_stats
 
 
 def heat(request, heat_id):

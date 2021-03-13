@@ -65,7 +65,7 @@
         <tr>
           <td class="text-center">{{ teacher_stats.index }}</td>
           <td class="text-center">
-            <a  href="{% url 'view_dancer' teacher_stats.teacher.id %}">{{ teacher_stats.teacher }}</a>
+            <a  href="{% url 'view_dancer' teacher_stats.instructor.id %}">{{ teacher_stats.instructor }}</a>
           </td>
           <td class="text-center">{{ teacher_stats.event_count }}</td>
           <td class="text-center">{{ teacher_stats.total_points }}</td>
