@@ -66,6 +66,9 @@ class Couple(models.Model):
 
     def __lt__(self, c):
         if self.dancer_1 == c.dancer_1:
-            return self.dancer_2 < c.dancer_2
+            if self.dancer_2 == c.dancer_2:
+                return self.couple_type < c.couple_type
+            else:
+                return self.dancer_2 < c.dancer_2
         else:
             return self.dancer_1 < c.dancer_1
