@@ -62,7 +62,7 @@ class NdcaPremResults(Results_Processor):
             return "quarters-" + accum_value
         elif rounds == "R3":
             return "round 3-" + accum_value
-        elif rounds == "R2":
+        elif rounds == "R2" or rounds == "R32":
             return "round 2-" + accum_value
         else:
             return "round 1-" + accum_value
@@ -95,6 +95,8 @@ class NdcaPremResults(Results_Processor):
                 entry.shirt_number = shirt_number
                 if len(entry.result) == 0:
                     entry.result = result_str
+                else:
+                    print(str(entry) + " result not empty")
                 break
         else:
             # couple not found, create a late entry
@@ -105,7 +107,7 @@ class NdcaPremResults(Results_Processor):
 
     def update_scoring(self, e):
         '''This method updates the result and points for a given entry, e.'''
-        if e.points is None and len(e.result) > 0:
+        if (e.points is None or e.points == 0 ) and len(e.result) > 0:
             if e.result.startswith("S"):
                 accum_value = e.result[len("Semis-"):]
                 e.result = "Semis"
@@ -233,7 +235,7 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_semifinal:
                 # if we find a semifinal, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
-                    #print("Found semi-final")
+                    print("Found semi-final")
                     self.heat.rounds = "S"
                     looking_for_semifinal = False
                     looking_for_final_dance = True
@@ -243,7 +245,7 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_quarterfinal:
                 # if we find a quarter final, set the rounds and look for the results of this round
                 if 'class="roundHeader"' in l:
-                    #print("Found quarter-final")
+                    print("Found quarter-final")
                     self.heat.rounds = "Q"
                     looking_for_quarterfinal = False
                     looking_for_final_dance = True
@@ -253,22 +255,22 @@ class NdcaPremResults(Results_Processor):
             elif looking_for_prelim_round:
                 # if we find an earlier round, set the rounds and look for the results of this round
                 if 'class="roundHeader">Third' in l:
-                    #print("Found Third Round")
+                    print("Found Third Round")
                     self.heat.rounds = "R3"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">Second' in l:
-                    #print("Found Second Round")
+                    print("Found Second Round")
                     if self.heat.rounds != "R3":
-                        self.heat.rounds = "R32"
-                    else:
                         self.heat.rounds = "R2"
+                    else:
+                        self.heat.rounds = "R32"
                     looking_for_prelim_round = False
                     looking_for_final_dance = True
                     dance_count = 0
                 elif 'class="roundHeader">First' in l:
-                    #print("Found First Round")
+                    print("Found First Round")
                     if self.heat.rounds == "R32":
                         self.heat.rounds = "R321"
                     elif self.heat.rounds == "R2":
@@ -341,11 +343,11 @@ class NdcaPremResults(Results_Processor):
         # process the scoresheet for each of those events.
         if entries.count() > 0:
             for entry in entries:
-                if entry.points is None:
+                if entry.points is None or entry.points == 0:
                     event_name = entries.first().heat.info
                     for event in self.events:
                         if event.name == event_name:
-                            #print("Processing " + event.name)
+                            print("Processing " + event.name)
                             event_result = self.process_scoresheet_for_event(entries, event)
                             if event_result is not None:
                                 for entry in entries:
