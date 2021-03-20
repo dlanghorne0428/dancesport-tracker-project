@@ -10,14 +10,24 @@
   </div>
 
   <div class="row align-items-start">
-    <div class="col-12 col-md-10 offset-md-1 col-lg-6 offset-lg-3 p-0 border border-dark">
+    <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 p-0 border border-dark">
       <table class="table table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th class='text-center' colspan="3">Couple</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
         {% for couple in page_obj %}
-        <tr>
-          <td>{{ couple }}</td>
-          <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id couple.id %}">View Heats</a></td>
-        </tr>
+          <tr>
+            <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' couple.dancer_1.id %}">{{ couple.dancer_1 }}</a></td>
+            <td class='text-center'>and</td>
+            <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' couple.dancer_2.id %}">{{ couple.dancer_2 }}</a></td>
+            <td class='text-center'><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id couple.id %}">View Heats</a></td>
+          </tr>
         {% endfor %}
+        </tbody>
       </table>
 
       {% include "rankings/pagination.html" %}
