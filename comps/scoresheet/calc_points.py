@@ -17,7 +17,7 @@ def extra_points(info, check_for_open=True):
     '''Based on the information about this  heat, return the number
        of extra points based on specific key words'''
     value = 0
-    if check_for_open and "Open" in info:
+    if check_for_open and ("Open" in info or "OP." in info):
         value += 5
     if "Scholarship" in info or "Scolarship" in info:
         value += 5
@@ -38,7 +38,7 @@ def non_pro_heat_level(info, multi_dance=True):
         return 20 + extra_points(info)
     elif "Closed" in info or "Challenge" in info:
         return 15 + extra_points(info)
-    elif "Open" in info or "World" in info:
+    elif "Open" in info or "World" in info or "OP." in info:
         return 20 + extra_points(info, check_for_open=False)
     elif "Pre-Champ" in info or "PreChamp" in info or "Pre Champ" in info:
         return 15
