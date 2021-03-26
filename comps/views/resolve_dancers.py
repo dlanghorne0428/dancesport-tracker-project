@@ -14,13 +14,6 @@ def resolve_dancers(request, comp_id):
 
     if request.method == "POST":
         submit = request.POST.get("submit")
-        # determine what page to show
-        heatlist_dancers = Heatlist_Dancer.objects.all().order_by('pk')
-        for index in range(len(heatlist_dancers)):
-            if current_name.name == heatlist_dancers[index].name:
-                page_number = index // 16 + 1
-                # print("Page Number is", page_number)
-                break
         if submit == "Delete":
             current_name.formatting_needed = False
             current_name.save()
@@ -39,16 +32,23 @@ def resolve_dancers(request, comp_id):
 
     # do this for either GET or POST
     heatlist_dancers = Heatlist_Dancer.objects.all().order_by('pk')
-    paginator = Paginator(heatlist_dancers, 16)
-    page_obj = paginator.get_page(page_number)
-
     possible_formats = list()
+
     if current_name is not None:
+        # determine what page to show
+        for index in range(len(heatlist_dancers)):
+            if current_name.name == heatlist_dancers[index].name:
+                page_number = index // 16 + 1
+                break
         fields = current_name.name.split()
         for field in range(1, len(fields)):
             possible_formats.append(current_name.format_name(current_name.name, simple=False, split_on=field))
     else:
+        page_number = len(heatlist_dancers) // 16 + 1
         comp.process_state = Comp.DANCER_NAMES_FORMATTED
         comp.save()
+
+    paginator = Paginator(heatlist_dancers, 16)
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'comps/resolve_dancers.html', {'comp': comp, 'page_obj': page_obj, 'current_name': current_name, 'possible_formats': possible_formats })
