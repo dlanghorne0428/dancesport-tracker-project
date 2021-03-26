@@ -30,26 +30,29 @@
     <div class="col border border-dark">
       <h4 class="text-center">Format Name</h4>
       {% if current_name %}
-      <div class="alert alert-info text-center" role="alert">
-        {{ current_name.name }}
-      </div>
-      <form method="POST">
-        {% csrf_token %}
-        <label for="spelling">Choose a format:</label>
-        <select id="spelling" name="spelling">
-          {% for spelling in possible_formats %}
-          <option value="{{ spelling }}">{{ spelling }}</option>
-          {% endfor %}
-        </select>
-        <br /><br />
-        <input class="btn btn-primary" type="submit" name="submit" value="Submit">
-        <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
-        <input class="btn btn-warning" type="submit" name="submit" value="Delete">
-      </form>
+        <div class="alert alert-info text-center" role="alert">
+          {{ current_name.name }}
+        </div>
+        <form method="POST">
+          {% csrf_token %}
+          <label for="spelling">Choose a format:</label>
+          <select id="spelling" name="spelling">
+            {% for spelling in possible_formats %}
+            <option value="{{ spelling }}">{{ spelling }}</option>
+            {% endfor %}
+          </select>
+          <br /><br />
+          <input class="btn btn-primary" type="submit" name="submit" value="Submit">
+          <input class="btn btn-secondary" type="submit" name="submit" value="Reset">
+          <input class="btn btn-warning" type="submit" name="submit" value="Delete">
+        </form>
       {% else %}
-      <div class="alert alert-success text-center" role="alert">
-        All names have been correctly formatted.
-      </div>
+        <div class="alert alert-success text-center" role="alert">
+          All names have been correctly formatted.
+        </div>
+        <div class="text-center">
+          <a class="btn btn-primary" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
+        </div>
       {% endif %}
     </div>
 
