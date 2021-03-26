@@ -5,7 +5,7 @@ from rankings.models import Couple, Dancer
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
-from rankings.forms import CoupleForm
+from rankings.forms import CoupleForm, CoupleTypeForm
 from rankings.rating_stats import couple_stats
 
 ################################################
@@ -115,3 +115,21 @@ def edit_couple(request, couple_pk):
             print("Deleting " + str(couple))
             couple.delete()
             return redirect ('all_couples')
+
+
+def change_couple_type(request, couple_pk):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    couple = get_object_or_404(Couple, pk=couple_pk)
+    if request.method == "GET":
+        form = CoupleTypeForm(instance=couple)
+        return render(request, 'rankings/change_couple_type.html', {'couple': couple, 'form': form})
+    else:
+        submit = request.POST.get("submit")
+        try:
+            form = CoupleTypeForm(data=request.POST, instance=couple)
+            form.save()
+            return redirect('view_couple', couple_pk)
+            #return redirect('all_couples')
+        except ValueError:
+            return render(request, 'rankings/change_couple_type.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})

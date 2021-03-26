@@ -1,0 +1,29 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+
+<h2 class='text-center'>{{ couple }}</h2>
+<h3 class='text-center'>Couple Type: {{ couple.get_couple_type_display }}</h3>
+<h4 class='text-center'>Couple Rating: {{rating}}</h4>
+<br />
+
+<div class="row">
+  <div class="col-4 offset-4 border border-dark">
+    <h3 class="text-center">Edit Couple Type</h3>
+    <p>{{ error }}</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="text-center form-group">
+        <label class="label">Type</label>
+          {{ form.couple_type}}
+      </div>
+      <div class="text-center mt-3">
+        <input class="btn btn-primary" type="submit" name="submit" value = "Save"/>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
