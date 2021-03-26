@@ -2,10 +2,24 @@
 
 {% block content %}
 
-<h2 class='text-center'>{{ couple }}</h2>
+<!-- display couple names as individual dancers with links to dancer page -->
+<!-- <h2 class='text-center'>{{ couple }}</h2> -->
+<h2 class='text-center'>
+  <a class="text-dark" href="{% url 'view_dancer' couple.dancer_1.id %}">{{couple.dancer_1 }}</a> and <a class="text-dark" href="{% url 'view_dancer' couple.dancer_2.id %}">{{ couple.dancer_2 }}</a>
+</h2>
 <h3 class='text-center'>Couple Type: {{ couple.get_couple_type_display }}</h3>
 <h4 class='text-center'>Couple Rating: {{rating}}</h4>
-<br />
+
+{% if show_admin_buttons %}
+  <div class="text-center my-3">
+    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownActionButton" data-toggle="dropdown">Modify</button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="{% url 'change_couple_type' couple.id %}">Change Type</a>
+      <a class="dropdown-item" href="{% url 'edit_couple' couple.id %}">Edit All Fields</a>
+      <a class="dropdown-item" href="{% url 'flip_couple' couple.id %}">Flip</a>
+    </div>
+  </div>
+{% endif %}
 
 <div class="row">
 
@@ -30,17 +44,19 @@
     </table>
     {% if show_admin_buttons %}
       <div class="text-center my-3">
-        <a class="btn btn-primary" href="{% url 'edit_couple' couple.id %}">Edit Couple</a>
-        <a class="btn btn-primary" href="{% url 'flip_couple' couple.id %}">Flip Couple</a>
         {% if comps_with_mismatches %}
-          <span class="dropdown">
-            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Go to Comp</button>
-            <span class="dropdown-menu">
-              {% for comp in comps_with_mismatches %}
-                <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id%}">{{comp.title}}</a>
-              {% endfor %}
+          {% if comps_with_mismatches|length > 1%}
+            <span class="dropdown">
+              <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Go to Comp</button>
+              <span class="dropdown-menu">
+                {% for comp in comps_with_mismatches %}
+                  <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id%}">{{comp.title}}</a>
+                {% endfor %}
+              </span>
             </span>
-          </span>
+          {% else %}
+            <a class="btn btn-secondary btn-sm" href="{% url 'comps:resolve_mismatches' comps_with_mismatches.0.id %}">Go To Comp</a>
+          {% endif %}
         {% endif %}
       </div>
     {% endif %}

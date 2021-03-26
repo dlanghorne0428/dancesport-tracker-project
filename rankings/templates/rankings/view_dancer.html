@@ -47,10 +47,16 @@
         <td class='text-center'>{{ p.couple.get_couple_type_display }}</td>
         <td class='text-center'>{{ p.rating }}</td>
         <td>
-          <a class="btn btn-primary btn-sm" href="{% url 'view_couple' p.couple.id %}">View</a>
           {% if show_admin_buttons %}
-            <a class="btn btn-secondary btn-sm" href="{% url 'edit_couple' p.couple.id %}">Edit</a>
-            <a class="btn btn-secondary btn-sm" href="{% url 'flip_couple' p.couple.id %}">Flip</a>
+            <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownActionButton" data-toggle="dropdown">Action</button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'view_couple' p.couple.id %}">View</a>
+              <a class="dropdown-item" href="{% url 'change_couple_type' p.couple.id %}">Change Type</a>
+              <a class="dropdown-item" href="{% url 'edit_couple' p.couple.id %}">Edit</a>
+              <a class="dropdown-item" href="{% url 'flip_couple' p.couple.id %}">Flip</a>
+            </div>
+          {% else %}
+            <a class="btn btn-primary btn-sm" href="{% url 'view_couple' p.couple.id %}">View</a>
           {% endif %}
         </td>
       </tr>
@@ -81,14 +87,18 @@
           </div>
         </span>
         {% if comps_with_mismatches %}
-          <span class="dropdown">
-            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Go to Comp</button>
-            <span class="dropdown-menu">
-              {% for comp in comps_with_mismatches %}
-                <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id%}">{{comp.title}}</a>
-              {% endfor %}
+          {% if comps_with_mismatches|length > 1%}
+            <span class="dropdown">
+              <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">Go to Comp</button>
+              <span class="dropdown-menu">
+                {% for comp in comps_with_mismatches %}
+                  <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id%}">{{comp.title}}</a>
+                {% endfor %}
+              </span>
             </span>
-          </span>
+          {% else %}
+            <a class="btn btn-secondary btn-sm" href="{% url 'comps:resolve_mismatches' comps_with_mismatches.0.id %}">Go To Comp</a>
+          {% endif %}
         {% endif %}
       </div>
     {% endif %}
