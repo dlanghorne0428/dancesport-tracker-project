@@ -7,6 +7,13 @@ class DancerForm(ModelForm):
         model = Dancer
         fields = ['name_first', 'name_middle', 'name_last', 'dancer_type']
 
+
+class CoupleTypeForm(ModelForm):
+    class Meta:
+        model = Couple
+        fields = ['couple_type']
+
+
 class CoupleForm(ModelForm):
     dancer_1 = ModelChoiceField(queryset=Dancer.objects.all())
     dancer_2 = ModelChoiceField(queryset=Dancer.objects.all())
