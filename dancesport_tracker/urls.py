@@ -41,6 +41,7 @@ urlpatterns = [
     path('couples/<int:couple_pk>/combine/<int:couple2_pk>', views.combine_couples, name='combine_couples'),
     path('couples/flip/<int:couple_pk>', views.flip_couple, name='flip_couple'),
     path('couples/edit/<int:couple_pk>', views.edit_couple, name='edit_couple'),
+    path('couples/change_type/<int:couple_pk>', views.change_couple_type, name='change_couple_type'),
     path('couples/create/', views.create_couple, name='create_couple'),
     path('couples/create/<str:couple_type>/<int:dancer_pk>/<int:dancer_position>/', views.create_couple, name='create_couple'),
     path('couples/create/<str:couple_type>/<int:dancer_pk>/<int:dancer_position>/<int:partner_pk>', views.create_couple, name='create_couple'),
