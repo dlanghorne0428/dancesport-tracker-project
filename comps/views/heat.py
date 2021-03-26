@@ -24,10 +24,13 @@ def heat(request, heat_id):
                 results_available = True
             else:
                 for e in entries:
-                    stats = couple_stats(e.couple, h.style)
+                    if h.style is None:
+                        stats = couple_stats(e.couple)
+                    else:
+                        stats = couple_stats(e.couple, h.style)
                     e.rating = stats['rating']
                     e.save()
-                entries = entries.order_by('-rating')
+                entries = entries.order_by('-rating', 'shirt_number')
 
         next_item = {'heat': h, 'entries': entries, 'results_available': results_available}
         heat_data.append(next_item)
