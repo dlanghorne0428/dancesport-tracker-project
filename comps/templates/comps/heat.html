@@ -14,17 +14,31 @@
 
 {% for item in heat_data %}
   <div class="row">
-    <div class="col-12">
+    <div class="col-2 text-center">
       {% if forloop.counter == 1 %}
-        <h3 class="text-center">{{ item.heat.time }}</h3>
+        {% if prev_heat_id %}
+          <a href="{% url 'comps:heat' prev_heat_id %}" class="btn btn-link">Previous Heat</a>
+        {% endif %}
       {% endif %}
-      <h4 class="text-center d-none d-md-block mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h4>
-      <h5 class="text-center d-block d-md-none mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h5>
-
+    </div>
+    <div class="col-8">
+      {% if forloop.counter == 1 %}
+        <h3 class="text-center d-none d-md-block">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.time }}</h3>
+        <h4 class="text-center d-block d-md-none">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.time }}</h4>
+      {% endif %}
       {% if show_edit_button %}
-      <div class="text-center my-1">
-        <a class="btn btn-primary" href="{% url 'comps:edit_heat' item.heat.id %}">Edit Heat</a>
-      </div>
+        <h4 class="text-center d-none d-md-block mt-3">{{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h4>
+        <h5 class="text-center d-block d-md-none mt-3">{{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h5>
+      {% else %}
+        <h4 class="text-center d-none d-md-block mt-3">{{ item.heat.info }}</h4>
+        <h5 class="text-center d-block d-md-none mt-3">{{ item.heat.info }}</h5>
+      {% endif %}
+    </div>
+    <div class="col-2 text-center">
+      {% if forloop.counter == 1 %}
+        {% if next_heat_id %}
+          <a href="{% url 'comps:heat' next_heat_id %}" class="btn btn-link">Next Heat</a>
+        {% endif %}
       {% endif %}
     </div>
   </div>
@@ -48,31 +62,43 @@
           {% for entry in item.entries %}
           <tr>
             {% if entry.couple.dancer_1 %}
-              <td><a class="text-dark" href="{% url 'view_dancer' entry.couple.dancer_1.id %}">{{ entry.couple.dancer_1 }}</a></td>
+              <td class='text-center'><a class="text-dark" href="{% url 'view_dancer' entry.couple.dancer_1.id %}">{{ entry.couple.dancer_1 }}</a></td>
             {% else %}
               <td>TBD</td>
             {% endif %}
-            <td>and</td>
+            <td class="text-center">and</td>
             {% if entry.couple.dancer_2 %}
-              <td><a class="text-dark" href="{% url 'view_dancer' entry.couple.dancer_2.id %}">{{ entry.couple.dancer_2 }}</a></td>
+              <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' entry.couple.dancer_2.id %}">{{ entry.couple.dancer_2 }}</a></td>
             {% else %}
               <td>TBD</td>
             {% endif %}
             <td class="text-center d-none d-sm-table-cell">{{ entry.shirt_number }}</td>
             {% if item.results_available %}
-              {% if entry.result|length > 0 %}
-                <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
-              {% elif show_edit_button %}
-                <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">Edit</a></td>
+              {% if show_edit_button %}
+                {% if entry.result|length > 0 %}
+                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
+                {% else %}
+                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">Edit</a></td>
+                {% endif %}
+              {% else %}
+                {% if entry.result|length > 0 %}
+                  <td class="text-center">{{ entry.result }}</td>
+                {% endif %}
               {% endif %}
               {% if entry.points %}
                 <td class="text-center">{{ entry.points}}</td>
               {% endif %}
             {% else %}
-              {% if entry.rating %}
-                <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.rating}}</a></td>
-              {% elif show_edit_button %}
-                <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">Edit</a></td>
+              {% if show_edit_button %}
+                {% if entry.rating %}
+                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.rating}}</a></td>
+                {% else %}
+                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">Edit</a></td>
+                {% endif %}
+              {% else %}
+                {% if entry.rating %}
+                  <td class="text-center">{{ entry.rating}}</td>
+                {% endif %}
               {% endif %}
             {% endif %}
           </tr>
@@ -82,14 +108,4 @@
     </div>
   </div>
 {% endfor %}
-<div class="row">
-  <div class="col-12 text-center mt-2">
-    {% if prev_heat_id %}
-        <a href="{% url 'comps:heat' prev_heat_id %}" class="btn btn-primary">Previous Heat</a>
-    {% endif %}
-    {% if next_heat_id %}
-        <a href="{% url 'comps:heat' next_heat_id %}" class="btn btn-primary">Next Heat</a>
-    {% endif %}
-  </div>
-</div>
 {% endblock %}

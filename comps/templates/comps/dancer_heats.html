@@ -15,8 +15,8 @@
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
-          <th>Category</th>
-          <th>Number</th>
+          <th class="text-center">Category</th>
+          <th class="text-center">Number</th>
           <th class="text-center d-none d-md-table-cell">Time</th>
           <th class="text-center">Description</th>
         </tr>
@@ -24,10 +24,10 @@
       <tbody>
         {% for heat in page_obj %}
         <tr>
-          <td>{{ heat.get_category_display }}</td>
+          <td class="text-center">{{ heat.get_category_display }}</td>
           <td class="text-center">{{ heat.heat_number }}</td>
-          <td class="d-none d-md-table-cell">{{ heat.time }}</td>
-          <td><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
+          <td class="text-center d-none d-md-table-cell">{{ heat.time }}</td>
+          <td class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
         </tr>
         {% endfor %}
       </tbody>
