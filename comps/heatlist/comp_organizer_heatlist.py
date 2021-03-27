@@ -56,6 +56,8 @@ class CompOrgHeatlist(Heatlist):
         if category_string in ["Formation ", "Team match "]:
             h.heat_number = -1  # indicate an error
             h.category = None
+        elif category_string == "Solo ":
+            h.category = Heat.SOLO
         elif category_string == "Pro heat ":
             h.category = Heat.PRO_HEAT
         elif category_string == "Heat ":
@@ -66,6 +68,8 @@ class CompOrgHeatlist(Heatlist):
         except:
             # split out extra non-digit info from the heat number
             if index == len(number_string):
+                h.heat_number = -1  # indicate an error
+                h.category = None
                 h.extra = number_string
             else:
                 end_index = index
@@ -86,7 +90,10 @@ class CompOrgHeatlist(Heatlist):
             day_of_week = time_fields[0]
             h.set_time(time_string, day_of_week)
         else:
-            print("Invalid time format " + str(time_fields))
+            print("Warning: Invalid time format " + str(time_fields) + " - using default")
+            day_of_week = "Saturday"
+            time_string = "11:00AM"
+            h.set_time(time_string, day_of_week)
 
         start_pos = items[item_index+4].find("-desc") + len("-desc") + 2
         h.info = items[item_index+4][start_pos:]

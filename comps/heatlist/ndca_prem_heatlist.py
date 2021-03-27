@@ -98,6 +98,8 @@ class NdcaPremHeatlist(Heatlist):
                     h.info = c[start_pos:]
                     if "Professional" in h.info:
                         h.category = Heat.PRO_HEAT
+                    elif "Solo " in h.info:
+                        h.category = Heat.SOLO
                     else:
                         h.category = Heat.NORMAL_HEAT
 

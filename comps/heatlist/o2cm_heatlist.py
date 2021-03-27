@@ -116,6 +116,8 @@ class O2cmHeatlist(Heatlist):
                     # find the heat description information
                     if "Professional" in h.info:
                         h.category = Heat.PRO_HEAT
+                    elif "Solo " in h.info:
+                        h.category = Heat.SOLO
                     else:
                         h.category = Heat.NORMAL_HEAT
 

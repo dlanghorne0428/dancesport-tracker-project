@@ -39,6 +39,8 @@ class CompMngrHeatlist(Heatlist):
         h.comp = comp_ref
         if category == "Pro heat":
             h.category = Heat.PRO_HEAT
+        elif category == "Solo":
+            h.category = Heat.SOLO
         else:
             h.category = Heat.NORMAL_HEAT
         h.heat_number = number
@@ -186,6 +188,16 @@ class CompMngrHeatlist(Heatlist):
                 if partner is not None:
                     if partner_name > dancer_name:
                         h = self.build_heat("Pro heat", line, comp_ref)
+                        if h is not None:
+                            shirt_number = line.split("<td>")[2].split("</td>")[0]
+                            self.build_heat_entry(h, dancer, partner, shirt_number)
+
+            # look for lines with solo information
+            elif "Solo " in line:
+                if partner is not None:
+                    if partner_name > dancer_name:
+                        # turn this line into a heat object and add it to the database
+                        h = self.build_heat("Solo", line, comp_ref)
                         if h is not None:
                             shirt_number = line.split("<td>")[2].split("</td>")[0]
                             self.build_heat_entry(h, dancer, partner, shirt_number)

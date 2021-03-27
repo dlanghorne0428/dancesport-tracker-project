@@ -69,6 +69,8 @@ class FileBasedHeatlist(Heatlist):
         category = summary[self.CATEGORY_COLUMN]
         if category == "Pro heat":
             self.heat.category = Heat.PRO_HEAT
+        elif category == "Solo":
+            self.heat.category = Heat.SOLO
         else:
             self.heat.category = Heat.NORMAL_HEAT
 
