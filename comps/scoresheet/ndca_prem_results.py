@@ -347,7 +347,7 @@ class NdcaPremResults(Results_Processor):
                     event_name = entries.first().heat.info
                     for event in self.events:
                         if event.name == event_name:
-                            print("Processing " + event.name)
+                            #print("Processing " + event.name)
                             event_result = self.process_scoresheet_for_event(entries, event)
                             if event_result is not None:
                                 for entry in entries:
