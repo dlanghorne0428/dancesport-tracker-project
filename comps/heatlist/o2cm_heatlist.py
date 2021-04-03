@@ -65,8 +65,9 @@ class O2cmHeatlist(Heatlist):
             return None
 
 
-    def load_heat(self, h, line="", comp_ref=""):
+    def load_heat(self, line="", comp_ref=""):
 
+        h = Heat()
         h.comp = comp_ref
         h.rounds = "F"      # assume final only
 
@@ -104,6 +105,7 @@ class O2cmHeatlist(Heatlist):
                     h.set_time(time_string, "Saturday", "%I:%M %p")  # day not available in this format
                 else:
                     return None
+
             else:
                 return None
 
@@ -131,6 +133,7 @@ class O2cmHeatlist(Heatlist):
                 return None
         else:
             return None
+        return h
 
 
     def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
@@ -156,14 +159,15 @@ class O2cmHeatlist(Heatlist):
                         if partner.name > dancer.name:
                             # if this row is the start of a new heat, create a new heat object
                             heat = Heat()
-                            self.load_heat(heat, rows[row_index], comp_ref)
-                            if "Solo Star" in heat.info:
-                                h = None
-                            else:
-                                h = self.add_heat_to_database(heat, comp_ref)
-                            if h is not None:
-                                # this format doesn't store shirt numbers, use code instead
-                                self.build_heat_entry(h, dancer, partner, shirt_number=dancer.code)
+                            heat = self.load_heat(rows[row_index], comp_ref)
+                            if heat is not None:
+                                if "Solo Star" in heat.info:
+                                    h = None
+                                else:
+                                    h = self.add_heat_to_database(heat, comp_ref)
+                                if h is not None:
+                                    # this format doesn't store shirt numbers, use code instead
+                                    self.build_heat_entry(h, dancer, partner, shirt_number=dancer.code)
 
                 # go to the next row
                 row_index += 1
