@@ -18,6 +18,33 @@ import time
 
 
 @shared_task(bind=True)
+def clear_comp_task(self, comp_data, heat_data):
+    for deserialized_object in serializers.deserialize("json", comp_data):
+        comp = deserialized_object.object
+
+    heats = list()
+    for deserialized_object in serializers.deserialize("json", heat_data):
+        heats.append(deserialized_object.object)
+    num_heats = len(heats)
+
+    progress_recorder = ProgressRecorder(self)
+    progress_recorder.set_progress(0, num_heats)
+    for index in range(num_heats):
+        h = heats[index]
+        heat_info = h.info
+        if heat_info is None:
+            break
+        h.delete()
+        progress_recorder.set_progress(index + 1, num_heats, description=heat_info)
+
+    result = num_heats
+    # reset the status
+    comp.process_state = Comp.INITIAL
+    comp.save()
+    return result
+
+
+@shared_task(bind=True)
 def process_heatlist_task(self, comp_data, heatlist_data):
     for deserialized_object in serializers.deserialize("json", comp_data):
         comp = deserialized_object.object

@@ -1,18 +1,22 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.core import serializers
+from django.shortcuts import render
 from comps.models.comp import Comp
 from comps.models.heat import Heat
+from comps.tasks import clear_comp_task
 
 def clear_comp(request, comp_id):
-    comp = get_object_or_404(Comp, pk=comp_id)
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    comp_objects = Comp.objects.filter(pk=comp_id)
+    if len(comp_objects) == 1:
+        comp=comp_objects[0]
 
-    # delete all the heats in the comps
+    # find all the heats in this comp
     heats = Heat.objects.filter(comp=comp)
-    for h in heats:
-        h.delete()
 
-    # reset the status for the next year's comp
-    comp.process_state = Comp.INITIAL
-    comp.save()
+    comp_data = serializers.serialize("json", comp_objects)
+    heat_data = serializers.serialize("json", heats)
 
-    # return to the list of comps
-    return redirect("comps:all_comps")
+    result = clear_comp_task.delay(comp_data, heat_data)
+
+    return render(request, 'comps/process_clear_comp.html', context={'task_id': result.task_id, 'comp': comp})
