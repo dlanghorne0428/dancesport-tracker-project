@@ -4,8 +4,8 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
-from rankings.models import Couple
-from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match
+from rankings.models import Dancer, Couple
+from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match, resolve_unmatched_entries
 
 
 def resolve_mismatches(request, comp_id, wider_search=0):
@@ -24,6 +24,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         return redirect("comps:comp_heats", comp_id)
     else:
         first_unmatched = unmatched_entries.first()
+        similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
         dancer_match = find_dancer_exact_match(first_unmatched.dancer)
         partner_match = find_dancer_exact_match(first_unmatched.partner)
         if wider_search == 0:
@@ -58,38 +59,44 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 if name_str == first_unmatched.dancer.name:
                     dancer_id = dancer_match.id
                     partner_id = partner_match.id
+                    code = first_unmatched.dancer.code
                 else:
                     dancer_id = partner_match.id
                     partner_id = dancer_match.id
+                    code = first_unmatched.partner.code
 
-                return redirect('create_couple', couple_type, dancer_id, 1, partner_id)
+                new_couple = Couple()
+                dancer_1 = Dancer.objects.get(pk=dancer_id)
+                dancer_2 = Dancer.objects.get(pk=partner_id)
+                new_couple.dancer_1 = dancer_1
+                new_couple.dancer_2 = dancer_2
+                new_couple.couple_type = couple_type
+                try:
+                    new_couple.save()
+                    resolve_unmatched_entries(new_couple, code, similar_unmatched)
+                except:
+                    new_couple.delete()
+
+                return redirect('comps:resolve_mismatches', comp_id = comp_id)
 
             elif submit == "Widen Search":
                 if wider_search < 2:
                     wider_search += 1
                 return redirect('comps:resolve_mismatches', comp_id = comp_id, wider_search=wider_search)
+
             elif submit == "Select" or submit == "Override Type":
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
                     if str(pm_couple) == couple_str and (pm_couple.couple_type == first_unmatched.entry.heat.couple_type() or submit == "Override Type"):
-                        similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
-                        for e in similar_unmatched:
-                            if pm_couple.couple_type == e.entry.heat.couple_type() or submit == "Override Type":
-                                # update the heat entry with the selected couple
-                                e.entry.couple = pm_couple
-                                e.entry.code = pm_code
-                                #print(e.entry)
-                                e.entry.save()
-                                e.delete()
+                        resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
                         break
                 return redirect("comps:heat", first_unmatched.entry.heat.id)
             elif submit == "Delete":
                 # deleting the heat entry that this unmatched entry points to will also delete all the unmatched entries
                 # that point to the same entry.
                 the_couple_type = first_unmatched.entry.heat.couple_type()
-                similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
+                #similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
                 for e in similar_unmatched:
                     if the_couple_type == e.entry.heat.couple_type():
                         e.delete()
-                #first_unmatched.entry.delete()
                 return redirect("comps:heat", first_unmatched.entry.heat.id)
