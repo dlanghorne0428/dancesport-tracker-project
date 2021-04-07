@@ -4,6 +4,7 @@
 
 from .models import Dancer, Couple
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 
 
 def split_name(name):
@@ -19,7 +20,7 @@ def split_name(name):
             return (name_fields[0], first_fields[0], first_fields[1])
     else:
         print("could not split name: " +  str(name))
-        return(name, '', '')
+        return('.', name, '')
 
 
 def find_last_name_matches(dancers, dancer_1_code, dancer_2_code):
@@ -117,3 +118,14 @@ def find_couple_exact_match(heatlist_dancer, heatlist_partner, couple_type):
                 return (couples.first(), heatlist_partner.code)
             else:
                 return (None, None)
+
+
+def resolve_unmatched_entries(couple, code, unmatched_entries, override_type=False):
+    for e in unmatched_entries:
+        if couple.couple_type == e.entry.heat.couple_type() or override_type:
+            # update the heat entry with the selected couple
+            e.entry.couple = couple
+            e.entry.code = code
+            #print(e.entry)
+            e.entry.save()
+            e.delete()
