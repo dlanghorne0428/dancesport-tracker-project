@@ -20,7 +20,8 @@ def split_name(name):
             return (name_fields[0], first_fields[0], first_fields[1])
     else:
         print("could not split name: " +  str(name))
-        return('.', name, '')
+        return(name, '', '')
+        #return('.', name, '')
 
 
 def find_last_name_matches(dancers, dancer_1_code, dancer_2_code):
