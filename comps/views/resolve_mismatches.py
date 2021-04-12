@@ -90,7 +90,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                     if str(pm_couple) == couple_str and (pm_couple.couple_type == first_unmatched.entry.heat.couple_type() or submit == "Override Type"):
                         resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
                         break
-                return redirect("comps:heat", first_unmatched.entry.heat.id)
+                return redirect('comps:resolve_mismatches', comp_id = comp_id)
             elif submit == "Delete":
                 # deleting the heat entry that this unmatched entry points to will also delete all the unmatched entries
                 # that point to the same entry.
