@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from django.db import models
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 from cloudinary.models import CloudinaryField
@@ -32,8 +33,12 @@ class Comp(models.Model):
 
     # URLs are optional, blank=True allows that, use heatlist_file if URL not available
     heatsheet_url = models.URLField(blank=True)
-    #heatsheet_file = models.ImageField(upload_to=comp_logo_path, blank=True, storage=RawMediaCloudinaryStorage())
     heatsheet_file = models.FileField(upload_to=comp_logo_path, blank=True, storage=RawMediaCloudinaryStorage())
+
+    # this field indicates when the heatsheet was loaded
+    default_time = datetime(1970,1,1,tzinfo=timezone.utc)
+    heatsheet_load_time = models.DateTimeField(null=True, default=default_time)
+
     scoresheet_url = models.URLField(blank=True)
 
     # the different states of processing a competition

@@ -24,9 +24,9 @@
     {% else %}
       <h4 class="text-center">{{ comp.start_date }} to {{ comp.end_date }}</h4>
     {% endif %}
-    <!-- <p>
-      Process State: {{ comp.get_process_state_display }}
-    </p> -->
+    {% if show_load_time %}
+      <h4 class="text-center">Heats Loaded at {{ comp.heatsheet_load_time }}</h4>
+    {% endif %}
   </div>
 </div>
 
@@ -116,16 +116,6 @@
     $( '#view_heats_button' ).removeClass( "btn-info" );
     $( '#view_heats_button' ).addClass( "btn-primary" );
   }
-</script>
-
-  <!-- $(function () {
-    if ( process state == "IN" ) {
-      $( '#load_heats_button' ).addClass( "btn-primary" );
-      $( '#load_dancers_button' ).removeClass( "btn-primary" );
-      $( '#resolve_mismatches_button' ).removeClass( "btn-primary" );
-      $( '#view_heats_button' ).removeClass( "btn-primary" );
-    })
-  }); -->
 </script>
 
 

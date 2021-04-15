@@ -1,5 +1,6 @@
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
+from datetime import datetime, timezone, timedelta
 from django.core import serializers
 from .heatlist.file_based_heatlist import FileBasedHeatlist
 from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
@@ -40,6 +41,7 @@ def clear_comp_task(self, comp_data, heat_data):
     result = num_heats
     # reset the status
     comp.process_state = Comp.INITIAL
+    comp.heatsheet_load_time = Comp.default_time
     comp.save()
     return result
 
@@ -84,6 +86,9 @@ def process_heatlist_task(self, comp_data, heatlist_data):
         comp.process_state = comp.HEAT_ENTRIES_MATCHED
     else:
         comp.process_state = comp.HEATS_LOADED
+
+    comp.heatsheet_load_time = datetime.now(tz=timezone(-timedelta(hours=4)))
+
     comp.save()
     return result
 
