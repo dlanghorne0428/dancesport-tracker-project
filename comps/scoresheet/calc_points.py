@@ -54,7 +54,7 @@ def non_pro_heat_level(info, multi_dance=True):
         #return 15
 
 
-def calc_points(level, placement, num_competitors = 6, rounds = "F", accum = 0):
+def calc_points(level, placement, num_competitors = 6, rounds = "F", score = 0, accum = 0):
     '''Point values are awarded based on the level of the event (Open, Rising Star, Novice)
        and the number of rounds (Final only, Semi-Final, and Quarter-Final).
        Extra points are awarded for events that had prelim rounds.'''
@@ -129,6 +129,9 @@ def calc_points(level, placement, num_competitors = 6, rounds = "F", accum = 0):
     elif num_competitors == 2:
         percent_table = [75, 35];
         return max_pts * percent_table[place] / 100
+    elif score > 0: # only one entry with proficiency score
+        percent = max(35, 35 + ((score - 93.5) * 10))
+        return max_pts * percent / 100
     else:  # only one entry
         return max_pts * 0.6
 
