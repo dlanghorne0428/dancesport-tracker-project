@@ -112,6 +112,7 @@ class O2cmResults(Results_Processor):
 
         # on the o2cm site, we only handle final rounds at this time
         looking_for_final_round = True
+        looking_for_score_column = False
         looking_for_final_summary = False
         looking_for_final_dance = False
         looking_for_result_column = False
@@ -140,10 +141,43 @@ class O2cmResults(Results_Processor):
             l = lines[i]
             if looking_for_final_round:
                 if 'class="h4"' in l:
-                    # once the find the title with the final results, look for the summary.
-                    looking_for_final_summary = True
+                    # once the find the title with the final results, look for the score column or summary.
+                    looking_for_score_column = True
+                    num_scores = 0
+                    total_score = 0
                     looking_for_final_round = False
                     #print("Found Final results")
+                else:
+                    i += 1
+            elif looking_for_score_column:
+                if 'class=h3' in l:
+                    if "Score" in l:
+                        next_row = False
+                        rows = l.split("</tr>")
+                        for r in rows:
+                            if next_row:
+                                fields = r.split("</td>")
+                                score_column = len(fields) - 4
+                                score = float(fields[score_column][len("<td>"):])
+                                num_scores += 1
+                                total_score += score
+                                break
+                            if "Score" in r:
+                                next_row = True
+
+                        i += 1
+                    else:
+                        looking_for_score_column = False
+                        looking_for_final_summary = True
+                elif "Couples" in l:
+                    e = entries[0]
+                    e.result = 1
+                    avg_score = total_score / num_scores
+                    e.points = round(calc_points(self.heat.base_value, placement=1, num_competitors=1, score=avg_score), 2)
+                    #print(str(e), total_score, avg_score, e.points)
+                    e.save()
+                    return 1
+                    i += 1
                 else:
                     i += 1
             elif looking_for_final_summary:
