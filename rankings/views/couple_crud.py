@@ -12,7 +12,8 @@ from rankings.rating_stats import couple_stats
 # CRUD Views for Couple objects
 # C:  create_couple
 # R:  all_couples and view_couples
-# UD: edit_couple and combine_couples
+# U: edit_couple and combine_couples
+# D: delete_couple
 ################################################
 
 def create_couple(request, couple_type = None, dancer_pk=None, dancer_position= None, partner_pk=None):
@@ -133,3 +134,11 @@ def change_couple_type(request, couple_pk):
             #return redirect('all_couples')
         except ValueError:
             return render(request, 'rankings/change_couple_type.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
+
+
+def delete_couple(request, couple_pk):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    couple = get_object_or_404(Couple, pk=couple_pk)
+    couple.delete()
+    return redirect ('all_couples')
