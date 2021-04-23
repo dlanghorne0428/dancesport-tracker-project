@@ -16,8 +16,8 @@ def load_dancers(request, comp_id):
     if len(comp_objects) == 1:
         comp=comp_objects[0]
 
-    if Heatlist_Dancer.objects.count() > 0:
-        Heatlist_Dancer.objects.all().delete()
+    #if Heatlist_Dancer.objects.count() > 0:
+    #    Heatlist_Dancer.objects.all().delete()
 
     if Unmatched_Heat_Entry.objects.count() > 0:
         Unmatched_Heat_Entry.objects.all().delete()
@@ -35,10 +35,10 @@ def load_dancers(request, comp_id):
         else: # CompOrganizer for now
             heatlist = CompOrgHeatlist()
 
-        heatlist.open(comp.heatsheet_url)
+        heatlist.open(comp)
 
     for d in heatlist.dancers:
-        in_database = Heatlist_Dancer.objects.filter(name = d.name)
+        in_database = Heatlist_Dancer.objects.filter(name = d.name, comp=comp)
         if in_database.count() == 0:
             d.save()
 

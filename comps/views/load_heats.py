@@ -12,7 +12,7 @@ def load_heats(request, comp_id):
     if len(comp_objects) == 1:
         comp=comp_objects[0]
 
-    heatlist_dancers = Heatlist_Dancer.objects.all()
+    heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)
 
     comp_data = serializers.serialize("json", comp_objects)
     heatlist_dancer_data = serializers.serialize("json", heatlist_dancers)

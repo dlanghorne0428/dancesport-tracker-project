@@ -90,14 +90,14 @@ class CompMngrHeatlist(Heatlist):
     # These methods process the HTML data file in CompMngr heatlist format
     # and populates the data structures
     ##################################################################################
-    def open(self, url):
-        '''This method opens the heatlist filename and finds all the dancer names.
-           The file is left open so other methods can find the heat information.'''
+    def open(self, comp):
+        '''This method opens the heatlist URL and finds all the dancer names.
+           Those dancer names are stored in a list of Heatlist_Dancer objects.'''
         dancer = None       # variables for the current dancer
         found_last_dancer = False
+        url = comp.heatsheet_url
 
-        # open the file and loop through all the lines until last dancer is found
-        #self.fhand = open(filename,encoding="utf-8")
+        # open the URL and loop through all the lines until last dancer is found
         response = requests.get(url)
         self.lines = response.text.splitlines()
         self.line_index = 0
@@ -108,6 +108,8 @@ class CompMngrHeatlist(Heatlist):
             if "Show entries" in line:
                 dancer = Heatlist_Dancer()
                 dancer.load_from_comp_mngr(line.strip())
+                dancer.comp = comp
+                dancer.alias = None
                 self.dancers.append(dancer)
             # if we see the line that says "size="", extract the name of the competition
             if 'size=' in line:
@@ -125,9 +127,9 @@ class CompMngrHeatlist(Heatlist):
     def load(self, url, heatlist_dancers):
         for d in heatlist_dancers:
             self.dancers.append(d)
-            #print(d.name)
+            #print(d)
 
-        # open the file and skip all the lines until last dancer is found
+        # open the URL and skip all the lines until last dancer is found
         response = requests.get(url)
         self.lines = response.text.splitlines()
         self.line_index = 0

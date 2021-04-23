@@ -8,14 +8,35 @@ from rankings.models import Dancer, Couple
 from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match, resolve_unmatched_entries
 
 
+def save_alias(unmatched_dancer, actual_dancer):
+    # if the unmatched dancer doesn't have an alias and the actual dancer's name is spelled differently,
+    # update the unmatched dancer to remember the actual dancer as an alias.
+    if unmatched_dancer.alias is None:
+        if unmatched_dancer.name != str(actual_dancer):
+            unmatched_dancer.alias = actual_dancer
+            unmatched_dancer.save()
+        #     print("Alias for " + unmatched_dancer.name + " is " + str(actual_dancer))
+        # else:
+        #     print("No alias needed for " + unmatched_dancer.name + " matches " + str(actual_dancer))
+    # else:
+    #     print("Alias for " + unmatched_dancer.name + " already assigned as " + str(unmatched_dancer.alias))
+
+
 def resolve_mismatches(request, comp_id, wider_search=0):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     unmatched_entries = Unmatched_Heat_Entry.objects.all().order_by('entry')
     comp = get_object_or_404(Comp, pk=comp_id)
     if unmatched_entries.count() == 0:
-        # all unmatched entries resolved, delete heatlist_dancer entries from database
-        heatlist_dancers = Heatlist_Dancer.objects.all().delete()
+        # all unmatched entries resolved, delete heatlist_dancer entries without an alias from database
+        heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)
+        orig_count = heatlist_dancers.count()
+        for hld in heatlist_dancers:
+            if hld.alias is None:
+                hld.delete()
+        new_count = Heatlist_Dancer.objects.filter(comp=comp).count()
+        print("Aliases found: " + str(new_count) + ". Deleted " + str(orig_count - new_count) + " objects.")
+
         if comp.process_state == comp.SCORESHEETS_LOADED:
             comp.process_state = comp.RESULTS_RESOLVED
         else:
@@ -55,7 +76,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 start_pos = len("Couple: ")
                 end_pos = submit.find(" and ")
                 name_str = submit[start_pos:end_pos]
-                print("Name: " + name_str + " match: " + first_unmatched.dancer.name,"**")
+                #print("Name: " + name_str + " match: " + first_unmatched.dancer.name,"**")
                 if name_str == first_unmatched.dancer.name:
                     dancer_id = dancer_match.id
                     partner_id = partner_match.id
@@ -88,6 +109,39 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
                     if str(pm_couple) == couple_str and (pm_couple.couple_type == first_unmatched.entry.heat.couple_type() or submit == "Override Type"):
+                        # assign aliases, if one matches, the other must be an alias
+                        if first_unmatched.dancer.name == str(pm_couple.dancer_1):
+                            save_alias(first_unmatched.partner, pm_couple.dancer_2)
+                        elif first_unmatched.dancer.name == str(pm_couple.dancer_2):
+                            save_alias(first_unmatched.partner, pm_couple.dancer_1)
+                        elif first_unmatched.partner.name == str(pm_couple.dancer_1):
+                            save_alias(first_unmatched.dancer, pm_couple.dancer_2)
+                        elif first_unmatched.partner.name == str(pm_couple.dancer_2):
+                            save_alias(first_unmatched.dancer, pm_couple.dancer_1)
+
+                        # neither names match, try to use first letter of last name
+
+                        # both dancer and partner have same first letter of last name, don't try to assign alias
+                        elif first_unmatched.dancer.name[0] == first_unmatched.partner.name[0]:
+                            print("Need alias for " + first_unmatched.dancer.name + " and " + first_unmatched.partner.name + " Couple is " + str(pm_couple))
+
+                        # last names start with different letters, use that to assign aliases to each member of the couple
+                        elif first_unmatched.dancer.name[0] == pm_couple.dancer_1.name_last[0]:
+                            save_alias(first_unmatched.dancer, pm_couple.dancer_1)
+                            save_alias(first_unmatched.partner, pm_couple.dancer_2)
+                        elif first_unmatched.partner.name[0] == pm_couple.dancer_1.name_last[0]:
+                            save_alias(first_unmatched.partner, pm_couple.dancer_1)
+                            save_alias(first_unmatched.dancer, pm_couple.dancer_2)
+                        elif first_unmatched.dancer.name[0] == pm_couple.dancer_2.name_last[0]:
+                            save_alias(first_unmatched.dancer, pm_couple.dancer_2)
+                            save_alias(first_unmatched.partner, pm_couple.dancer_1)
+                        elif first_unmatched.partner.name[0] == pm_couple.dancer_2.name_last[0]:
+                            save_alias(first_unmatched.partner, pm_couple.dancer_2)
+                            save_alias(first_unmatched.dancer, pm_couple.dancer_1)
+
+                        else: # neither name matches the first letter of last name, don't try to assign aliases
+                            print("Need alias for " + first_unmatched.dancer.name + " and " + first_unmatched.partner.name + " Couple is " + str(pm_couple))
+
                         resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
                         break
                 return redirect('comps:resolve_mismatches', comp_id = comp_id)

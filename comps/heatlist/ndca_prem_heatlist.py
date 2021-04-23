@@ -152,9 +152,10 @@ class NdcaPremHeatlist(Heatlist):
     ############### OVERRIDDEN METHODS  #######################################################
     # the following methods override the parent class to obtain data from the  NdcaPremier site
     ###########################################################################################
-    def open(self, url):
+    def open(self, comp):
         '''This method obtains the name of the competition and a list of all the dancers.'''
         #extract comp name and comp_id from URL
+        url = comp.heatsheet_url
         start_pos = url.find("cyi=") + len("cyi=")
         self.comp_id = url[start_pos:]
         self.comp_name = self.get_comp_name(self.comp_id)
@@ -170,6 +171,8 @@ class NdcaPremHeatlist(Heatlist):
             safe = html.unescape(competitors[c])
             d = Heatlist_Dancer()
             d.load_from_ndca_premier(safe)
+            d.comp = comp
+            d.alias = None
             try:
                 code_num = int(d.code)
                 if d.code != "0":
