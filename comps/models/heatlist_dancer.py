@@ -1,4 +1,6 @@
 from django.db import models
+from comps.models.comp import Comp
+from rankings.models import Dancer
 
 
 class Heatlist_Dancer(models.Model):
@@ -9,6 +11,12 @@ class Heatlist_Dancer(models.Model):
 
     # the code field is used to obtain scoresheet results for this dancer
     code = models.CharField(max_length = 20)
+
+    # the dancer object that matches this name
+    alias = models.ForeignKey("rankings.Dancer", on_delete=models.SET_NULL, null=True)
+
+    # the comp object that created this heatlist_dancer
+    comp = models.ForeignKey("comps.Comp", on_delete=models.CASCADE, null=True)
 
     # flag to indicate if the name needs additional formatting by the user
     formatting_needed = models.BooleanField(default=False)
@@ -110,4 +118,4 @@ class Heatlist_Dancer(models.Model):
 
 
     def __str__(self):
-        return self.name
+        return self.name + ' ' + str(self.comp)

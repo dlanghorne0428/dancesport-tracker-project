@@ -86,6 +86,10 @@ def find_couple_first_letter_match(dancer, partner, dancer_only=True):
 
 
 def find_dancer_exact_match(heatlist_dancer):
+    if heatlist_dancer.alias is not None:
+        #print("Returning " + str(heatlist_dancer.alias) + " for " + str(heatlist_dancer))
+        return heatlist_dancer.alias
+
     dancer_last, dancer_first, dancer_middle = split_name(heatlist_dancer.name)
     try:
         dancer = Dancer.objects.get(name_last = dancer_last, name_first = dancer_first, name_middle = dancer_middle)

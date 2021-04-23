@@ -7,6 +7,17 @@ from comps.models.heatlist_dancer import Heatlist_Dancer
 from rankings.models import Dancer, Couple
 from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match, resolve_unmatched_entries
 
+def save_alias(unmatched_dancer, actual_dancer):
+    if unmatched_dancer.alias is None:
+        if unmatched_dancer.alias != str(actual_dancer):
+            unmatched_dancer.alias = actual_dancer
+            unmatched_dancer.save()
+            print("Alias for " + unmatched_dancer.name + " is " + str(actual_dancer))
+        else:
+            print("No alias needed for " + unmatched_dancer.name + " matches " + str(actual_dancer))
+    else:
+        print("Alias for " + unmatched_dancer.name + " already assigned as " + str(unmatched_dancer.alias))
+
 
 def resolve_mismatches(request, comp_id, wider_search=0):
     if not request.user.is_superuser:
@@ -15,7 +26,8 @@ def resolve_mismatches(request, comp_id, wider_search=0):
     comp = get_object_or_404(Comp, pk=comp_id)
     if unmatched_entries.count() == 0:
         # all unmatched entries resolved, delete heatlist_dancer entries from database
-        heatlist_dancers = Heatlist_Dancer.objects.all().delete()
+        # don't do this here, we want to save the aliases discovered and delete later
+        # heatlist_dancers = Heatlist_Dancer.objects.all().delete()
         if comp.process_state == comp.SCORESHEETS_LOADED:
             comp.process_state = comp.RESULTS_RESOLVED
         else:
@@ -55,7 +67,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 start_pos = len("Couple: ")
                 end_pos = submit.find(" and ")
                 name_str = submit[start_pos:end_pos]
-                print("Name: " + name_str + " match: " + first_unmatched.dancer.name,"**")
+                #print("Name: " + name_str + " match: " + first_unmatched.dancer.name,"**")
                 if name_str == first_unmatched.dancer.name:
                     dancer_id = dancer_match.id
                     partner_id = partner_match.id
@@ -88,7 +100,39 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
                     if str(pm_couple) == couple_str and (pm_couple.couple_type == first_unmatched.entry.heat.couple_type() or submit == "Override Type"):
-                        resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
+                        print(couple_str, first_unmatched.dancer.name, first_unmatched.partner.name)
+                        # assign aliases
+                        if first_unmatched.dancer.name in couple_str:
+                            if first_unmatched.dancer.name == str(pm_couple.dancer_1):
+                                save_alias(first_unmatched.partner, pm_couple.dancer_2)
+                                resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
+                            else:
+                                save_alias(first_unmatched.partner, pm_couple.dancer_1)
+                                resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
+
+                        elif first_unmatched.partner.name in couple_str:
+                            if first_unmatched.partner.name == str(pm_couple.dancer_1):
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_2)
+                                # if first_unmatched.dancer.alias is None:
+                                #     first_unmatched.dancer.alias = pm_couple.dancer_2
+                                #     first_unmatched.dancer.save()
+                                #     print("Alias for " + first_unmatched.dancer.name + " is " + str(pm_couple.dancer_2))
+                                # else:
+                                #     print("Alias for " + first_unmatched.dancer.name + " already assigned as " + str(first_unmatched.dancer.alias))
+                                resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
+                            else:
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_1)
+                                # if first_unmatched.dancer.alias is None:
+                                #     first_unmatched.dancer.alias = pm_couple.dancer_1
+                                #     first_unmatched.dancer.save()
+                                #     print("Alias for " + first_unmatched.dancer.name + " is " + str(pm_couple.dancer_1))
+                                # else:
+                                #     print("Alias for " + first_unmatched.dancer.name + " already assigned as " + str(first_unmatched.dancer.alias))
+                                resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
+
+                        else:
+                            print("Need alias for both")
+                        #resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
                         break
                 return redirect('comps:resolve_mismatches', comp_id = comp_id)
             elif submit == "Delete":
