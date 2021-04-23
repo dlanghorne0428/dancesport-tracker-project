@@ -9,7 +9,7 @@ def resolve_dancers(request, comp_id):
         return render(request, 'rankings/permission_denied.html')
 
     comp = get_object_or_404(Comp, pk=comp_id)
-    names_to_format = Heatlist_Dancer.objects.filter(formatting_needed = True)
+    names_to_format = Heatlist_Dancer.objects.filter(comp=comp).filter(formatting_needed = True)
     current_name = names_to_format.first()
 
     if request.method == "POST":
@@ -25,13 +25,13 @@ def resolve_dancers(request, comp_id):
             current_name.save()
 
         # find next name to format
-        names_to_format = Heatlist_Dancer.objects.filter(formatting_needed = True)
+        names_to_format = Heatlist_Dancer.objects.filter(comp=comp).filter(formatting_needed = True)
         current_name = names_to_format.first()
     else: # GET
         page_number = request.GET.get('page')
 
     # do this for either GET or POST
-    heatlist_dancers = Heatlist_Dancer.objects.all().order_by('pk')
+    heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp).order_by('pk')
     possible_formats = list()
 
     if current_name is not None:

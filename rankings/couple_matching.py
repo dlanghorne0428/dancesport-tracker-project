@@ -85,8 +85,8 @@ def find_couple_first_letter_match(dancer, partner, dancer_only=True):
     return partial_matching_couples
 
 
-def find_dancer_exact_match(heatlist_dancer):
-    if heatlist_dancer.alias is not None:
+def find_dancer_exact_match(heatlist_dancer, accept_alias=False):
+    if accept_alias and heatlist_dancer.alias is not None:
         #print("Returning " + str(heatlist_dancer.alias) + " for " + str(heatlist_dancer))
         return heatlist_dancer.alias
 
@@ -99,8 +99,10 @@ def find_dancer_exact_match(heatlist_dancer):
 
 
 def find_couple_exact_match(heatlist_dancer, heatlist_partner, couple_type):
-    dancer = find_dancer_exact_match(heatlist_dancer)
-    partner = find_dancer_exact_match(heatlist_partner)
+    if heatlist_dancer is None or heatlist_partner is None:
+        return(None, None)
+    dancer = find_dancer_exact_match(heatlist_dancer, accept_alias=True)
+    partner = find_dancer_exact_match(heatlist_partner, accept_alias=True)
     if dancer is None or partner is None:
         return (None, None)
     else:

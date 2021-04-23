@@ -38,8 +38,7 @@ def load_dancers(request, comp_id):
         heatlist.open(comp)
 
     for d in heatlist.dancers:
-        # TODO: this should also filter on comp?
-        in_database = Heatlist_Dancer.objects.filter(name = d.name)
+        in_database = Heatlist_Dancer.objects.filter(name = d.name, comp=comp)
         if in_database.count() == 0:
             d.save()
 
