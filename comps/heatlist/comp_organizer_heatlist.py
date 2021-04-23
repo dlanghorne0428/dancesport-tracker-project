@@ -156,10 +156,10 @@ class CompOrgHeatlist(Heatlist):
     ############### OVERRIDDEN METHODS  #######################################################
     # the following methods override the parent class to obtain data from the website
     ###########################################################################################
-    def open(self, url):
+    def open(self, comp):
         '''This method obtains the name of the competition and a list of all the dancers.'''
         #extract comp name from URL
-        print("URL", url)
+        url = comp.heatsheet_url
         response = requests.get(url)
         lines = response.text.splitlines()
         for l in lines:
@@ -185,6 +185,8 @@ class CompOrgHeatlist(Heatlist):
             start_pos = competitors[c].find('"id')
             d = Heatlist_Dancer()
             d.load_from_comp_org(competitors[c][start_pos:])
+            d.comp = comp
+            d.alias = None
             try:
                 code_num = int(d.code)
                 if d.code != "0":
