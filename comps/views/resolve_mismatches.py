@@ -28,9 +28,15 @@ def resolve_mismatches(request, comp_id, wider_search=0):
     unmatched_entries = Unmatched_Heat_Entry.objects.all().order_by('entry')
     comp = get_object_or_404(Comp, pk=comp_id)
     if unmatched_entries.count() == 0:
-        # all unmatched entries resolved, delete heatlist_dancer entries from database
-        # don't do this here, we want to save the aliases discovered and delete later
-        # heatlist_dancers = Heatlist_Dancer.objects.all().delete()
+        # all unmatched entries resolved, delete heatlist_dancer entries without an alias from database
+        heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)
+        orig_count = heatlist_dancers.count()
+        for hld in heatlist_dancers:
+            if hld.alias is None:
+                hld.delete()
+        new_count = Heatlist_Dancer.objects.filter(comp=comp).count()
+        print("Aliases found: " + str(new_count) + ". Deleted " + str(orig_count - new_count) + " objects.")
+
         if comp.process_state == comp.SCORESHEETS_LOADED:
             comp.process_state = comp.RESULTS_RESOLVED
         else:
