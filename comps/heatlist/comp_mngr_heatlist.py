@@ -162,6 +162,7 @@ class CompMngrHeatlist(Heatlist):
            The dancer_index is a counter, providing a quick way to find the dancer object
            based on the dancer's name'''
         dancer = None       # object for the current dancer
+        dancer_name = ""
 
         while self.line_index < len(self.lines):
             line = self.lines[self.line_index]
