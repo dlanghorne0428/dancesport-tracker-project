@@ -75,10 +75,10 @@ def process_heatlist_task(self, comp_data, heatlist_data):
 
     progress_recorder.set_progress(0, num_dancers)
     for index in range(num_dancers):
-        progress_recorder.set_progress(index, num_dancers, description=heatlist.dancers[index].name)
         the_name = heatlist.get_next_dancer(index, comp)
         if the_name is None:
             break
+        progress_recorder.set_progress(index + 1, num_dancers, description=the_name)
 
     unmatched_entries = heatlist.complete_processing()
     result = [num_dancers, unmatched_entries]
@@ -137,7 +137,7 @@ def process_scoresheet_task(self, comp_data):
                 progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)
 
             else:  # don't score freestyles, and delete those heats
-                #print("Deleting heat " + str(heat))
+                progress_recorder.set_progress(index, num_heats, description="Deleting " + heat.info)
                 heat.delete()
 
         unmatched_entries = len(scoresheet.late_entries)
