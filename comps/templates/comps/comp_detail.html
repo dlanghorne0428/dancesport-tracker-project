@@ -31,40 +31,51 @@
 </div>
 
 
-{% if comp.heatsheet_url or comp.heatsheet_file %}
-  {% if show_load_buttons %}
-    <div class="row">
-      <div class="col-12 text-center">
-          <a id="load_dancers_button" class="btn btn-info" role="button" href="{% url 'comps:load_dancers' comp.id %}">Load Dancers</a>
-          <a id="load_heats_button" class="btn btn-info" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
-          <a id="load_scoresheets_button" class="btn btn-info" role="button" href="{% url 'comps:load_scoresheets' comp.id %}">Load Scoresheets</a>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 text-center">
-          <a id="resolve_duplicate_entry_button" class="btn btn-info" role="button" href="{% url 'comps:fix_dup_entries' comp.id %}">Resolve Duplicate Entries</a>
-          <a id="resolve_couple_type_button" class="btn btn-info" role="button" href="{% url 'comps:fix_couple_type' comp.id %}">Resolve Incorrect Couple Type</a>
-          <a id="resolve_mismatches_button" class="btn btn-info" role="button" href="{% url 'comps:resolve_mismatches' comp.id %}">Resolve Mismatches</a>
-      </div>
-    </div>
-  {% endif %}
-  <div class="row">
-    <div class="col-12 text-center">
-        <a id="view_dancers_button" class="btn btn-info" role="button" href="{% url 'comps:dancers' comp.id %}">View Dancers</a>
-        <a id="view_couples_button" class="btn btn-info" role="button" href="{% url 'comps:couples' comp.id %}">View Couples</a>
-        <a id="view_heats_button" class="btn btn-info" role="button" href="{% url 'comps:comp_heats' comp.id %}">View Heats</a>
-    </div>
-  </div>
-{% endif %}
+<div class="row">
+  <div class="col-12 text-center my-3">
+    {% if show_load_buttons %}
+      <span class="dropdown">
+        <button class="btn btn-warning dropdown-toggle" type="button" id="editDropdownActionButton" data-toggle="dropdown">Edit</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'comps:edit_comp' comp.id %}">Comp Info</a>
+          <a class="dropdown-item" onclick="return confirm('Are you sure?')" href="{% url 'comps:clear_comp' comp.id %}">Clear All Data</a>
+        </div>
+      </span>
 
-{% if show_load_buttons %}
-  <div class="row">
-    <div class="col-12 text-center">
-      <a id="edit_compo_button" class="btn btn-warning" role="button" href="{% url 'comps:edit_comp' comp.id %}">Edit Comp</a>
-      <a id="clear_comp_button" class="btn btn-warning" role="button" onclick="return confirm('Are you sure?')" href="{% url 'comps:clear_comp' comp.id %}">Clear Comp Data</a>
-    </div>
+      {% if comp.heatsheet_url or comp.heatsheet_file %}
+        <span class="dropdown">
+          <button class="btn btn-info dropdown-toggle" type="button" id="loadDropdownActionButton" data-toggle="dropdown">Load</button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'comps:load_dancers' comp.id %}">Dancers</a>
+            <a class="dropdown-item" href="{% url 'comps:load_heats' comp.id %}">Heats</a>
+            {% if comp.scoresheet_url %}
+              <a class="dropdown-item" href="{% url 'comps:load_scoresheets' comp.id %}">Scoresheets</a>
+            {% endif %}
+          </div>
+        </span>
+      {% endif %}
+
+      <span class="dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="resolveDropdownActionButton" data-toggle="dropdown">Resolve</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'comps:fix_dup_entries' comp.id %}">Duplicate Entries</a>
+          <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id %}">Mismatched Entries</a>
+        </div>
+      </span>
+
+    {% endif %}
+    <span class="dropdown">
+      <button class="btn btn-info dropdown-toggle" type="button" id="viewDropdownActionButton" data-toggle="dropdown">View</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="{% url 'comps:dancers' comp.id %}">Dancers</a>
+        <a class="dropdown-item" href="{% url 'comps:couples' comp.id %}">Couples</a>
+        <a class="dropdown-item" href="{% url 'comps:comp_heats' comp.id %}">Heats</a>
+      </div>
+    </span>
   </div>
-{% endif %}
+</div>
+
+
 
 {% endblock %}
 
@@ -74,47 +85,27 @@
   console.log("Running JS")
   var process_state = '{{ comp.process_state }}';
   if (process_state === '{{ comp.INITIAL }}') {
-    $( '#load_dancers_button' ).removeClass( "btn-info" );
-    $( '#load_dancers_button' ).addClass( "btn-primary" );
+    $( '#loadDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#loadDropdownActionButton' ).addClass( "btn-primary" );
   } else if (process_state === '{{ comp.DANCERS_LOADED }}' || process_state === '{{ comp.DANCER_NAMES_FORMATTED }}') {
-    $( '#load_heats_button' ).removeClass( "btn-info" );
-    $( '#load_heats_button' ).addClass( "btn-primary" );
+    $( '#loadDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#loadDropdownActionButton' ).addClass( "btn-primary" );
   } else if (process_state === '{{ comp.HEATS_LOADED}}') {
-    $( '#resolve_mismatches_button' ).removeClass( "btn-info" );
-    $( '#resolve_mismatches_button' ).addClass( "btn-primary" );
-    $( '#resolve_couple_type_button' ).removeClass( "btn-info" );
-    $( '#resolve_couple_type_button' ).addClass( "btn-primary" );
-    $( '#resolve_duplicate_entry_button' ).removeClass( "btn-info" );
-    $( '#resolve_duplicate_entry_button' ).addClass( "btn-primary" );
+    $( '#resolveDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#resolveDropdownActionButton' ).addClass( "btn-primary" );
   } else if (process_state === '{{ comp.HEAT_ENTRIES_MATCHED}}' || process_state === '{{ comp.HEAT_STYLES_DEFINED }}' || process_state === '{{ comp.HEAT_LEVELS_DEFINED }}') {
-    $( '#view_dancers_button' ).removeClass( "btn-info" );
-    $( '#view_dancers_button' ).addClass( "btn-primary" );
-    $( '#view_couples_button' ).removeClass( "btn-info" );
-    $( '#view_couples_button' ).addClass( "btn-primary" );
-    $( '#view_heats_button' ).removeClass( "btn-info" );
-    $( '#view_heats_button' ).addClass( "btn-primary" );
-    $( '#load_scoresheets_button' ).removeClass( "btn-info" );
-    $( '#load_scoresheets_button' ).addClass( "btn-primary" );
+    $( '#viewDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#viewDropdownActionButton' ).addClass( "btn-primary" );
+    $( '#loadDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#loadDropdownActionButton' ).addClass( "btn-primary" );
   } else if (process_state === '{{ comp.SCORESHEETS_LOADED}}') {
-    $( '#resolve_mismatches_button' ).removeClass( "btn-info" );
-    $( '#resolve_mismatches_button' ).addClass( "btn-primary" );
-    $( '#resolve_couple_type_button' ).removeClass( "btn-info" );
-    $( '#resolve_couple_type_button' ).addClass( "btn-primary" );
-    $( '#resolve_duplicate_entry_button' ).removeClass( "btn-info" );
-    $( '#resolve_duplicate_entry_button' ).addClass( "btn-primary" );
-    $( '#view_dancers_button' ).removeClass( "btn-info" );
-    $( '#view_dancers_button' ).addClass( "btn-primary" );
-    $( '#view_couples_button' ).removeClass( "btn-info" );
-    $( '#view_couples_button' ).addClass( "btn-primary" );
-    $( '#view_heats_button' ).removeClass( "btn-info" );
-    $( '#view_heats_button' ).addClass( "btn-primary" );
+    $( '#resolveDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#resolveDropdownActionButton' ).addClass( "btn-primary" );
+    $( '#viewDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#viewDropdownActionButton' ).addClass( "btn-primary" );
   } else if (process_state === '{{ comp.RESULTS_RESOLVED}}') {
-    $( '#view_dancers_button' ).removeClass( "btn-info" );
-    $( '#view_dancers_button' ).addClass( "btn-primary" );
-    $( '#view_couples_button' ).removeClass( "btn-info" );
-    $( '#view_couples_button' ).addClass( "btn-primary" );
-    $( '#view_heats_button' ).removeClass( "btn-info" );
-    $( '#view_heats_button' ).addClass( "btn-primary" );
+    $( '#viewDropdownActionButton' ).removeClass( "btn-info" );
+    $( '#viewDropdownActionButton' ).addClass( "btn-primary" );
   }
 </script>
 
