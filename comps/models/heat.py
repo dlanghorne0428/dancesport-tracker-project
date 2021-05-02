@@ -99,7 +99,7 @@ class Heat(models.Model):
     def multi_dance(self):
         '''This function returns True if the description indicates a multi-dance heat.'''
         s = self.info
-        if "Mixed" in s or "ML" in s or "Solo Star" in s or "NP" in s:
+        if "Solo Star" in s or "NP" in s:
             return False
         left_pos = s.find('(')
         right_pos = s.find(')')

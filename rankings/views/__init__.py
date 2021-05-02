@@ -1,3 +1,4 @@
+from .alias_dancers import *
 from .calc_rankings import *
 from .calc_teacher_rankings import *
 from .couple_crud import *
