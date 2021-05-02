@@ -15,11 +15,6 @@ def save_alias(unmatched_dancer, actual_dancer):
         if unmatched_dancer.name != str(actual_dancer):
             unmatched_dancer.alias = actual_dancer
             unmatched_dancer.save()
-        #     print("Alias for " + unmatched_dancer.name + " is " + str(actual_dancer))
-        # else:
-        #     print("No alias needed for " + unmatched_dancer.name + " matches " + str(actual_dancer))
-    # else:
-    #     print("Alias for " + unmatched_dancer.name + " already assigned as " + str(unmatched_dancer.alias))
 
 
 def resolve_mismatches(request, comp_id, wider_search=0):
