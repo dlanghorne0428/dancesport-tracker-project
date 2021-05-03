@@ -250,7 +250,7 @@ class Results_Processor():
                                     elif e.result == temp_result:
                                         break
                                     else:
-                                        print(e.heat.heat_number +  " Same shirt # - new result: " + str(e.couple) + " " + e.result + " " + temp_result + " " + str(accum))
+                                        print(str(e.heat.heat_number) +  " Same shirt # - new result: " + str(e.couple) + " " + e.result + " " + temp_result + " " + str(accum))
                                         e.result = temp_result
 
                             # If we get here, we didn't find an entry on the heatsheet that matches
@@ -300,7 +300,7 @@ class Results_Processor():
                                 elif e.result == str(result_place):
                                     break
                                 else:
-                                    print(e.heat.heat_number + " Same number - new result: " + " " + str(e.couple.dancer_1) + " " + str(e.couple.dancer_2) + " " + e.result + " " + result_place)
+                                    print(str(e.heat.heat_number) + " Same number - new result: " + " " + str(e.couple.dancer_1) + " " + str(e.couple.dancer_2) + " " + e.result + " " + str(result_place))
                                     e.result = str(result_place)
                                     break
 
