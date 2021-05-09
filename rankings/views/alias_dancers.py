@@ -5,20 +5,23 @@ from rankings.couple_matching import split_name
 from rankings.models import Dancer
 
 
-def alias_dancers(request):
+def alias_dancers(request, level=2):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
 
     alias_dancers = Heatlist_Dancer.objects.exclude(alias__isnull=True).order_by('name')
-    doubles = list()
-    for i in range(1, len(alias_dancers)):
-        if alias_dancers[i-1].name == alias_dancers[i].name and alias_dancers[i-1].alias == alias_dancers[i].alias:
-            doubles.append(alias_dancers[i])
+    if level == 2:
+        doubles = list()
+        for i in range(1, len(alias_dancers)):
+            if alias_dancers[i-1].name == alias_dancers[i].name and alias_dancers[i-1].alias == alias_dancers[i].alias:
+                doubles.append(alias_dancers[i])
+        paginator = Paginator(doubles, 16)
+    else:
+        paginator = Paginator(alias_dancers, 16)
 
-    paginator = Paginator(doubles, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'rankings/alias_dancers.html', {'page_obj': page_obj, })
+    return render(request, 'rankings/alias_dancers.html', {'page_obj': page_obj, 'level': level })
 
 
 def accept_alias(request, hld_pk):
@@ -58,4 +61,4 @@ def reject_alias(request, hld_pk):
         hld_object = a
         hld_object.delete()
 
-    return redirect('alias_dancers')
+    return redirect('alias_dancers', 2)

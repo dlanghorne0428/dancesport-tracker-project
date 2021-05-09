@@ -58,7 +58,7 @@
       <span class="dropdown">
         <button class="btn btn-info dropdown-toggle" type="button" id="resolveDropdownActionButton" data-toggle="dropdown">Resolve</button>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="{% url 'alias_dancers' %}">Dancer Alias Names</a>
+          <a class="dropdown-item" href="{% url 'alias_dancers' 2 %}">Dancer Alias Names</a>
           <a class="dropdown-item" href="{% url 'comps:fix_dup_entries' comp.id %}">Duplicate Entries</a>
           <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id %}">Mismatched Entries</a>
         </div>

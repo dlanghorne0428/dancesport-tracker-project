@@ -4,17 +4,31 @@
 {% block content %}
   <div class="row">
     <div class="col-12">
-      <h2 class="text-center">Dancers with Alias Names</h3>
+      <h2 class="text-center">Dancers with Alias Names</h2>
     </div>
   </div>
 
+  <div class="row mb-2">
+    <div class="col-12 text-center">
+        {% if level > 1 %}
+          <a class="btn btn-secondary" href="{% url 'alias_dancers' 1 %}">All Aliases</a>
+          <a class="btn btn-primary" href="{% url 'alias_dancers' 2 %}">Repeated Aliases</a>
+        {% else %}
+          <a class="btn btn-primary" href="{% url 'alias_dancers' 1 %}">All Aliases</a>
+          <a class="btn btn-secondary" href="{% url 'alias_dancers' 2 %}">Repeated Aliases</a>
+        {% endif %}
+    </div>
+  </div>
+
+
   <div class="row align-items-start">
-    <div class="col-12 col-lg-8 offset-lg-2 border border-dark px-0">
+    <div class="col-12 col-lg-10 offset-lg-1 border border-dark px-0">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
             <th class="text-center">Alias</th>
             <th class="text-center">Stored Name</th>
+            <th class="text-center">Competition</th>
             <th class="text-center">Action</th>
           </tr>
         </thead>
@@ -23,6 +37,11 @@
             <tr>
               <td class="text-center">{{ d.name }}</td>
               <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' d.alias.id %}">{{ d.alias }}</a></td>
+              {% if d.comp %}
+                <td class="text-center"><a class="text-dark" href="{% url 'comps:comp_detail' d.comp.id %}">{{ d.comp.title }}</a></td>
+              {% else %}
+                <td class="text-center">{{ d.comp.title }}</td>
+              {% endif %}
               <td class="text-center">
                 <a class="btn btn-warning btn-sm" href="{% url 'accept_alias' d.id %}">Accept</a>
                 <a class="btn btn-info btn-sm" href="{% url 'reject_alias'  d.id %}">Reject</a>
