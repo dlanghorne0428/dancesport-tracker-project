@@ -21,7 +21,7 @@ class CompOrgResults(Results_Processor):
            It saves information such that we can request results for any
            dancer in the competition'''
         #extract comp name from URL
-        response = requests.get(url)
+        response = requests.get(url,timeout=3.0)
         lines = response.text.splitlines()
         for l in lines:
             start_pos = l.find("getResults")
@@ -51,4 +51,4 @@ class CompOrgResults(Results_Processor):
         #print("Requesting", url)
 
         # Make the HTML request and the data is returned as text.
-        return requests.get(url)
+        return requests.get(url,timeout=5.0)
