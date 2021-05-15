@@ -40,7 +40,11 @@
         <tr>
           <td colspan="2" class="text-center d-none d-lg-table-cell">{{ heat.time }}</td>
           <td class="text-center">{{ heat.get_category_display }}</td>
-          <td class="text-center">{{ heat.heat_number }}</td>
+          {% if heat.extra %}
+            <td class="text-center">{{ heat.heat_number }}{{ heat.extra }}</td>
+          {% else %}
+            <td class="text-center">{{ heat.heat_number }}</td>
+          {% endif %}
           <td colspan="3" class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
         </tr>
         {% endfor %}
