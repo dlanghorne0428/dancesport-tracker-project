@@ -7,7 +7,7 @@ from comps.filters import HeatFilter
 
 def comp_heats(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
-    f = HeatFilter(request.GET, queryset=Heat.objects.filter(comp=comp).order_by('time'))
+    f = HeatFilter(request.GET, queryset=Heat.objects.filter(comp=comp).order_by('time', 'extra', 'info'))
     paginator = Paginator(f.qs, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
