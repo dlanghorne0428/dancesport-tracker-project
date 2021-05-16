@@ -104,38 +104,40 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 couple_str = request.POST.get("couple")
                 for pm_couple, pm_code in possible_matches:
                     if str(pm_couple) == couple_str and (pm_couple.couple_type == first_unmatched.entry.heat.couple_type() or submit == "Override Type"):
-                        # assign aliases, if one matches, the other must be an alias
-                        if first_unmatched.dancer.name == str(pm_couple.dancer_1):
-                            save_alias(first_unmatched.partner, pm_couple.dancer_2)
-                        elif first_unmatched.dancer.name == str(pm_couple.dancer_2):
-                            save_alias(first_unmatched.partner, pm_couple.dancer_1)
-                        elif first_unmatched.partner.name == str(pm_couple.dancer_1):
-                            save_alias(first_unmatched.dancer, pm_couple.dancer_2)
-                        elif first_unmatched.partner.name == str(pm_couple.dancer_2):
-                            save_alias(first_unmatched.dancer, pm_couple.dancer_1)
+                        # don't assign aliases if this is a late entry
+                        if first_unmatched.entry.code != "LATE":
+                            # assign aliases, if one matches, the other must be an alias
+                            if first_unmatched.dancer.name == str(pm_couple.dancer_1):
+                                save_alias(first_unmatched.partner, pm_couple.dancer_2)
+                            elif first_unmatched.dancer.name == str(pm_couple.dancer_2):
+                                save_alias(first_unmatched.partner, pm_couple.dancer_1)
+                            elif first_unmatched.partner.name == str(pm_couple.dancer_1):
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_2)
+                            elif first_unmatched.partner.name == str(pm_couple.dancer_2):
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_1)
 
-                        # neither names match, try to use first letter of last name
+                            # neither names match, try to use first letter of last name
 
-                        # both dancer and partner have same first letter of last name, don't try to assign alias
-                        elif first_unmatched.dancer.name[0] == first_unmatched.partner.name[0]:
-                            print("Need alias for " + first_unmatched.dancer.name + " and " + first_unmatched.partner.name + " Couple is " + str(pm_couple))
+                            # both dancer and partner have same first letter of last name, don't try to assign alias
+                            elif first_unmatched.dancer.name[0] == first_unmatched.partner.name[0]:
+                                print("Need alias for " + first_unmatched.dancer.name + " and " + first_unmatched.partner.name + " Couple is " + str(pm_couple))
 
-                        # last names start with different letters, use that to assign aliases to each member of the couple
-                        elif first_unmatched.dancer.name[0] == pm_couple.dancer_1.name_last[0]:
-                            save_alias(first_unmatched.dancer, pm_couple.dancer_1)
-                            save_alias(first_unmatched.partner, pm_couple.dancer_2)
-                        elif first_unmatched.partner.name[0] == pm_couple.dancer_1.name_last[0]:
-                            save_alias(first_unmatched.partner, pm_couple.dancer_1)
-                            save_alias(first_unmatched.dancer, pm_couple.dancer_2)
-                        elif first_unmatched.dancer.name[0] == pm_couple.dancer_2.name_last[0]:
-                            save_alias(first_unmatched.dancer, pm_couple.dancer_2)
-                            save_alias(first_unmatched.partner, pm_couple.dancer_1)
-                        elif first_unmatched.partner.name[0] == pm_couple.dancer_2.name_last[0]:
-                            save_alias(first_unmatched.partner, pm_couple.dancer_2)
-                            save_alias(first_unmatched.dancer, pm_couple.dancer_1)
+                            # last names start with different letters, use that to assign aliases to each member of the couple
+                            elif first_unmatched.dancer.name[0] == pm_couple.dancer_1.name_last[0]:
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_1)
+                                save_alias(first_unmatched.partner, pm_couple.dancer_2)
+                            elif first_unmatched.partner.name[0] == pm_couple.dancer_1.name_last[0]:
+                                save_alias(first_unmatched.partner, pm_couple.dancer_1)
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_2)
+                            elif first_unmatched.dancer.name[0] == pm_couple.dancer_2.name_last[0]:
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_2)
+                                save_alias(first_unmatched.partner, pm_couple.dancer_1)
+                            elif first_unmatched.partner.name[0] == pm_couple.dancer_2.name_last[0]:
+                                save_alias(first_unmatched.partner, pm_couple.dancer_2)
+                                save_alias(first_unmatched.dancer, pm_couple.dancer_1)
 
-                        else: # neither name matches the first letter of last name, don't try to assign aliases
-                            print("Need alias for " + first_unmatched.dancer.name + " and " + first_unmatched.partner.name + " Couple is " + str(pm_couple))
+                            else: # neither name matches the first letter of last name, don't try to assign aliases
+                                print("Need alias for " + first_unmatched.dancer.name + " and " + first_unmatched.partner.name + " Couple is " + str(pm_couple))
 
                         resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
                         break

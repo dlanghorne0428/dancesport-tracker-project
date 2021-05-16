@@ -1,3 +1,5 @@
+import string
+
 from comps.scoresheet.calc_points import calc_points
 from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
@@ -283,9 +285,13 @@ class Results_Processor():
                     elif count == result_column:
                         # When we get to the result column, we want to extract the number that indicates
                         # the finishing position of this couple in this heat.
-                        # Need to check for parenthesis, as the result could include a tiebreaker rule
+                        # Need to check for non-digit, as the result could include a tiebreaker rule
                         # For example: 3(R11) means they finished in 3rd place.
-                        result_place = int(self.get_table_data(line).split('(')[0])
+                        result_field = self.get_table_data(line)
+                        index = 0
+                        while index < len(result_field) and result_field[index] in string.digits:
+                            index += 1
+                        result_place = int(result_field[:index])
 
                         #couple_names = self.get_couple_names(current_competitor)
                         shirt_number = self.get_shirt_number(current_competitor)
