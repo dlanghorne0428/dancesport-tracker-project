@@ -4,6 +4,7 @@ from comps.scoresheet.calc_points import calc_points
 from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.result_error import Result_Error
 
 
 class Results_Processor():
@@ -204,6 +205,11 @@ class Results_Processor():
                         result_index = -2
                         rounds = "S"
                         print("Found Semis unexpectedly")
+                        res_error = Result_Error()
+                        res_error.comp = e.heat.comp
+                        res_error.heat = e.heat
+                        res_error.error = Result_Error.UNEXPECTED_EARLY_ROUND
+                        res_error.save()
                 elif "<td>" in line:
                     count += 1
 
@@ -253,6 +259,12 @@ class Results_Processor():
                                         break
                                     else:
                                         print(str(e.heat.heat_number) +  " Same shirt # - new result: " + str(e.couple) + " " + e.result + " " + temp_result + " " + str(accum))
+                                        res_error = Result_Error()
+                                        res_error.comp = e.heat.comp
+                                        res_error.heat = e.heat
+                                        res_error.couple = e.couple
+                                        res_error.error = Result_Error.TWO_RESULTS_FOR_COUPLE
+                                        res_error.save()
                                         e.result = temp_result
 
                             # If we get here, we didn't find an entry on the heatsheet that matches
@@ -308,6 +320,12 @@ class Results_Processor():
                                 else:
                                     print(str(e.heat.heat_number) + " Same number - new result: " + " " + str(e.couple.dancer_1) + " " + str(e.couple.dancer_2) + " " + e.result + " " + str(result_place))
                                     e.result = str(result_place)
+                                    res_error = Result_Error()
+                                    res_error.comp = e.heat.comp
+                                    res_error.heat = e.heat
+                                    res_error.couple = e.couple
+                                    res_error.error = Result_Error.TWO_RESULTS_FOR_COUPLE
+                                    res_error.save()
                                     break
 
                         else:    # this code runs when competitor not found in heat
@@ -418,7 +436,9 @@ class Results_Processor():
            A lise of heat entries is passed in.'''
         # loop through the entries in the heat
         loop_count = 0
-        heat_result = None
+        # initalize the result to "No Change".
+        # if a scoresheet is processed, its result (possibly none) will be returned
+        heat_result = "No Change"
         for e in entries:
             # if we don't already know the result for this entry
             if len(e.result) == 0:

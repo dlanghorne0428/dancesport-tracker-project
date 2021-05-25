@@ -15,6 +15,7 @@ from .scoresheet.o2cm_results import O2cmResults
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
+from comps.models.result_error import Result_Error
 import time
 
 
@@ -120,18 +121,50 @@ def process_scoresheet_task(self, comp_data):
         for heat in heats_to_process:
             index += 1
             if heat.category == Heat.PRO_HEAT or heat.multi_dance():
+                if heat.style == Heat.UNKNOWN:
+                    print("Unknown Heat Style " + str(heat))
+                    res_err = Result_Error()
+                    res_err.comp = comp
+                    res_err.heat = heat
+                    res_err.error = Result_Error.UNKNOWN_STYLE
+                    res_err.save()
+
+                if heat.base_value == 0:
+                    print("Unknown Heat Level " + str(heat))
+                    res_err = Result_Error()
+                    res_err.comp = comp
+                    res_err.heat = heat
+                    res_err.error = Result_Error.UNKNOWN_STYLE
+                    res_err.save()
+
                 entries_in_event = Heat_Entry.objects.filter(heat=heat)
                 if entries_in_event.count() > 0:
                     heat_result = scoresheet.determine_heat_results(entries_in_event)
                     if heat_result is None:
                         print("No results for " + str(heat))
+                        res_err = Result_Error()
+                        res_err.comp = comp
+                        res_err.heat = heat
+                        res_err.error = Result_Error.NO_RESULTS_FOUND
+                        res_err.save()
                     else:
                         for e in entries_in_event:
                             if e.result == "DNP":
-                                print("Deleting " + str(e))
-                                e.delete()
+                                print("No result found for " + str(e))
+                                res_err = Result_Error()
+                                res_err.comp = comp
+                                res_err.heat = heat
+                                res_err.couple = e.couple
+                                res_err.error = Result_Error.NO_COUPLE_RESULT
+                                res_err.save()
+                                #e.delete()
                 else:
                     print("No entries in " + str(heat))
+                    res_err = Result_Error()
+                    res_err.comp = comp
+                    res_err.heat = heat
+                    res_err.error = Result_Error.NO_ENTRIES_FOUND
+                    res_err.save()
 
                 heat_str = heat.get_category_display() + " " + str(heat.heat_number)
                 progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)

@@ -2,6 +2,7 @@ import requests
 from comps.scoresheet.results_processor import Results_Processor
 from comps.scoresheet.calc_points import calc_points
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.result_error import Result_Error
 
 
 class NdcaPremEvent():
@@ -97,6 +98,12 @@ class NdcaPremResults(Results_Processor):
                     entry.result = result_str
                 else:
                     print(str(entry) + " result not empty")
+                    res_error = Result_Error()
+                    res_error.comp = entry.heat.comp
+                    res_error.heat = entry.heat
+                    res_error.couple = entry.couple
+                    res_error.error = Result_Error.TWO_RESULTS_FOR_COUPLE
+                    res_error.save()
                 break
         else:
             # couple not found, create a late entry
@@ -341,29 +348,31 @@ class NdcaPremResults(Results_Processor):
     def determine_heat_results(self, entries):
         '''This method obtains the results for all entries in the event.'''
         # process the scoresheet for each of those events.
-        if entries.count() > 0:
-            for entry in entries:
-                if entry.points is None or entry.points == 0:
-                    event_name = entries.first().heat.info
-                    for event in self.events:
-                        if event.name == event_name:
-                            #print("Processing " + event.name)
-                            event_result = self.process_scoresheet_for_event(entries, event)
-                            if event_result is not None:
-                                for entry in entries:
-                                    if entry.points is None:
-                                        entry.result = "DNP"
+        for entry in entries:
+            if entry.points is None or entry.points == 0:
+                event_name = entries.first().heat.info
+                for event in self.events:
+                    if event.name == event_name:
+                        #print("Processing " + event.name)
+                        event_result = self.process_scoresheet_for_event(entries, event)
+                        if event_result is not None:
+                            for entry in entries:
+                                if entry.points is None:
+                                    entry.result = "DNP"
 
-                            return event_result
+                        return event_result
 
-                    else:
-                        print("ERROR: Could not find event " + event_name)
-                        return None
-            else: # all entries have results already
-                return None
-        else:
-            print("ERROR: No entries in event " + event.name)
-            return None
+                else:
+                    print("ERROR: Could not find event " + event_name)
+                    heat = entries.first().heat
+                    res_error = Result_Error()
+                    res_error.comp = heat.comp
+                    res_error.heat = heat
+                    res_error.error = Result_Error.HEAT_NOT_FOUND
+                    res_error.save()
+                    return "No Change"
+        else: # all entries have results already
+            return "No change"
 
 
     def open(self, url):
