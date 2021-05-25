@@ -2,7 +2,7 @@ import requests
 from comps.scoresheet.results_processor import Results_Processor
 from comps.scoresheet.calc_points import calc_points
 from comps.models.heatlist_dancer import Heatlist_Dancer
-
+from comps.models.result_error import Result_Error
 
 
 
@@ -60,6 +60,7 @@ class O2cmResults(Results_Processor):
                 entry.shirt_number = shirt_number
                 if len(entry.result) == 0:
                     entry.result = result_str
+                # TODO: generate error if result already exists.
                 # print(entry)
                 break
         else:
@@ -400,27 +401,31 @@ class O2cmResults(Results_Processor):
 
     def determine_heat_results(self, entries):
         '''This method obtains the results for all entries in the event.'''
+        res_error = "No Change"
         # process the scoresheet for each of those events.
-        if entries.count() > 0:
-            for entry in entries:
-                if entry.points is None:
-                    self.payload["selent"] = entry.code
-                    #print(self.payload)
+        for entry in entries:
+            if entry.points is None:
+                self.payload["selent"] = entry.code
+                #print(self.payload)
 
-                    # obtain a list of heats danced by this dancer
-                    response = requests.post(self.base_url, data = self.payload)
-                    lines = response.text.split("</td>")
-                    heat_info = entry.heat.info
-                    end_pos = heat_info.find(' [')
-                    heat_url = self.find_heat_url(lines, heat_info[:end_pos])
-                    if heat_url is not None:
-                        return self.process_scoresheet_for_event(entries, heat_url)
+                # obtain a list of heats danced by this dancer
+                response = requests.post(self.base_url, data = self.payload)
+                lines = response.text.split("</td>")
+                heat_info = entry.heat.info
+                end_pos = heat_info.find(' [')
+                heat_url = self.find_heat_url(lines, heat_info[:end_pos])
+                if heat_url is not None:
+                    return self.process_scoresheet_for_event(entries, heat_url)
+                else:
+                    if res_error is None:
+                        res_error = Result_Error()
+                        res_error.comp = heat.comp
+                        res_error.heat = heat
+                        res_error.error = Result_Error.HEAT_NOT_FOUND
+                        res_error.save()
 
-            else: # all entries have results already
-                return None
-        else:
-            print("ERROR: No entries in event " + event.name)
-            return None
+        else: # all entries have results already
+            return "No Change"
 
 
     def open(self, url):
