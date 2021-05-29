@@ -21,13 +21,14 @@ def resolve_dancers(request, comp_id):
             new_name = request.POST.get("spelling")
             current_name.name = new_name
             current_name.formatting_needed = False
-            # print(current_name.name)
+            #print(current_name.name)
             current_name.save()
 
         # find next name to format
         names_to_format = Heatlist_Dancer.objects.filter(comp=comp).filter(formatting_needed = True)
         current_name = names_to_format.first()
     else: # GET
+        print("Formatting: " + current_name.name)
         page_number = request.GET.get('page')
 
     # do this for either GET or POST
@@ -41,8 +42,12 @@ def resolve_dancers(request, comp_id):
                 page_number = index // 16 + 1
                 break
         fields = current_name.name.split()
-        for field in range(1, len(fields)):
-            possible_formats.append(current_name.format_name(current_name.name, simple=False, split_on=field))
+        if len(fields) == 1:
+            possible_formats.append(current_name.name + ",.")
+            possible_formats.append(".," + current_name.name)
+        else:
+            for field in range(1, len(fields)):
+                possible_formats.append(current_name.format_name(current_name.name, simple=False, split_on=field))
     else:
         page_number = len(heatlist_dancers) // 16 + 1
         comp.process_state = Comp.DANCER_NAMES_FORMATTED

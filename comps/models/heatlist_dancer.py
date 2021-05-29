@@ -28,8 +28,6 @@ class Heatlist_Dancer(models.Model):
            If simple is false, the split_on field will determine where to put the comma'''
 
         fields = orig_name.split()
-        if len(fields) == 1:
-            return(orig_name)
         if simple:
             if len(fields) == 2:
                 return fields[1] + ', '  + fields[0]
@@ -37,6 +35,8 @@ class Heatlist_Dancer(models.Model):
                 print("format needed: " + orig_name)
                 self.formatting_needed = True
                 return None
+        elif len(fields) == 1:
+            return(orig_name)
         else:
             name = ""
             for f in range(split_on, len(fields)):
