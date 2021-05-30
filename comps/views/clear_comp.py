@@ -2,6 +2,7 @@ from django.core import serializers
 from django.shortcuts import render
 from comps.models.comp import Comp
 from comps.models.heat import Heat
+from comps.models.heatlist_error import Heatlist_Error
 from comps.tasks import clear_comp_task
 
 def clear_comp(request, comp_id):
@@ -10,6 +11,9 @@ def clear_comp(request, comp_id):
     comp_objects = Comp.objects.filter(pk=comp_id)
     if len(comp_objects) == 1:
         comp=comp_objects[0]
+
+    # delete any heatlist errors associated with this comp
+    Heatlist_Error.objects.filter(comp=comp).delete()
 
     # find all the heats in this comp
     heats = Heat.objects.filter(comp=comp)

@@ -4,6 +4,7 @@ from django.db.models import Q
 from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.heatlist_error import Heatlist_Error
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -91,6 +92,13 @@ class CompOrgHeatlist(Heatlist):
             h.set_time(time_string, day_of_week)
         else:
             print("Warning: Invalid time format " + str(time_fields) + " - using default")
+            in_database = Heatlist_Error.objects.filter(comp=h.comp).filter(heat=h)
+            if len(in_database) == 0:
+                he = Heatlist_Error()
+                he.comp = h.comp
+                he.heat = h
+                he.error = Heatlist_Error.HEAT_TIME_INVALID
+                he.save()
             day_of_week = "Saturday"
             time_string = "11:00AM"
             h.set_time(time_string, day_of_week)
@@ -110,6 +118,8 @@ class CompOrgHeatlist(Heatlist):
         items = heat_data.split("</td>")
         if len(items) <= 1:
             print("Error parsing heat")
+            self.build_heatlist_error(comp_ref, Heatlist_Error.PARSING_ERROR, dancer_name=dancer.name)
+
         item_index = 0
         partner = None
         # process all the list items
@@ -117,15 +127,24 @@ class CompOrgHeatlist(Heatlist):
             # check if this item specifies a partner name
             p_string = self.get_partner(items[item_index])
             if p_string is not None:
-                if len(p_string) > 0:
+                if "/" in p_string:
+                    partner = None
+                elif len(p_string) > 0:
                     partner = self.find_dancer(p_string)
                     if partner is None:
                         print(dancer.name + " No partner found " + p_string)
-                    # partner found, go to next item
+                        in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
+                        if len(in_database) == 0:
+                            self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
+
                 else:
                     partner = None
                     print(dancer.name + " No partner found")
+                    in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
+                    if len(in_database) == 0:
+                        self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
 
+                # partner found, go to next item
                 item_index += 1
 
             # no partner, check if this item has the start of a new heat
@@ -182,7 +201,7 @@ class CompOrgHeatlist(Heatlist):
         response = requests.get(self.base_url, timeout=1.25)
         competitors = response.text.split("},")
         print("Competitors = " + str(len(competitors)))
-        for c in range(len(competitors) - 1):
+        for c in range(len(competitors)):
             start_pos = competitors[c].find('"id')
             d = Heatlist_Dancer()
             d.load_from_comp_org(competitors[c][start_pos:])
@@ -192,8 +211,12 @@ class CompOrgHeatlist(Heatlist):
                 code_num = int(d.code)
                 if d.code != "0":
                     self.dancers.append(d)
+                else:
+                    print("Invalid competitor " + d.name + " " + d.code)
+                    self.build_heatlist_error(comp, Heatlist_Error.NO_CODE_FOUND, dancer_name=d.name)
             except:
                 print("Invalid competitor " + d.name + " " + d.code)
+                self.build_heatlist_error(comp, Heatlist_Error.NO_CODE_FOUND, dancer_name=d.name)
 
 
     def load(self, url, heatlist_dancers):

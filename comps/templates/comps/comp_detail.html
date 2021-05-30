@@ -60,6 +60,7 @@
         <div class="dropdown-menu">
           <a class="dropdown-item" href="{% url 'alias_dancers' 2 %}">Dancer Alias Names</a>
           <a class="dropdown-item" href="{% url 'comps:fix_dup_entries' comp.id %}">Duplicate Entries</a>
+          <a class="dropdown-item" href="{% url 'comps:show_heatlist_errors' comp.id %}">Heatlist Errors</a>
           <a class="dropdown-item" href="{% url 'comps:resolve_mismatches' comp.id %}">Mismatched Entries</a>
           <a class="dropdown-item" href="{% url 'comps:show_scoresheet_errors' comp.id %}">Scoresheet Errors</a>
         </div>

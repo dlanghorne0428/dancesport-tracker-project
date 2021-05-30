@@ -1,0 +1,58 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
+    <h3 class="text-center">Heatlist Errors</h3>
+  </div>
+</div>
+
+<div class="row align-items-start">
+
+
+  <div class="col-12 col-xl-10 offset-xl-1 px-0 border border-dark">
+    <table class="table table-bordered table-sm">
+      <thead class="thead-dark">
+        <tr>
+          <th class="text-center">Error</th>
+          <th>Category</th>
+          <th>Number</th>
+          <th class="text-center">Description</th>
+          <th class="text-center">Dancer</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for error in page_obj %}
+        <tr>
+          <td class="text-center">{{ error.get_error_display }}</td>
+          {% if error.heat %}
+            <td class="text-center">{{ error.heat.get_category_display }}</td>
+            {% if heat.extra %}
+              <td class="text-center">{{ error.heat.heat_number }}{{ heat.extra }}</td>
+            {% else %}
+              <td class="text-center">{{ error.heat.heat_number }}</td>
+            {% endif %}
+            <td class="text-center"><a href="{% url 'comps:heat' error.heat.id %}">{{ error.heat.info}}</a></td>
+          {% else %}
+            <td colspan="3">N/A</td>
+          {% endif %}
+          {% if error.dancer %}
+            <td class="text-center">{{ error.dancer}}</td>
+          {% else %}
+            <td>N/A</td>
+          {% endif %}
+          <td> <a class="btn btn-warning" role="button" href="{% url 'comps:delete_heatlist_error' error.pk %}">Delete</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% include "rankings/pagination.html" %}
+
+  </div>
+</div>
+
+
+{% endblock %}

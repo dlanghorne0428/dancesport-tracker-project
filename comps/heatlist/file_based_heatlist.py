@@ -3,6 +3,7 @@ import json
 from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.heatlist_error import Heatlist_Error
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -110,6 +111,7 @@ class FileBasedHeatlist(Heatlist):
             num_heats = int(fields[-1])
         except:
             print("Error: Dancer: " + str(dancer_index) + " Heat count not found in " + line)
+            self.build_heatlist_error(comp_ref, Heatlist_Error.NO_HEAT_COUNT, dancer_name=d.name)
             num_heats = -1
             return None
         for index in range(num_heats):
@@ -124,6 +126,9 @@ class FileBasedHeatlist(Heatlist):
                 p = self.find_dancer(partner_name)
             else:
                 print("No partner found in " + str(couple_fields))
+                in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=d.name)
+                if len(in_database) == 0:
+                    self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=d.name)
                 p = None
             if p is not None:
                 if p.name > d.name:

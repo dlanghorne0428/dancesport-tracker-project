@@ -4,6 +4,7 @@ import html
 from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.heatlist_error import Heatlist_Error
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -104,9 +105,22 @@ class O2cmHeatlist(Heatlist):
                     time_string = line[start_pos:end_pos]
                     h.set_time(time_string, "Saturday", "%I:%M %p")  # day not available in this format
                 else:
+                    in_database = Heatlist_Error.objects.filter(comp=h.comp).filter(heat=h)
+                    if len(in_database) == 0:
+                        he = Heatlist_Error()
+                        he.comp = h.comp
+                        he.heat = h
+                        he.error = Heatlist_Error.HEAT_TIME_INVALID
+                        he.save()
                     return None
-
             else:
+                in_database = Heatlist_Error.objects.filter(comp=h.comp).filter(heat=h)
+                if len(in_database) == 0:
+                    he = Heatlist_Error()
+                    he.comp = h.comp
+                    he.heat = h
+                    he.error = Heatlist_Error.HEAT_TIME_INVALID
+                    he.save()
                 return None
 
             # find the heat description information
@@ -127,6 +141,7 @@ class O2cmHeatlist(Heatlist):
                     h.remove_info_prefix()
                     h.set_level()
                     h.set_dance_style()
+
                 else:
                     return None
             else:
@@ -145,6 +160,8 @@ class O2cmHeatlist(Heatlist):
             rows = fields[2].split("</tr>")
             if len(rows) <= 1:
                 print("Error parsing heat rows")
+                self.build_heatlist_error(comp_ref, Heatlist_Error.PARSING_ERROR, dancer_name=dancer.name)
+
             row_index = 0
             partner = None
             # parse all the rows with heat information
@@ -174,6 +191,7 @@ class O2cmHeatlist(Heatlist):
 
         else:
             print("Error parsing heat data")
+            self.build_heatlist_error(comp_ref, Heatlist_Error.PARSING_ERROR, dancer_name=dancer.name)
 
 
     ############### OVERRIDDEN METHODS  #######################################################
@@ -214,6 +232,7 @@ class O2cmHeatlist(Heatlist):
                     self.dancers.append(d)
             except:
                 print("Invalid competitor", d.name, d.code)
+                self.build_heatlist_error(comp, Heatlist_Error.NO_CODE_FOUND, dancer_name=d.name)
 
 
     def load(self, url, heatlist_dancers):
