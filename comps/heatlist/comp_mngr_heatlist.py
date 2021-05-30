@@ -5,6 +5,7 @@ from django.db.models import Q
 from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.heatlist_error import Heatlist_Error
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -35,6 +36,7 @@ class CompMngrHeatlist(Heatlist):
         name = line[start_pos:end_pos]
         return name
 
+
     def load_heat(self, h, category, line="", comp_ref="", number=0):
         h.comp = comp_ref
         if category == "Pro heat":
@@ -64,6 +66,13 @@ class CompMngrHeatlist(Heatlist):
                 h.set_time(time_string, day_of_week)
             else:
                 print("Invalid time format")
+                in_database = Heatlist_Error.objects.filter(comp=h.comp).filter(heat=h)
+                if len(in_database) == 0:
+                    he = Heatlist_Error()
+                    he.comp = h.comp
+                    he.heat = h
+                    he.error = Heatlist_Error.HEAT_TIME_INVALID
+                    he.save()
 
             # get the heat info
             h.info = fields[4].split("</td>")[0]
@@ -183,6 +192,9 @@ class CompMngrHeatlist(Heatlist):
                     partner = None
                 elif len(partner_name) == 0:
                     partner = None
+                    in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
+                    if len(in_database) == 0:
+                        self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
                 else:
                     partner = self.find_dancer(partner_name)
 

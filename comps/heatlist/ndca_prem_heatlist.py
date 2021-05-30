@@ -4,6 +4,7 @@ import html
 from rankings.models import Couple, Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.models.heatlist_error import Heatlist_Error
 from comps.heatlist.heatlist import Heatlist
 
 
@@ -104,7 +105,6 @@ class NdcaPremHeatlist(Heatlist):
                         h.category = Heat.NORMAL_HEAT
 
                     # set the style and level if necessary
-
                     h.remove_info_prefix()
                     h.set_level()
                     h.set_dance_style()
@@ -119,6 +119,10 @@ class NdcaPremHeatlist(Heatlist):
             rows = fields[1].split("</tr>")
             if len(rows) <= 1:
                 print("Error parsing heat rows")
+                in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
+                if len(in_database) == 0:
+                    self.build_heatlist_error(comp_ref, Heatlist_Error.PARSING_ERROR, dancer_name=dancer.name)
+
             row_index = 0
             partner = None
             # parse all the rows with heat information
@@ -147,6 +151,9 @@ class NdcaPremHeatlist(Heatlist):
 
         else:
             print("Error parsing heat data")
+            in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
+            if len(in_database) == 0:
+                self.build_heatlist_error(comp_ref, Heatlist_Error.PARSING_ERROR, dancer_name=dancer.name)
 
 
     ############### OVERRIDDEN METHODS  #######################################################
@@ -179,6 +186,7 @@ class NdcaPremHeatlist(Heatlist):
                     self.dancers.append(d)
             except:
                 print("Invalid competitor " + d.name + " " + d.code)
+                self.build_heatlist_error(comp, Heatlist_Error.NO_CODE_FOUND, dancer_name=d.name)
 
 
     def load(self, url, heatlist_dancers):

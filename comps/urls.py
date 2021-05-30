@@ -20,6 +20,7 @@ urlpatterns = [
     path('<int:comp_id>/create_heat/?couple=<int:couple_id>', views.create_heat, name="create_heat"),
     path('<int:comp_id>/resolve_dancers', views.resolve_dancers, name="resolve_dancers"),
     path('<int:comp_id>/mismatch_heats', views.resolve_mismatches, name="resolve_mismatches"),
+    path('<int:comp_id>/heatlist_errors', views.show_heatlist_errors, name="show_heatlist_errors"),
     path('<int:comp_id>/scoresheet_errors', views.show_scoresheet_errors, name="show_scoresheet_errors"),
     path('<int:comp_id>/mismatch_heats/<int:wider_search>', views.resolve_mismatches, name="resolve_mismatches"),
     path('<int:comp_id>/duplicate_entries', views.fix_dup_entries, name="fix_dup_entries"),
@@ -28,7 +29,8 @@ urlpatterns = [
     path('heat/<int:heat_id>/', views.heat, name="heat"),
     path('heat/edit/<int:heat_id>/', views.edit_heat, name="edit_heat"),
     path('heat_entry/<int:entry_id>/', views.edit_heat_entry, name="edit_heat_entry"),
-    path('clear_error/<int:error_id>/', views.delete_scoresheet_error, name="delete_scoresheet_error"),
+    path('clear_scoresheet_error/<int:error_id>/', views.delete_scoresheet_error, name="delete_scoresheet_error"),
+    path('clear_heatlist_error/<int:error_id>/', views.delete_heatlist_error, name="delete_heatlist_error"),
     # these are maintenance URLs -
     path('<int:comp_id>/combine_heats', views.combine_heats, name="combine_heats"),
     path('<int:comp_id>/null_entries', views.fix_null_entries, name="fix_null_entries"),

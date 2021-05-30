@@ -3,6 +3,7 @@ from rankings.models import Couple, Dancer
 from rankings.couple_matching import find_couple_exact_match
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
+from comps.models.heatlist_error import Heatlist_Error
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 
 
@@ -52,9 +53,11 @@ class Heatlist():
         else:
             h = heat
             h.save()   # save the heat into the database
+            if h.base_value == 0 and (h.category == Heat.PRO_HEAT or h.multi_dance()):
+                self.build_heatlist_error(comp_ref, Heatlist_Error.UNKNOWN_LEVEL, heat_ref=h)
+            if h.style == Heat.UNKNOWN and (h.category == Heat.PRO_HEAT or h.multi_dance()):
+                self.build_heatlist_error(comp_ref, Heatlist_Error.UNKNOWN_STYLE, heat_ref=h)
         return h
-        #else: # not a heat that we care about
-        #    return None
 
 
     def build_heat_entry(self, heat, dancer, partner, shirt_number):
@@ -87,3 +90,14 @@ class Heatlist():
                 mismatch.save()
 
             self.unmatched_entries += 1
+
+
+    def build_heatlist_error(self, comp_ref, error, heat_ref=None, dancer_name=None):
+        he = Heatlist_Error()
+        he.comp = comp_ref
+        he.error = error
+        if heat_ref is not None:
+            he.heat = heat_ref
+        if dancer_name is not None:
+            he.dancer = dancer_name
+        he.save()

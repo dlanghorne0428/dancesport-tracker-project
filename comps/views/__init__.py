@@ -16,6 +16,7 @@ from .fix_couple_type import *
 from .fix_dup_entries import *
 from .fix_null_entries import *
 from .heat import *
+from .heatlist_error_crud import *
 from .load_dancers import *
 from .load_heats import *
 from .load_scoresheets import *
