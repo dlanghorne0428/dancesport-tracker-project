@@ -29,6 +29,9 @@
       {% if show_edit_button %}
         <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h4>
         <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h5>
+        {% if item.error %}
+          <p class="text-center bg-warning mt-0">{{ item.error.get_error_display }}</p>
+        {% endif %}
       {% else %}
         <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.info }}</h4>
         <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.info }}</h5>

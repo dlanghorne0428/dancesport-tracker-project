@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
+from comps.models.heatlist_error import Heatlist_Error
 from comps.forms import HeatForm
 from rankings.rating_stats import couple_stats
 
@@ -17,6 +18,11 @@ def heat(request, heat_id):
 
     for h in parallel_heats:
         results_available = False
+        errors = Heatlist_Error.objects.filter(heat=h)
+        if len(errors) > 0:
+            error = errors.first()
+        else:
+            error = None
         entries = Heat_Entry.objects.filter(heat=h)
         if entries.count() > 0:
             if entries.first().points is not None:
@@ -32,7 +38,7 @@ def heat(request, heat_id):
                     e.save()
                 entries = entries.order_by('-rating', 'shirt_number')
 
-        next_item = {'heat': h, 'entries': entries, 'results_available': results_available}
+        next_item = {'heat': h, 'entries': entries, 'results_available': results_available, 'error': error}
         heat_data.append(next_item)
 
     comp_id = heat.comp_id

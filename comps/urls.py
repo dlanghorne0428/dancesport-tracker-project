@@ -31,6 +31,7 @@ urlpatterns = [
     path('heat_entry/<int:entry_id>/', views.edit_heat_entry, name="edit_heat_entry"),
     path('clear_scoresheet_error/<int:error_id>/', views.delete_scoresheet_error, name="delete_scoresheet_error"),
     path('clear_heatlist_error/<int:error_id>/', views.delete_heatlist_error, name="delete_heatlist_error"),
+    path('check_heatlist_error/<int:error_id>/', views.check_heatlist_error, name="check_heatlist_error"),
     # these are maintenance URLs -
     path('<int:comp_id>/combine_heats', views.combine_heats, name="combine_heats"),
     path('<int:comp_id>/null_entries', views.fix_null_entries, name="fix_null_entries"),
