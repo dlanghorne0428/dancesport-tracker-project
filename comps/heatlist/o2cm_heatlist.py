@@ -99,29 +99,14 @@ class O2cmHeatlist(Heatlist):
 
             # find the heat time
             start_pos = end_pos = line.find(" @", start_pos) + 3
+            day_of_week_str = ""       # day not available in this format
+            time_string = ""           # initialize time_string
             if start_pos > 0:
                 end_pos = line.find("M") + 1
                 if end_pos > start_pos:
                     time_string = line[start_pos:end_pos]
-                    h.set_time(time_string, "Saturday", "%I:%M %p")  # day not available in this format
-                else:
-                    in_database = Heatlist_Error.objects.filter(comp=h.comp).filter(heat=h)
-                    if len(in_database) == 0:
-                        he = Heatlist_Error()
-                        he.comp = h.comp
-                        he.heat = h
-                        he.error = Heatlist_Error.HEAT_TIME_INVALID
-                        he.save()
-                    return None
-            else:
-                in_database = Heatlist_Error.objects.filter(comp=h.comp).filter(heat=h)
-                if len(in_database) == 0:
-                    he = Heatlist_Error()
-                    he.comp = h.comp
-                    he.heat = h
-                    he.error = Heatlist_Error.HEAT_TIME_INVALID
-                    he.save()
-                return None
+
+            h.set_time(time_string, day_of_week_str, "%I:%M %p")
 
             # find the heat description information
             start_pos = end_pos + 1  # skip past the space after the M found above
