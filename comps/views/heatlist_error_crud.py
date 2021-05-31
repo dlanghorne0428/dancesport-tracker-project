@@ -12,6 +12,18 @@ def delete_heatlist_error(request, error_id):
     return redirect("comps:show_heatlist_errors", comp.id)
 
 
+def check_heatlist_error(request, error_id):
+    heatlist_error = get_object_or_404(Heatlist_Error, pk=error_id)
+    heat = heatlist_error.heat
+    if heatlist_error.error == Heatlist_Error.UNKNOWN_LEVEL:
+        if heat.base_value > 0:
+            heatlist_error.delete()
+    elif heatlist_error.error == Heatlist_Error.UNKNOWN_STYLE:
+        if heat.style != Heat.UNKNOWN:
+            heatlist_error.delete()
+    return redirect('comps:heat', heat.id)
+
+
 def show_heatlist_errors(request, comp_id):
     comp = get_object_or_404(Comp, pk=comp_id)
     heatlist_errors = Heatlist_Error.objects.filter(comp=comp).order_by('error', 'dancer', 'heat__heat_number')
