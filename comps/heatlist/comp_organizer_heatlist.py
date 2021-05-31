@@ -89,19 +89,10 @@ class CompOrgHeatlist(Heatlist):
             else:
                 time_string = time_fields[1]
             day_of_week = time_fields[0]
-            h.set_time(time_string, day_of_week)
         else:
-            print("Warning: Invalid time format " + str(time_fields) + " - using default")
-            in_database = Heatlist_Error.objects.filter(comp=h.comp).filter(heat=h)
-            if len(in_database) == 0:
-                he = Heatlist_Error()
-                he.comp = h.comp
-                he.heat = h
-                he.error = Heatlist_Error.HEAT_TIME_INVALID
-                he.save()
-            day_of_week = "Saturday"
-            time_string = "11:00AM"
-            h.set_time(time_string, day_of_week)
+            day_of_week = ""
+            time_string = ""
+        h.set_time(time_string, day_of_week)
 
         start_pos = items[item_index+4].find("-desc") + len("-desc") + 2
         h.info = items[item_index+4][start_pos:]

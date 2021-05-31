@@ -28,7 +28,7 @@ def resolve_dancers(request, comp_id):
         names_to_format = Heatlist_Dancer.objects.filter(comp=comp).filter(formatting_needed = True)
         current_name = names_to_format.first()
     else: # GET
-        print("Formatting: " + current_name.name)
+        #print("Formatting: " + current_name.name)
         page_number = request.GET.get('page')
 
     # do this for either GET or POST
