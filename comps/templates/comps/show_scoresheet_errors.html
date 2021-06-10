@@ -28,14 +28,25 @@
         <tr>
           <td class="text-center">{{ error.heat.get_category_display }}</td>
           {% if heat.extra %}
-            <td class="text-center">{{ error.heat.heat_number }}{{ heat.extra }}</td>
+            <td class="text-center">{{ error.heat.heat_number }}{{ error.heat.extra }}</td>
           {% else %}
             <td class="text-center">{{ error.heat.heat_number }}</td>
           {% endif %}
-          <td class="text-center"><a href="{% url 'comps:heat' error.heat.id %}">{{ error.heat.info}}</a></td>
+          <td class="text-center"><a href="{% url 'comps:heat' error.heat.id %}">{{ error.heat.info }}</a></td>
           <td class="text-center">{{ error.get_error_display }}</td>
-          <td class="text-center"><a href="{% url 'view_couple' error.couple.id %}">{{ error.couple}}</a></td>
-          <td> <a class="btn btn-warning" role="button" href="{% url 'comps:delete_scoresheet_error' error.pk %}">Delete</a></td>
+          {% if error.couple %}
+            <td class="text-center"><a href="{% url 'view_couple' error.couple.id %}">{{ error.couple }}</a></td>
+          {% else %}
+            <td></td>
+          {% endif %}
+          <td>
+              <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownActionButton" data-toggle="dropdown">Action</button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'comps:delete_scoresheet_error' error.pk %}">Delete</a>
+                <a class="dropdown-item" href="{% url 'comps:heat' error.heat.id %}">View</a>
+                <a class="dropdown-item" href="{% url 'comps:repair_scoresheet_error' error.pk %}">Repair</a>
+              </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
