@@ -11,7 +11,7 @@
 
 <div class="row align-items-start">
 
-  <div class="col-12 col-lg-10 offset-lg-1 p-0 border border-dark">
+  <div class="col-12 p-0 border border-dark">
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
@@ -19,15 +19,21 @@
           <th class="text-center">Number</th>
           <th class="text-center d-none d-md-table-cell">Time</th>
           <th class="text-center">Description</th>
+          <th class="text-center">Couple</th>
         </tr>
       </thead>
       <tbody>
-        {% for heat in page_obj %}
+        {% for entry in page_obj %}
         <tr>
-          <td class="text-center">{{ heat.get_category_display }}</td>
-          <td class="text-center">{{ heat.heat_number }}</td>
-          <td class="text-center d-none d-md-table-cell">{{ heat.time }}</td>
-          <td class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
+          <td class="text-center">{{ entry.heat.get_category_display }}</td>
+          {% if entry.heat.extra %}
+            <td class="text-center">{{ entry.heat.heat_number }}{{entry.heat.extra}}</td>
+          {% else %}
+            <td class="text-center">{{ entry.heat.heat_number }}</td>
+          {% endif %}
+          <td class="text-center d-none d-md-table-cell">{{ entry.heat.time }}</td>
+          <td class="text-center"><a href="{% url 'comps:heat' entry.heat.id %}">{{ entry.heat.info}}</a></td>
+          <td class="text-center"><a href="{% url 'comps:couple_heats' comp.id entry.couple.id %}">{{ entry.couple}}</a></td>
         </tr>
         {% endfor %}
       </tbody>
