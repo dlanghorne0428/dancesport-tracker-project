@@ -58,6 +58,9 @@ class Heat(models.Model):
     # this field indicates the when the heat is scheduled to be danced
     time = models.DateTimeField(blank=True)
 
+    # this field indicates this heat is a dance-off that was not in the original heatlist
+    dance_off = models.BooleanField(default=False)
+
     # this field indicates if the heat had prelim rounds before the Final.
     rounds = models.CharField(max_length=20, default="F")  # default is Final only
 

@@ -131,12 +131,21 @@ class Results_Processor():
            We use this to extract the results of the heat we are interested in .'''
         # Build the string to find the results for the heat we want.
         # For example: Pro Heat 5:
+        heat_string = e.heat.get_category_display() + " "
+        # if the heat number is 0, leave it out
+        if e.heat.heat_number != 0:
+            heat_string += str(e.heat.heat_number)
+
         # need the colon directly after the number, to distinguish 5 from 51, etc.
-        heat_string = e.heat.get_category_display() + " " + str(e.heat.heat_number)
-        if len(e.heat.extra) == 1:
+        # if the extra field is a single character or TBD, include it (Heat 123A: or Heat TBD:)
+        if len(e.heat.extra) == 1 or e.heat.extra == "TBD":
             heat_string += e.heat.extra + ":"
         else:
             heat_string += ":"
+
+        # if extra field was TBD, there may be more than one, so include the heat info field
+        if e.heat.extra == "TBD":
+            heat_string += " " + e.heat.info
 
         heat_info_from_scoresheet = None
 
@@ -407,6 +416,7 @@ class Results_Processor():
 
             # If this check is true, we found the Final results for this heat
             elif heat_string in line and ("<p>" in line or "<h3>" in line):   # and "Final" in line:
+                print("Found " + heat_string)
                 heat_info_from_scoresheet = self.get_heat_info(line, heat_string, "Final")
                 # if this is a single dance event, we can look for the results now
                 if event == "Single Dance":

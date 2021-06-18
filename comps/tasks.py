@@ -120,7 +120,7 @@ def process_scoresheet_task(self, comp_data):
 
         for heat in heats_to_process:
             index += 1
-            if heat.category == Heat.PRO_HEAT or heat.multi_dance():
+            if heat.category == Heat.PRO_HEAT or heat.multi_dance() or heat.dance_off:
                 if heat.style == Heat.UNKNOWN:
                     print("Unknown Heat Style " + str(heat))
                     res_err = Result_Error()
