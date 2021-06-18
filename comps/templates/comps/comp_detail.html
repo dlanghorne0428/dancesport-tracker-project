@@ -37,6 +37,7 @@
       <span class="dropdown">
         <button class="btn btn-warning dropdown-toggle" type="button" id="editDropdownActionButton" data-toggle="dropdown">Edit</button>
         <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'comps:create_heat' comp.id %}">Add Heat</a>
           <a class="dropdown-item" href="{% url 'comps:edit_comp' comp.id %}">Comp Info</a>
           <a class="dropdown-item" onclick="return confirm('Are you sure?')" href="{% url 'comps:clear_comp' comp.id %}">Clear All Data</a>
         </div>
