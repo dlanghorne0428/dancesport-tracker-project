@@ -32,7 +32,7 @@
         {% for heat in page_obj %}
         <tr>
           <td class="text-center">{{ heat.get_category_display }}</td>
-          <td class="text-center">{{ heat.heat_number }}</td>
+          <td class="text-center">{{ heat.heat_number }}{{ heat.extra }}</td>
           <td class="text-center d-none d-md-table-cell">{{ heat.time }}</td>
           <td class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
         </tr>
