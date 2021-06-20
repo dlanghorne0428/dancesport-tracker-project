@@ -134,7 +134,7 @@ def process_scoresheet_task(self, comp_data):
                     res_err = Result_Error()
                     res_err.comp = comp
                     res_err.heat = heat
-                    res_err.error = Result_Error.UNKNOWN_STYLE
+                    res_err.error = Result_Error.UNKNOWN_LEVEL
                     res_err.save()
 
                 entries_in_event = Heat_Entry.objects.filter(heat=heat)
