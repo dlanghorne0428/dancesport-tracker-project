@@ -88,6 +88,10 @@ class NdcaPremHeatlist(Heatlist):
                             index = 0
                             while number_string[index].isdigit():
                                 index += 1
+                            if index == 0:
+                                h.heat_number = 0
+                                h.extra = "TBD"
+                            else:
                                 h.heat_number = int(number_string[:index])
                                 h.extra = number_string[index:]
                     continue
