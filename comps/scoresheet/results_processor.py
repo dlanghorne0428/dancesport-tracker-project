@@ -35,9 +35,15 @@ class Results_Processor():
            followed by a space, then the couple names. This routine
            extracts and returns the shirt number.'''
         fields = competitor.split()
-        # if len(fields) != 2:
-        #     print("error", fields)
-        return fields[0]
+        if len(fields) != 2:
+            index = 0
+            while fields[0][index].isdigit():
+                index += 1
+                if index == len(fields[0]):
+                    break
+            return fields[0][:index]
+        else:
+            return fields[0]
 
 
     def get_heat_info(self, line, heat_string, trailer):
@@ -394,7 +400,7 @@ class Results_Processor():
                 looking_for_recall_column = True  # enter the next state
 
             # If this check is true, we found quarter-final results for this heat
-            elif heat_string in line and "QUARTER-FINAL" in line.upper() and ("<p>" in line or "<h3>" in line):
+            elif heat_string in line and "QUARTER" in line.upper() and "FINAL" in line.upper() and ("<p>" in line or "<h3>" in line):
                 temp_result = "quarters"    # indicate which round we are in
                 result_index = -1      # use this to pull values from the points table
                 #print("Found Quarterfinals")
@@ -416,7 +422,7 @@ class Results_Processor():
 
             # If this check is true, we found the Final results for this heat
             elif heat_string in line and ("<p>" in line or "<h3>" in line):   # and "Final" in line:
-                print("Found " + heat_string)
+                #print("Found " + heat_string)
                 heat_info_from_scoresheet = self.get_heat_info(line, heat_string, "Final")
                 # if this is a single dance event, we can look for the results now
                 if event == "Single Dance":
