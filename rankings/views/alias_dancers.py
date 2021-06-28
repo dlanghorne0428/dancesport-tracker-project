@@ -9,7 +9,7 @@ def alias_dancers(request, level=2):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
 
-    alias_dancers = Heatlist_Dancer.objects.exclude(alias__isnull=True).order_by('name')
+    alias_dancers = Heatlist_Dancer.objects.exclude(alias__isnull=True).order_by('name', 'comp__start_date')
     if level == 2:
         doubles = list()
         for i in range(1, len(alias_dancers)):
@@ -22,6 +22,21 @@ def alias_dancers(request, level=2):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'rankings/alias_dancers.html', {'page_obj': page_obj, 'level': level })
+
+
+def aliases_for_dancer(request, hld_pk):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+
+    # get the heatlist dancer
+    heatlist_dancer = get_object_or_404(Heatlist_Dancer, pk=hld_pk)
+
+    alias_dancers = Heatlist_Dancer.objects.filter(name=heatlist_dancer.name)
+    paginator = Paginator(alias_dancers, 16)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'rankings/alias_dancers.html', {'page_obj': page_obj, 'level': 1 })
 
 
 def accept_alias(request, hld_pk):

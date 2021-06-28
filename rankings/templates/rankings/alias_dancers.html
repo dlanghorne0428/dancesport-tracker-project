@@ -45,6 +45,7 @@
               <td class="text-center">
                 <a class="btn btn-warning btn-sm" href="{% url 'accept_alias' d.id %}">Accept</a>
                 <a class="btn btn-info btn-sm" href="{% url 'reject_alias'  d.id %}">Reject</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'aliases_for_dancer'  d.id %}">View</a>
               </td>
             </tr>
           {% endfor %}
