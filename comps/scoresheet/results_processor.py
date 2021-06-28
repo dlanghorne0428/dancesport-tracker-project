@@ -142,16 +142,14 @@ class Results_Processor():
         if e.heat.heat_number != 0:
             heat_string += str(e.heat.heat_number)
 
-        # need the colon directly after the number, to distinguish 5 from 51, etc.
-        # if the extra field is a single character or TBD, include it (Heat 123A: or Heat TBD:)
-        if len(e.heat.extra) == 1 or e.heat.extra == "TBD":
+        # if extra field was TBD or BOBR, there may be more than one, so include the heat info field
+        if e.heat.extra in ["TBD", "BOBR"]:
+            heat_string += e.heat.extra + ": " + e.heat.info
+        elif len(e.heat.extra) == 1:
+            # if the extra field is a single character, include it (Heat 123A:)
             heat_string += e.heat.extra + ":"
-        else:
+        else: # need the colon directly after the number, to distinguish 5 from 51, etc.
             heat_string += ":"
-
-        # if extra field was TBD, there may be more than one, so include the heat info field
-        if e.heat.extra == "TBD":
-            heat_string += " " + e.heat.info
 
         heat_info_from_scoresheet = None
 
