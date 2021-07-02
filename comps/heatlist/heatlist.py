@@ -70,13 +70,13 @@ class Heatlist():
         if couple is not None:
             heat_entry_obj.populate(heat, couple, code, shirt_number)
             entries_in_database = Heat_Entry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
-            if entries_in_database.count() == 0:
+            if entries_in_database.count() == 0 or heat.category == Heat.FORMATION:
                 heat_entry_obj.save()
         else:
             # populate and save partially completed heat entry
             heat_entry_obj.populate(heat, shirt_number=shirt_number)
             entries_in_database = Heat_Entry.objects.filter(heat=heat, shirt_number=shirt_number)
-            if entries_in_database.count() == 0:
+            if entries_in_database.count() == 0 or heat.category == Heat.FORMATION:
                 heat_entry_obj.save()
                 he = heat_entry_obj
             else:

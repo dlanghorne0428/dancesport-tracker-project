@@ -43,6 +43,8 @@ class CompMngrHeatlist(Heatlist):
             h.category = Heat.PRO_HEAT
         elif category == "Solo":
             h.category = Heat.SOLO
+        elif category == "Formation":
+            h.category = Heat.FORMATION
         else:
             h.category = Heat.NORMAL_HEAT
         h.heat_number = number
@@ -160,8 +162,6 @@ class CompMngrHeatlist(Heatlist):
         # turn that heat info into an object and add it to the database
         heat = Heat()
         self.load_heat(heat, category_str, line, comp_ref)
-        if "Solo Star" in heat.info:
-            return None
         return self.add_heat_to_database(heat, comp_ref)
 
 
@@ -191,10 +191,8 @@ class CompMngrHeatlist(Heatlist):
                 if "/" in partner_name:
                     partner = None
                 elif len(partner_name) == 0:
-                    partner = None
-                    in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
-                    if len(in_database) == 0:
-                        self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
+                    # assign to {No, Partner}, which should be at the end of the list
+                    partner = self.dancers[-1]
                 else:
                     partner = self.find_dancer(partner_name)
 
@@ -210,9 +208,19 @@ class CompMngrHeatlist(Heatlist):
             # look for lines with solo information
             elif "Solo " in line:
                 if partner is not None:
-                    if partner_name > dancer_name:
+                    if partner.name > dancer.name:
                         # turn this line into a heat object and add it to the database
                         h = self.build_heat("Solo", line, comp_ref)
+                        if h is not None:
+                            shirt_number = line.split("<td>")[2].split("</td>")[0]
+                            self.build_heat_entry(h, dancer, partner, shirt_number)
+
+            # look for lines with formation information
+            elif "Formation " in line:
+                if partner is not None:
+                    if partner.name > dancer.name:
+                        # turn this line into a heat object and add it to the database
+                        h = self.build_heat("Formation", line, comp_ref)
                         if h is not None:
                             shirt_number = line.split("<td>")[2].split("</td>")[0]
                             self.build_heat_entry(h, dancer, partner, shirt_number)
@@ -220,7 +228,7 @@ class CompMngrHeatlist(Heatlist):
             # look for lines with heat number information
             elif "Heat " in line:
                 if partner is not None:
-                    if partner_name > dancer_name:
+                    if partner.name > dancer.name:
                         # turn this line into a heat object and add it to the database
                         h = self.build_heat("Heat", line, comp_ref)
                         if h is not None:
