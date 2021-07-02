@@ -16,10 +16,12 @@ class Heat(models.Model):
     PRO_HEAT = 'PH'
     NORMAL_HEAT = 'NH'
     SOLO = "SO"
+    FORMATION = "4M"
     CATEGORY_CHOICES = [
         (PRO_HEAT, "Pro heat"),
         (NORMAL_HEAT, "Heat"),
         (SOLO, "Solo"),
+        (FORMATION, "Formation")
     ]
     category = models.CharField(max_length = 2, choices = CATEGORY_CHOICES, default = NORMAL_HEAT)
     heat_number = models.IntegerField()

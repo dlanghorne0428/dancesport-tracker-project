@@ -105,6 +105,8 @@ class NdcaPremHeatlist(Heatlist):
                         h.category = Heat.PRO_HEAT
                     elif "Solo " in h.info:
                         h.category = Heat.SOLO
+                    elif "Formation " in h.info:
+                        h.category = Heat:FORMATION        
                     else:
                         h.category = Heat.NORMAL_HEAT
 
@@ -137,18 +139,20 @@ class NdcaPremHeatlist(Heatlist):
                     partner = p
 
                 elif "heatlist-sess" in rows[row_index]:
-                    if partner is not None:
-                        if partner.name > dancer.name:
-                            # if this row is the start of a new heat, create a new heat object
-                            heat = Heat()
-                            self.load_heat(heat, rows[row_index], comp_ref)
-                            if "Solo Star" in heat.info:
-                                h = None
-                            else:
-                                h = self.add_heat_to_database(heat, comp_ref)
-                            if h is not None:
-                                # this format doesn't store shirt numbers, use code instead
-                                self.build_heat_entry(h, dancer, partner, shirt_number=dancer.code)
+                    if partner is None:
+                        partner = self.dancers[-1]
+                        print (dancer.name, partner.name)
+                    if partner.name > dancer.name:
+                        # if this row is the start of a new heat, create a new heat object
+                        heat = Heat()
+                        self.load_heat(heat, rows[row_index], comp_ref)
+                        # if "Solo Star" in heat.info:
+                        #     h = None
+                        # else:
+                        h = self.add_heat_to_database(heat, comp_ref)
+                        if h is not None:
+                            # this format doesn't store shirt numbers, use code instead
+                            self.build_heat_entry(h, dancer, partner, shirt_number=dancer.code)
 
                 # go to the next row
                 row_index += 1
@@ -169,7 +173,7 @@ class NdcaPremHeatlist(Heatlist):
         url = comp.heatsheet_url
         start_pos = url.find("cyi=") + len("cyi=")
         self.comp_id = url[start_pos:]
-        self.comp_name = self.get_comp_name(self.comp_id)
+        #self.comp_name = self.get_comp_name(self.comp_id)
 
         # open this URL to obtain a list of dancers
         url = "http://www.ndcapremier.com/scripts/competitors.asp?cyi=" + self.comp_id
@@ -201,7 +205,7 @@ class NdcaPremHeatlist(Heatlist):
         #extract comp name and comp_id from URL
         start_pos = url.find("cyi=") + len("cyi=")
         self.comp_id = url[start_pos:]
-        self.comp_name = self.get_comp_name(self.comp_id)
+        #self.comp_name = self.get_comp_name(self.comp_id)
 
 
     def get_next_dancer(self, index, comp_ref):

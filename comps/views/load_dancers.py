@@ -36,6 +36,13 @@ def load_dancers(request, comp_id):
             heatlist = CompOrgHeatlist()
 
         heatlist.open(comp)
+        
+        # add special "dancer" for partnerless events
+        d = Heatlist_Dancer()
+        d.name = "{No, Partner}"
+        d.code = "0"
+        d.comp = comp
+        heatlist.dancers.append(d)
 
     for d in heatlist.dancers:
         in_database = Heatlist_Dancer.objects.filter(name = d.name, comp=comp)
