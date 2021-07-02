@@ -82,20 +82,22 @@ class Heatlist_Dancer(models.Model):
             print("Error - invalid code")
 
 
-    def load_from_ndca_premier(self, line):
-        '''This method populates the object from a line of text from a heatlist in NDCA Premier format.'''
+    def load_from_ndca_premier(self, json_record):
+        '''This method populates the object from a JSON object from a heatlist in NDCA Premier format.'''
         # find the dancer's name
-        fields = line.split(">")
-        orig_name = fields[1]
-        new_name = self.format_name(orig_name)
-        if new_name is None:
-            self.name = orig_name
+        name_field = json_record["Name"]
+        if len(name_field) == 2 and name_field[0] is not None and name_field[1] is not None:
+            self.name = name_field[1] + ", " + name_field[0]
         else:
-            self.name = new_name
+            self.formatting_needed = True
+            self.name = name_field[0]
+            for f in range(1, len(name_field)):
+                if name_field[f] is not None:
+                    self.name += " "
+                    self.name += name_field[f]
 
         # find the ID code for this dancer
-        pos = fields[0].find("competitor=") + len("competitor=")
-        self.code = fields[0][pos+1:-1]
+        self.code = json_record["ID"]
 
 
     def load_from_o2cm(self, line):
