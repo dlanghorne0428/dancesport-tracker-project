@@ -63,6 +63,8 @@ class CompOrgHeatlist(Heatlist):
             h.category = Heat.PRO_HEAT
         elif category_string == "Heat ":
             h.category = Heat.NORMAL_HEAT
+        elif category_string == "Formation ":
+            h.category = Heat.FORMATION
 
         try:
             h.heat_number = int(number_string[index:])
@@ -128,12 +130,12 @@ class CompOrgHeatlist(Heatlist):
                         if len(in_database) == 0:
                             self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
 
-                else:
-                    partner = None
-                    print(dancer.name + " No partner found")
-                    in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
-                    if len(in_database) == 0:
-                        self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
+                else: # assign to {No, Partner} which should be at the end of the list
+                    partner = self.dancers[-1]
+                    print(dancer.name + " " + partner.name)
+                    # in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
+                    # if len(in_database) == 0:
+                    #     self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
 
                 # partner found, go to next item
                 item_index += 1
@@ -145,8 +147,8 @@ class CompOrgHeatlist(Heatlist):
                         # build heat object, which takes up the next five items
                         heat = Heat()
                         self.load_heat(heat, items, item_index, comp_ref)
-                        if "Solo Star" in heat.info:
-                            heat.category = None
+                        # if "Solo Star" in heat.info:
+                        #     heat.category = None
                         if heat.category is not None:
                             h = self.add_heat_to_database(heat, comp_ref)
                             start_pos = items[item_index+3].find("-numb") + len("-numb") + 2
