@@ -23,18 +23,18 @@
     </div>
     <div class="col-8">
       {% if forloop.counter == 1 %}
-        <h3 class="text-center d-none d-lg-block">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.time }}</h3>
-        <h4 class="text-center d-block d-lg-none">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.time }}</h4>
+        <h3 class="text-center d-none d-lg-block">{{ item.heat.time }}</h3>
+        <h4 class="text-center d-block d-lg-none">{{ item.heat.time }}</h4>
       {% endif %}
       {% if show_edit_button %}
-        <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h4>
-        <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h5>
+        <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h4>
+        <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h5>
         {% if item.error %}
           <p class="text-center bg-warning mt-0">{{ item.error.get_error_display }}</p>
         {% endif %}
       {% else %}
-        <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.info }}</h4>
-        <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.info }}</h5>
+        <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h4>
+        <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h5>
       {% endif %}
     </div>
     <div class="col-2">
