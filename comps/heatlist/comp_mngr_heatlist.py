@@ -190,10 +190,9 @@ class CompMngrHeatlist(Heatlist):
                 partner_name = self.get_dancer_name(line.strip(), line.find("With ") + 5)
                 if "/" in partner_name:
                     partner = None
-                elif len(partner_name) == 0:
-                    # assign to {No, Partner}, which should be at the end of the list
-                    partner = self.dancers[-1]
                 else:
+                    if len(partner_name) == 0:
+                        partner_name = "{No, Partner}"
                     partner = self.find_dancer(partner_name)
 
             # look for lines with pro heat number information
