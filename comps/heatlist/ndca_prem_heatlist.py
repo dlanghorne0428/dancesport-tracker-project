@@ -106,7 +106,7 @@ class NdcaPremHeatlist(Heatlist):
                     elif "Solo " in h.info:
                         h.category = Heat.SOLO
                     elif "Formation " in h.info:
-                        h.category = Heat:FORMATION        
+                        h.category = Heat.FORMATION
                     else:
                         h.category = Heat.NORMAL_HEAT
 
