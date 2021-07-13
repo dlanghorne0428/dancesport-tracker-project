@@ -149,5 +149,6 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 #similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
                 for e in similar_unmatched:
                     if the_couple_type == e.entry.heat.couple_type():
+                        e.entry.delete()
                         e.delete()
                 return redirect("comps:heat", first_unmatched.entry.heat.id)
