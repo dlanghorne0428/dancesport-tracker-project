@@ -6,6 +6,7 @@ from comps.heatlist.file_based_heatlist import FileBasedHeatlist
 from comps.heatlist.comp_mngr_heatlist import CompMngrHeatlist
 from comps.heatlist.comp_organizer_heatlist import CompOrgHeatlist
 from comps.heatlist.ndca_prem_heatlist import NdcaPremHeatlist
+from comps.heatlist.ndca_prem_feed_heatlist import NdcaPremFeedHeatlist
 from comps.heatlist.o2cm_heatlist import O2cmHeatlist
 
 
@@ -30,13 +31,15 @@ def load_dancers(request, comp_id):
             heatlist = CompMngrHeatlist()
         elif comp.url_data_format == Comp.NDCA_PREM:
             heatlist = NdcaPremHeatlist()
+        elif comp.url_data_format == Comp.NDCA_FEED:
+            heatlist = NdcaPremFeedHeatlist()
         elif comp.url_data_format == Comp.O2CM:
             heatlist = O2cmHeatlist()
         else: # CompOrganizer for now
             heatlist = CompOrgHeatlist()
 
         heatlist.open(comp)
-        
+
         # add special "dancer" for partnerless events
         d = Heatlist_Dancer()
         d.name = "{No, Partner}"

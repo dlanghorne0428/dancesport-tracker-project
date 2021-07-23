@@ -6,6 +6,7 @@ from .heatlist.file_based_heatlist import FileBasedHeatlist
 from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
 from .heatlist.comp_organizer_heatlist import CompOrgHeatlist
 from .heatlist.ndca_prem_heatlist import NdcaPremHeatlist
+from .heatlist.ndca_prem_feed_heatlist import NdcaPremFeedHeatlist
 from .heatlist.o2cm_heatlist import O2cmHeatlist
 from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
@@ -67,10 +68,13 @@ def process_heatlist_task(self, comp_data, heatlist_data):
             heatlist = CompMngrHeatlist()
         elif comp.url_data_format == Comp.NDCA_PREM:
             heatlist = NdcaPremHeatlist()
+        elif comp.url_data_format == Comp.COMP_ORG:
+            heatlist = CompOrgHeatlist()
         elif comp.url_data_format == Comp.O2CM:
             heatlist = O2cmHeatlist()
         else: # Comp CompOrganizer
-            heatlist = CompOrgHeatlist()
+            heatlist = NdcaPremFeedHeatlist()
+
 
         heatlist.load(comp.heatsheet_url, heatlist_dancers)
 

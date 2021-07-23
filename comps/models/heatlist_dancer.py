@@ -98,6 +98,24 @@ class Heatlist_Dancer(models.Model):
         self.code = fields[0][pos+1:-1]
 
 
+    def load_from_ndca_premier_feed(self, json_record):
+        '''This method populates the object from a JSON object from a heatlist in NDCA Premier format.'''
+        # find the dancer's name
+        name_field = json_record["Name"]
+        if len(name_field) == 2 and name_field[0] is not None and name_field[1] is not None:
+            self.name = name_field[1] + ", " + name_field[0]
+        else:
+            self.formatting_needed = True
+            self.name = name_field[0]
+            for f in range(1, len(name_field)):
+                if name_field[f] is not None:
+                    self.name += " "
+                    self.name += name_field[f]
+
+        # find the ID code for this dancer
+        self.code = json_record["ID"]
+
+
     def load_from_o2cm(self, line):
         '''This method populates the object from a line of text from a heatlist in o2cm.com format.'''
         # find the dancer's name
