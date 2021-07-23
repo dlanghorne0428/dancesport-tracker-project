@@ -44,7 +44,7 @@ def resolve_dancers(request, comp_id):
         fields = current_name.name.split()
         if len(fields) == 1:
             possible_formats.append(current_name.name + ",.")
-            possible_formats.append(".," + current_name.name)
+            possible_formats.append("., " + current_name.name)
         else:
             for field in range(1, len(fields)):
                 possible_formats.append(current_name.format_name(current_name.name, simple=False, split_on=field))
