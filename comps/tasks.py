@@ -12,6 +12,7 @@ from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
 from .scoresheet.comp_organizer_results import CompOrgResults
 from .scoresheet.ndca_prem_results import NdcaPremResults
+from .scoresheet.ndca_prem_feed_results import NdcaPremFeedResults
 from .scoresheet.o2cm_results import O2cmResults
 from comps.models.comp import Comp
 from comps.models.heat import Heat
@@ -110,6 +111,8 @@ def process_scoresheet_task(self, comp_data):
             scoresheet = CompMngrResults()
         elif comp.url_data_format == Comp.NDCA_PREM:
              scoresheet = NdcaPremResults()
+        elif comp.url_data_format == Comp.NDCA_FEED:
+              scoresheet = NdcaPremFeedResults()
         elif comp.url_data_format == Comp.O2CM:
               scoresheet = O2cmResults()
         else: # CompOrganizer for now
