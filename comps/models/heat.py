@@ -226,4 +226,7 @@ class Heat(models.Model):
 
 
     def __str__(self):
-        return self.comp.title + " " + self.get_category_display() + " " + str(self.heat_number)
+        if self.heat_number is not None and self.category is not None:
+            return self.comp.title + " " + self.get_category_display() + " " + str(self.heat_number)
+        else:
+            return ""
