@@ -113,7 +113,7 @@ class NdcaPremFeedHeatlist(Heatlist):
         try:
             json_data = json.loads(heat_data)
         except:
-            print("Unable to parse heatsheet - " + dancer.name
+            print("Unable to parse heatsheet - " + dancer.name)
             return
 
         if json_data['Status'] == 0:
