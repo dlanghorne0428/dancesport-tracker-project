@@ -110,6 +110,17 @@ class NdcaPremFeedHeatlist(Heatlist):
     def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
         '''This method extracts heat information from the heat_data read in from a URL.
         The information is saved into the specified dancer object.'''
+        try:
+            json_data = json.loads(heat_data)
+        except:
+            print("Unable to parse heatsheet - " + dancer.name
+            return
+
+        if json_data['Status'] == 0:
+            # no heatlist for this competitor
+            print("No heatlist - " + dancer.name)
+            return
+
         json_record= json.loads(heat_data)
 
         for entry in json_record['Result']['Entries']:
