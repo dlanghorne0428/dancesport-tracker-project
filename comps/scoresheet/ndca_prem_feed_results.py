@@ -39,9 +39,17 @@ class NdcaPremFeedResults(Results_Processor):
         # set the rounds indicator to finals, until proven otherwise
         rounds = "F"
 
-        json_data = json.loads(self.response.text)
+        if self.response.text[0] == "{":
+            start_pos = 0
+        else:
+            start_pos = self.response.text.find("{")
 
-        print(json_data['Status'])
+        try:
+            json_data = json.loads(self.response.text[start_pos:])
+        except:
+            print("Unable to parse scoresheet - " + str(e.heat))
+            return
+
         if json_data['Status'] == 0:
             # no results for this competitor
             print("No scoresheet")
@@ -55,27 +63,25 @@ class NdcaPremFeedResults(Results_Processor):
                         for c in r['Summary']['Competitors']:
                             for entry in entries:
                                 if str(entry.shirt_number) == c['Bib']:
-                                    if len(c['Result']) == 1:
-                                        result_str = c['Result'][0]
-                                        if len(entry.result) == 0:
-                                            entry.result = result_str
-                                            self.entries_in_event += 1
-                                            break
-                                        elif entry.result == result_str:
-                                            break
-                                        else:
-                                            print(str(entry.heat.heat_number) + " Same number - new result: " + " " + str(entry.couple.dancer_1) + " " + str(entry.couple.dancer_2) + " " + entry.result + " " + result_str)
-                                            entry.result = result_str
-                                            res_error = Result_Error()
-                                            res_error.comp = entry.heat.comp
-                                            res_error.heat = entry.heat
-                                            res_error.couple = entry.couple
-                                            res_error.error = Result_Error.TWO_RESULTS_FOR_COUPLE
-                                            res_error.save()
-                                            break
+                                    # This Result list is length 1, unless there are tiebreakers, so use the last item 
+                                    result_str = c['Result'][-1]
+                                    if len(entry.result) == 0:
+                                        entry.result = result_str
+                                        self.entries_in_event += 1
+                                        break
+                                    elif entry.result == result_str:
+                                        break
                                     else:
-                                        print("Multiple Results")
-                                        xxx()
+                                        print(str(entry.heat.heat_number) + " Same number - new result: " + " " + str(entry.couple.dancer_1) + " " + str(entry.couple.dancer_2) + " " + entry.result + " " + result_str)
+                                        entry.result = result_str
+                                        res_error = Result_Error()
+                                        res_error.comp = entry.heat.comp
+                                        res_error.heat = entry.heat
+                                        res_error.couple = entry.couple
+                                        res_error.error = Result_Error.TWO_RESULTS_FOR_COUPLE
+                                        res_error.save()
+                                        break
+
                             else:
                                 print("Late Entry")
                                 xxx()
@@ -86,6 +92,21 @@ class NdcaPremFeedResults(Results_Processor):
                             if e.points is not None:
                                 #print(e, e.result, e.points)
                                 e.save()
+
+                    elif r['Name'] == "Semi-Final":
+                        rounds = "S"
+                        result_index = -2
+                        temp_result = "Semis"
+                        for c in r['Summary']['Competitors']:
+                            if c['Recalled'] == 0:
+                                for entry in entries:
+                                    if str(entry.shirt_number) == c['Bib']:
+                                        # If the couple was not recalled, their result is the round
+                                        # in which they were eliminated
+                                        entry.result = temp_result
+
+                                        # Lookup their points, and exit the loop
+                                        entry.points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
 
                     else:
                         print("Early Round")
