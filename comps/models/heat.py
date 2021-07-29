@@ -147,19 +147,23 @@ class Heat(models.Model):
             self.style = Heat.UNKNOWN
 
 
-    def set_time(self, time_str, day_of_week_str, time_format="%I:%M%p"):
-        comp_start_date = self.comp.start_date.isocalendar()
-        days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        try:
-            isoweekday = days_of_week.index(day_of_week_str) + 1
-            heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
-        except:
-            print(str(self), "Warning in day of week: " + day_of_week_str)
-            heat_date = self.comp.start_date
+    def set_time(self, time_str, day_of_week_str, time_format="%I:%M%p", date_string=None):
+        if date_string is not None:
+            date_fields = date_string.split('/')
+            heat_date = date(int(date_fields[2]), int(date_fields[0]), int(date_fields[1]))
+        else:
+            comp_start_date = self.comp.start_date.isocalendar()
+            days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            try:
+                isoweekday = days_of_week.index(day_of_week_str) + 1
+                heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
+            except:
+                print(str(self), "Warning in day of week: " + day_of_week_str)
+                heat_date = self.comp.start_date
         try:
             time_of_day = time.strptime(time_str, time_format)
         except:
-            print(str(self), "Warning in time of day: " + time_str + "!")
+            print(str(self) + " Warning in time of day: " + time_str + "!")
             time_of_day = time.strptime("0:0", "%H:%M")
         tz = timezone(offset=timedelta(hours=0))  # avoid warnings about naive time, treat all times as UTC
                                                  # could try to get smarter about where comp was located, but why?
@@ -222,4 +226,7 @@ class Heat(models.Model):
 
 
     def __str__(self):
-        return self.comp.title + " " + self.get_category_display() + " " + str(self.heat_number)
+        if self.heat_number is not None and self.category is not None:
+            return self.comp.title + " " + self.get_category_display() + " " + str(self.heat_number)
+        else:
+            return ""

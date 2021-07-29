@@ -54,7 +54,7 @@ class CompOrgHeatlist(Heatlist):
                 break
         # get the heat category
         category_string = number_string[:index]
-        if category_string in ["Formation ", "Team match "]:
+        if category_string in ["Team match "]:
             h.heat_number = -1  # indicate an error
             h.category = None
         elif category_string == "Solo ":
@@ -78,7 +78,10 @@ class CompOrgHeatlist(Heatlist):
                 end_index = index
                 while number_string[end_index].isdigit():
                     end_index += 1
-                h.heat_number = int(number_string[index:end_index])
+                if end_index > index:
+                    h.heat_number = int(number_string[index:end_index])
+                else:
+                    h.heat_number = 0
                 h.extra = number_string[end_index:]
 
         # save the heat time, determine if there are multiple rounds
@@ -173,7 +176,7 @@ class CompOrgHeatlist(Heatlist):
         #extract comp name from URL
         url = comp.heatsheet_url
         print(comp.heatsheet_url)
-        response = requests.get(url, timeout=1.0)
+        response = requests.get(url, timeout=5.0)
         lines = response.text.splitlines()
         for l in lines:
             if "var cmid" in l:
@@ -218,7 +221,7 @@ class CompOrgHeatlist(Heatlist):
             self.dancers.append(d)
 
         #extract comp name from URL
-        response = requests.get(url,timeout=0.5)
+        response = requests.get(url,timeout=5.0)
         lines = response.text.splitlines()
         for l in lines:
             if "var cmid" in l:
