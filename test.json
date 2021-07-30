@@ -1,0 +1,15 @@
+{
+'Type': 'Partner', 
+'Couple_ID': 261, 
+'Participants': [{'ID': 430, 'Name': ['Roman', 'Drobotov']}],
+'Events': [
+    {'Event_ID': 35, 
+    'Event_Name': "Professional Open Events Int'l Latin (CC,S,R,PD,J)", 
+    'Heat': '4', 
+    'Ballroom': None, 
+    'Floor': None, 
+    'Bib': '515', 
+    'Rounds': [{'Round_Name': 'Final', 'Session': '4', 'Round_Time': '7/24/2021 10:43:00 PM', 'Complete': 0}]
+    }
+]
+}

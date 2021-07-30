@@ -15,23 +15,25 @@ class NdcaPremFeedResults(Results_Processor):
         self.comp_name = None
 
 
+    def get_couple_names(self, participants):
+        couple_names = []
+        if len(participants) == 2:
+            for n in participants:
+                if len(n['Name']) == 2:
+                    couple_names.append(n['Name'][1] + ", " + n['Name'][0])
+        return couple_names
+
+
     def process_response(self, entries, e):
         '''This routine processes the response returned by the form submittal.
            It is the scoresheet results for a single dancer.
            We use this to extract the results of the heat we are interested in .'''
 
-
-        heat_string = str(e.heat.heat_number)
-        heat_info_from_scoresheet = None
-
-        # If there are parenthesis in the heat info, the heat has multiple dances
-        # For example (W/T/F).
-        # At this point, we only care about the final results of the heat, not the
-        # individual dances.
-        if e.heat.multi_dance():
-            event = "Multi-Dance"
+        # determine heat to search for in the scoresheet
+        if e.heat.heat_number == 0:
+            heat_string = e.heat.extra
         else:
-            event = "Single Dance"
+            heat_string = str(e.heat.heat_number)
 
         # save the level of the event (e.g. Open vs. Rising Star, Bronze, Silver, Gold, etc.)
         level = e.heat.base_value
@@ -39,6 +41,7 @@ class NdcaPremFeedResults(Results_Processor):
         # set the rounds indicator to finals, until proven otherwise
         rounds = "F"
 
+        # find the beginning of the JSON data
         if self.response.text[0] == "{":
             start_pos = 0
         else:
@@ -55,19 +58,24 @@ class NdcaPremFeedResults(Results_Processor):
             print("No scoresheet")
             return
 
+        # search all the events on this dancer's scoresheet
         for ev in json_data['Result']['Events']:
+            # once we find the heat we want
             if ev['Heat'] == heat_string:
                 for r in ev['Rounds']:
                     if r['Name'] == "Final":
+                        # process final round results
                         self.entries_in_event = 0
+                        # loop through all the competitors in this heat
                         for c in r['Summary']['Competitors']:
+                            self.entries_in_event += 1
                             for entry in entries:
+                                # find matching entry by shirt number
                                 if str(entry.shirt_number) == c['Bib']:
-                                    # This Result list is length 1, unless there are tiebreakers, so use the last item 
+                                    # This Result list is length 1, unless there are tiebreakers, so use the last item
                                     result_str = c['Result'][-1]
                                     if len(entry.result) == 0:
                                         entry.result = result_str
-                                        self.entries_in_event += 1
                                         break
                                     elif entry.result == result_str:
                                         break
@@ -82,10 +90,15 @@ class NdcaPremFeedResults(Results_Processor):
                                         res_error.save()
                                         break
 
-                            else:
-                                print("Late Entry")
-                                xxx()
+                            else: # late entry in final
+                                couple_names = self.get_couple_names(c['Participants'])
+                                if len(couple_names) == 2:
+                                    self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=c['Result'][-1], couple_names=couple_names)
+                                else:
+                                    print("error in late entry couple names")
+                                    xxx()
 
+                        # now we know the number of entries, calculate points
                         for e in entries:
                             if e.points is None and len(e.result) > 0:
                                 e.points = calc_points(level, int(e.result), num_competitors=self.entries_in_event, rounds=rounds)
@@ -93,10 +106,19 @@ class NdcaPremFeedResults(Results_Processor):
                                 #print(e, e.result, e.points)
                                 e.save()
 
-                    elif r['Name'] == "Semi-Final":
-                        rounds = "S"
-                        result_index = -2
-                        temp_result = "Semis"
+                        for late_entry in self.late_entries:
+                            if late_entry.points is None:
+                                late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
+                                late_entry.save()
+
+                    else: # process early rounds, looking for those who were eliminated 
+                        if r['Name'] == "Semi-Final":
+                            rounds = "S"
+                            result_index = -2
+                            temp_result = "Semis"
+                        else:
+                            print("Early Round")
+                            xxx()
                         for c in r['Summary']['Competitors']:
                             if c['Recalled'] == 0:
                                 for entry in entries:
@@ -108,11 +130,14 @@ class NdcaPremFeedResults(Results_Processor):
                                         # Lookup their points, and exit the loop
                                         entry.points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
 
-                    else:
-                        print("Early Round")
-                        xxx()
-
-
+                        else:  # late entry
+                            couple_names = self.get_couple_names(c['Participants'])
+                            if len(couple_names) == 2:
+                                points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
+                                self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=temp_result, couple_names=couple_names, points=points)
+                            else:
+                                print("error in late entry names")
+                                xxx()
 
 
     ############### PRIMARY ROUTINES  ####################################################
