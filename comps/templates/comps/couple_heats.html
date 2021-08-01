@@ -24,7 +24,7 @@
         <tr>
           <th class="text-center">Category</th>
           <th class="text-center">Number</th>
-          <th class="text-center d-none d-md-table-cell">Time</th>
+          <th class="text-center d-none d-sm-table-cell">Time</th>
           <th class="text-center">Description</th>
         </tr>
       </thead>
@@ -33,7 +33,7 @@
         <tr>
           <td class="text-center">{{ heat.get_category_display }}</td>
           <td class="text-center">{{ heat.heat_number }}{{ heat.extra }}</td>
-          <td class="text-center d-none d-md-table-cell">{{ heat.time }}</td>
+          <td class="text-center d-none d-sm-table-cell">{{ heat.time }}</td>
           <td class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
         </tr>
         {% endfor %}
