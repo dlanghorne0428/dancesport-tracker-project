@@ -111,11 +111,15 @@ class NdcaPremFeedResults(Results_Processor):
                                 late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
                                 late_entry.save()
 
-                    else: # process early rounds, looking for those who were eliminated 
+                    else: # process early rounds, looking for those who were eliminated
                         if r['Name'] == "Semi-Final":
                             rounds = "S"
                             result_index = -2
                             temp_result = "Semis"
+                        elif r['Name'] == "Quarter-Final":
+                            rounds = "Q"
+                            result_index = -1
+                            temp_result = "quarters"
                         else:
                             print("Early Round")
                             xxx()
