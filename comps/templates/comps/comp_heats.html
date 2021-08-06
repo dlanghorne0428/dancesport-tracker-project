@@ -16,9 +16,9 @@
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
-          <th colspan="2" class="text-center d-none d-lg-table-cell">Time</th>
-          <th>Category</th>
-          <th>Number</th>
+          <th colspan="2" class="text-center d-none d-sm-table-cell">Time</th>
+          <th class="text-center">Category</th>
+          <th class="text-center">Number</th>
           <th colspan="3" class="text-center">Description</th>
         </tr>
       </thead>
@@ -26,8 +26,8 @@
         <form class="mx-auto" method="get">
           {% csrf_token %}
           <tr class="table-primary">
-            <td class="text-center d-none d-lg-table-cell"><strong>Filter </strong></td>
-            <td class="text-center d-none d-lg-table-cell">Value: {{ filter.form.base_value }}</td>
+            <td class="text-center d-none d-sm-table-cell"><strong>Filter </strong></td>
+            <td class="text-center d-none d-sm-table-cell">Value: {{ filter.form.base_value }}</td>
             <td class="text-center">{{ filter.form.category }}</td>
             <td class="text-center">{{ filter.form.heat_number }}</td>
             <td class="d-table-cell d-md-none"></td>
@@ -38,7 +38,7 @@
         </form>
         {% for heat in page_obj %}
         <tr>
-          <td colspan="2" class="text-center d-none d-lg-table-cell">{{ heat.time }}</td>
+          <td colspan="2" class="text-center d-none d-sm-table-cell">{{ heat.time }}</td>
           <td class="text-center">{{ heat.get_category_display }}</td>
           {% if heat.extra %}
             <td class="text-center">{{ heat.heat_number }}{{ heat.extra }}</td>

@@ -17,7 +17,7 @@
         <tr>
           <th class="text-center">Category</th>
           <th class="text-center">Number</th>
-          <th class="text-center d-none d-md-table-cell">Time</th>
+          <th class="text-center d-none d-sm-table-cell">Time</th>
           <th class="text-center">Description</th>
           <th class="text-center">Couple</th>
         </tr>
@@ -31,7 +31,7 @@
           {% else %}
             <td class="text-center">{{ entry.heat.heat_number }}</td>
           {% endif %}
-          <td class="text-center d-none d-md-table-cell">{{ entry.heat.time }}</td>
+          <td class="text-center d-none d-sm-table-cell">{{ entry.heat.time }}</td>
           <td class="text-center"><a href="{% url 'comps:heat' entry.heat.id %}">{{ entry.heat.info}}</a></td>
           <td class="text-center"><a href="{% url 'comps:couple_heats' comp.id entry.couple.id %}">{{ entry.couple}}</a></td>
         </tr>
