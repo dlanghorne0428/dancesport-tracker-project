@@ -159,12 +159,12 @@ class Heat(models.Model):
                 heat_date = date.fromisocalendar(comp_start_date[0], comp_start_date[1], isoweekday)
             except:
                 print(str(self), "Warning in day of week: " + day_of_week_str)
-                heat_date = self.comp.start_date
+                heat_date = self.comp.end_date
         try:
             time_of_day = time.strptime(time_str, time_format)
         except:
             print(str(self) + " Warning in time of day: " + time_str + "!")
-            time_of_day = time.strptime("0:0", "%H:%M")
+            time_of_day = time.strptime("23:45", "%H:%M")
         tz = timezone(offset=timedelta(hours=0))  # avoid warnings about naive time, treat all times as UTC
                                                  # could try to get smarter about where comp was located, but why?
         self.time = datetime(heat_date.year, heat_date.month, heat_date.day,
