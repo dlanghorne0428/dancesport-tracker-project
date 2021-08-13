@@ -1,6 +1,6 @@
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, date, timezone, timedelta
 from django.core import serializers
 from .heatlist.file_based_heatlist import FileBasedHeatlist
 from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
@@ -118,7 +118,7 @@ def process_scoresheet_task(self, comp_data):
         else: # CompOrganizer for now
              scoresheet = CompOrgResults()
 
-        heats_to_process = Heat.objects.filter(comp=comp).order_by('heat_number')
+        heats_to_process = Heat.objects.filter(comp=comp).order_by('time')
         num_heats = heats_to_process.count()
 
         index = 0
@@ -127,6 +127,10 @@ def process_scoresheet_task(self, comp_data):
 
         for heat in heats_to_process:
             index += 1
+            heat_str = heat.get_category_display() + " " + str(heat.heat_number)
+            if heat.time.date() >= datetime.now(tz=timezone(-timedelta(hours=4))).date():
+                progress_recorder.set_progress(index, num_heats, description= "Skipping - " + heat_str + " " + heat.info)
+                continue
             if heat.category == Heat.PRO_HEAT or heat.multi_dance() or heat.dance_off:
                 if heat.style == Heat.UNKNOWN:
                     print("Unknown Heat Style " + str(heat))
@@ -173,11 +177,10 @@ def process_scoresheet_task(self, comp_data):
                     res_err.error = Result_Error.NO_ENTRIES_FOUND
                     res_err.save()
 
-                heat_str = heat.get_category_display() + " " + str(heat.heat_number)
                 progress_recorder.set_progress(index, num_heats, description= heat_str + " " + heat.info)
 
             else:  # don't score freestyles, and delete those heats
-                progress_recorder.set_progress(index, num_heats, description="Deleting " + heat.info)
+                progress_recorder.set_progress(index, num_heats, description="Deleting " + heat_str + " " + heat.info)
                 heat.delete()
 
         unmatched_entries = len(scoresheet.late_entries)
