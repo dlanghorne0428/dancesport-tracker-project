@@ -25,7 +25,7 @@ def create_heat(request, comp_id, couple_id=None):
             try:
                 heat = Heat()
                 heat.comp = comp
-                heat.set_time("12:00pm", "") # use first day of comp
+                heat.set_time("11:50pm", "") # use last day of comp
                 heat_from_form = HeatForm(request.POST, instance=heat)
                 heat_instance = heat_from_form.save(commit=False)
                 matching_heat = Heat.objects.filter(comp=comp).filter(info=heat_instance.info)
