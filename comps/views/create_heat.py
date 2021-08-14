@@ -26,8 +26,13 @@ def create_heat(request, comp_id, couple_id=None):
                 heat = Heat()
                 heat.comp = comp
                 heat.set_time("12:00pm", "") # use first day of comp
-                form = HeatForm(request.POST, instance=heat)
-                heat_instance = form.save()
+                heat_from_form = HeatForm(request.POST, instance=heat)
+                heat_instance = heat_from_form.save(commit=False)
+                matching_heat = Heat.objects.filter(comp=comp).filter(info=heat_instance.info)
+                if len(matching_heat) == 0:
+                    heat_instance.save()
+                else:
+                    heat_instance = matching_heat[0]
                 if couple is not None:
                     other_heat_entry = Heat_Entry.objects.filter(heat__comp=comp).filter(couple=couple).first()
                     if other_heat_entry is not None:
