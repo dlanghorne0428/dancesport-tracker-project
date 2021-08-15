@@ -32,7 +32,9 @@ class NdcaPremFeedResults(Results_Processor):
         # determine heat to search for in the scoresheet
         if e.heat.heat_number == 0:
             heat_string = e.heat.extra
-        else:
+        elif len(e.heat.extra) > 0:
+            heat_string = str(e.heat.heat_number) + e.heat.extra
+        else:       
             heat_string = str(e.heat.heat_number)
 
         # save the level of the event (e.g. Open vs. Rising Star, Bronze, Silver, Gold, etc.)
