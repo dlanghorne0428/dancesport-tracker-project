@@ -66,6 +66,9 @@ class NdcaPremFeedResults(Results_Processor):
                     if r['Name'] == "Final":
                         # process final round results
                         self.entries_in_event = 0
+                        # don't process Solo - keep looking for heat_string
+                        if r['Scoring_Method'] == "Solos":
+                            continue
                         # loop through all the competitors in this heat
                         for c in r['Summary']['Competitors']:
                             self.entries_in_event += 1
