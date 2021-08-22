@@ -30,7 +30,7 @@ def heat(request, heat_id):
                 results_available = True
             else:
                 for e in entries:
-                    if h.style is None:
+                    if h.style is None or h.style == Heat.UNKNOWN:
                         stats = couple_stats(e.couple)
                     else:
                         stats = couple_stats(e.couple, h.style)
