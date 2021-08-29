@@ -22,12 +22,12 @@
       progressBarElement.style.backgroundColor = '#68a9ef';
       progressBarElement.style.width = progress.percent + "%";
       var description = progress.description || "";
-      progressBarMessageElement.innerHTML = 'Deleting: ' + description + ' - ' + progress.current + ' of ' + progress.total;
+      progressBarMessageElement.innerHTML = 'Deleting: ' + description + ' - event ' + progress.current + ' of ' + progress.total;
     }
 
   function customResult(resultElement, result) {
     $( resultElement ).append(
-      $('<p>').text('Deleted ' + result + " heats." )
+      $('<p>').text('Deleted ' + result + " events." )
     );
   }
 
