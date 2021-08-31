@@ -38,7 +38,11 @@
         <td>{{ comp.start_date }}</td>
         <td><a href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></td>
         <td class="d-none d-md-table-cell">{{ comp.location}}</td>
-        <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id couple.id %}">View Heats</a></td>
+        {% if comp.process_state == comp.RESULTS_RESOLVED %}
+          <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id couple.id %}">View Results</a></td>
+        {% else %}
+          <td><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id couple.id %}">View Heats</a></td>
+        {% endif %}
       </tr>
       {% endfor %}
     </table>

@@ -5,7 +5,11 @@
 <div class="row">
   <div class="col-12">
     <h2 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h2>
-    <h3 class="text-center">Heats</h3>
+    {% if comp.process_state == comp.RESULTS_RESOLVED %}
+      <h3 class="text-center">Heat Results</h3>
+    {% else %}
+      <h3 class="text-center">Heats</h3>
+    {% endif %}
   </div>
 </div>
 

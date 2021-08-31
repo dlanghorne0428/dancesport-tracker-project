@@ -32,7 +32,11 @@
             <tr>
               <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' dancer.id %}">{{ dancer }}</a></td>
               <td class="text-center">{{ dancer.get_dancer_type_display }}</td>
-              <td class="text-center"><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:dancer_heats' comp.id dancer.id %}">View Heats</a></td>
+              {% if comp.process_state == comp.RESULTS_RESOLVED %}
+                <td class="text-center"><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:dancer_heats' comp.id dancer.id %}">View Results</a></td>
+              {% else %}
+                <td class="text-center"><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:dancer_heats' comp.id dancer.id %}">View Heats</a></td>
+              {% endif %}
             </tr>
           {% endfor %}
         </tbody>
