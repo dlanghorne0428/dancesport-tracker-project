@@ -34,7 +34,7 @@ class NdcaPremFeedResults(Results_Processor):
             heat_string = e.heat.extra
         elif len(e.heat.extra) > 0:
             heat_string = str(e.heat.heat_number) + e.heat.extra
-        else:       
+        else:
             heat_string = str(e.heat.heat_number)
 
         # save the level of the event (e.g. Open vs. Rising Star, Bronze, Silver, Gold, etc.)
@@ -118,35 +118,54 @@ class NdcaPremFeedResults(Results_Processor):
 
                     else: # process early rounds, looking for those who were eliminated
                         if r['Name'] == "Semi-Final":
-                            rounds = "S"
+                            if rounds == "F":
+                                rounds = "S"
                             result_index = -2
                             temp_result = "Semis"
                         elif r['Name'] == "Quarter-Final":
-                            rounds = "Q"
+                            if rounds == "F":
+                                rounds = "Q"
                             result_index = -1
                             temp_result = "quarters"
+                        elif r['Name'] == "Round 1":
+                            if rounds == "F":
+                                rounds = "R1"
+                            result_index = -10
+                            temp_result = "round 1"
                         else:
                             print("Early Round")
+                            print(r)
                             xxx()
                         for c in r['Summary']['Competitors']:
                             if c['Recalled'] == 0:
                                 for entry in entries:
                                     if str(entry.shirt_number) == c['Bib']:
-                                        # If the couple was not recalled, their result is the round
-                                        # in which they were eliminated
-                                        entry.result = temp_result
+                                        if len(entry.result) == 0 or entry.result == temp_result:
+                                            # If the couple was not recalled, their result is the round
+                                            # in which they were eliminated
+                                            entry.result = temp_result
 
-                                        # Lookup their points, and exit the loop
-                                        entry.points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
+                                            # Lookup their points, and exit the loop
+                                            entry.points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
+                                            break
+                                        else:
+                                            res_error = Result_Error()
+                                            res_error.comp = e.heat.comp
+                                            res_error.heat = e.heat
+                                            res_error.couple = e.couple
+                                            res_error.error = Result_Error.TWO_RESULTS_FOR_COUPLE
+                                            res_error.save()
+                                            entry.result = temp_result
+                                            break
 
-                        else:  # late entry
-                            couple_names = self.get_couple_names(c['Participants'])
-                            if len(couple_names) == 2:
-                                points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
-                                self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=temp_result, couple_names=couple_names, points=points)
-                            else:
-                                print("error in late entry names")
-                                xxx()
+                                else:  # late entry
+                                    couple_names = self.get_couple_names(c['Participants'])
+                                    if len(couple_names) == 2:
+                                        points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
+                                        self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=temp_result, couple_names=couple_names, points=points)
+                                    else:
+                                        print("error in late entry names")
+                                        xxx()
 
 
     ############### PRIMARY ROUTINES  ####################################################
