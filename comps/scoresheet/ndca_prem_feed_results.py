@@ -132,6 +132,11 @@ class NdcaPremFeedResults(Results_Processor):
                                 rounds = "R1"
                             result_index = -10
                             temp_result = "round 1"
+                        elif r['Name'] == "Round 2":
+                            if rounds == "F" or rounds == "R1":
+                                rounds = "R21"
+                            result_index = -5
+                            temp_result = "round 2"
                         else:
                             print("Early Round")
                             print(r)
