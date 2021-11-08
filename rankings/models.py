@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 # Create your models here.
 class Dancer(models.Model):
@@ -21,6 +22,8 @@ class Dancer(models.Model):
         choices=DANCER_TYPE_CHOICES,
         default=PRO,
     )
+
+    name_fix_date = models.DateField(default=date(2021,4,19))
 
     def __str__(self):
         if len(self.name_middle) > 0:
