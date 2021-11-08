@@ -43,9 +43,11 @@
                 <td class="text-center">{{ d.comp.title }}</td>
               {% endif %}
               <td class="text-center">
-                <a class="btn btn-warning btn-sm" href="{% url 'accept_alias' d.id %}">Accept</a>
-                <a class="btn btn-info btn-sm" href="{% url 'reject_alias'  d.id %}">Reject</a>
-                <a class="btn btn-primary btn-sm" href="{% url 'aliases_for_dancer'  d.id %}">View</a>
+                {% if d.name|length > 0 %}
+                  <a class="btn btn-warning btn-sm" href="{% url 'accept_alias' d.id %}">Accept</a>
+                  <a class="btn btn-info btn-sm" href="{% url 'reject_alias'  d.id %}">Reject</a>
+                  <a class="btn btn-primary btn-sm" href="{% url 'aliases_for_dancer' d.id %}">View</a>
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
