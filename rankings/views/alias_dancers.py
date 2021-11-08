@@ -1,5 +1,8 @@
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from comps.models.comp import Comp
+from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from rankings.couple_matching import split_name
 from rankings.models import Dancer
@@ -28,11 +31,33 @@ def aliases_for_dancer(request, hld_pk):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
 
-    # get the heatlist dancer
+    # get the heatlist dancer and the dancer by alias
     heatlist_dancer = get_object_or_404(Heatlist_Dancer, pk=hld_pk)
+    dancer = get_object_or_404(Dancer, pk=heatlist_dancer.alias.id)
+    dancer_aliases = Heatlist_Dancer.objects.filter(alias=heatlist_dancer.alias)
 
-    alias_dancers = Heatlist_Dancer.objects.filter(name=heatlist_dancer.name)
-    paginator = Paginator(alias_dancers, 16)
+    all_comps = Comp.objects.all().order_by('-start_date')
+    comps_for_dancer = list()
+    for comp in all_comps:
+        # if dancer's name has been corrected after this comp's start date, quit loop
+        if comp.start_date < dancer.name_fix_date:
+            break
+        # if the dancer was in this comp
+        if Heat_Entry.objects.filter(heat__comp=comp).filter(Q(couple__dancer_1=dancer) | Q(couple__dancer_2=dancer)).count() > 0:
+            # and had an alias in that comp
+            matches = dancer_aliases.filter(comp=comp)
+            # add the alias to the list
+            if matches.count() > 0:
+                comps_for_dancer.append(matches.first())
+            else: # add a "no name alias" to the list
+                no_name_hld = Heatlist_Dancer()
+                no_name_hld.name = ""
+                no_name_hld.code = "No Code"
+                no_name_hld.alias = dancer
+                no_name_hld.comp = comp
+                comps_for_dancer.append(no_name_hld)
+
+    paginator = Paginator(comps_for_dancer, 16)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -52,6 +77,7 @@ def accept_alias(request, hld_pk):
     dancer.name_last = name_last
     dancer.name_first = name_first
     dancer.name_middle = name_middle
+    dancer.name_fix_date = heatlist_dancer.comp.start_date
     dancer.save()
 
     # now that dancer object has been updated with a new name, delete these aliases
@@ -69,6 +95,11 @@ def reject_alias(request, hld_pk):
 
     # get the heatlist dancer whose alias has been rejected
     heatlist_dancer = get_object_or_404(Heatlist_Dancer, pk=hld_pk)
+
+    # get the dancer object referenced by alias
+    dancer = heatlist_dancer.alias
+    dancer.name_fix_date = heatlist_dancer.comp.start_date
+    dancer.save()
 
     # remove all matching heatlist_dancer objects
     aliases_to_remove = Heatlist_Dancer.objects.filter(name=heatlist_dancer.name).filter(alias=heatlist_dancer.alias)
