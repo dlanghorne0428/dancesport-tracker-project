@@ -175,7 +175,7 @@ class Heat(models.Model):
 
     def amateur_heat(self):
         '''This function returns True if the description indicates an amateur heat.'''
-        if "Amateur" in self.comp.title:
+        if "Amateur" in self.comp.title or "BYU" in self.comp.title:
             return True
         s = self.info
         if "AC-" in s or "AA-" in s or "Amateur" in s or "YY-" in s or "AM/AM" in s or "AmAm" in s or "Fordney" in s or "MLA" in s or "Y & Adult Am" in s:
@@ -194,8 +194,8 @@ class Heat(models.Model):
            "High School" in s or "Elementary School" in s or \
            "-TB" in s or "Teddy Bear" in s or " TB" in s or "TB " in s:
 
-           # Under 21 heats are sometimes listed as youth, but should not be treated as juniors
-           if "U21" in s or "Under 21" in s or "Under-21" in s:
+           # Under 21 heats and BYU class heats are sometimes listed as youth, but should not be treated as juniors
+           if "U21" in s or "Under 21" in s or "Under-21" in s or "BYU" in s:
                 return False
            else:
                return True
