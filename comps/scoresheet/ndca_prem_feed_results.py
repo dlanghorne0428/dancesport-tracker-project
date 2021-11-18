@@ -137,8 +137,13 @@ class NdcaPremFeedResults(Results_Processor):
                                 rounds = "R21"
                             result_index = -5
                             temp_result = "round 2"
+                        elif r['Name'] == "Round 3":
+                            if rounds == "F" or rounds == "R1" or rounds == "R21":
+                                rounds = "R321"
+                            result_index = -3
+                            temp_result = "round 3"
                         else:
-                            print("Early Round")
+                            print("Unknown Round")
                             print(r)
                             xxx()
                         for c in r['Summary']['Competitors']:
@@ -164,13 +169,16 @@ class NdcaPremFeedResults(Results_Processor):
                                             break
 
                                 else:  # late entry
-                                    couple_names = self.get_couple_names(c['Participants'])
-                                    if len(couple_names) == 2:
-                                        points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
-                                        self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=temp_result, couple_names=couple_names, points=points)
-                                    else:
+                                    try:
+                                        couple_names = self.get_couple_names(c['Participants'])
+                                        if len(couple_names) == 2:
+                                            points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
+                                            self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=temp_result, couple_names=couple_names, points=points)
+                                        else:
+                                            print("error in late entry names")
+                                            xxx()
+                                    except:
                                         print("error in late entry names")
-                                        xxx()
 
 
     ############### PRIMARY ROUTINES  ####################################################
