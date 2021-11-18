@@ -1,5 +1,6 @@
 import json
 import requests
+from comps.models.result_error import Result_Error
 from comps.scoresheet.calc_points import calc_points
 from comps.scoresheet.results_processor import Results_Processor
 
