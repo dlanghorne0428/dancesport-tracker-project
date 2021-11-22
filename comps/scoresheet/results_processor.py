@@ -108,6 +108,8 @@ class Results_Processor():
 
 
     def build_late_entry(self, heat, shirt_number, couple_names, result, points=None):
+        if len(couple_names) != 2:
+            return
         late_entry = Heat_Entry()
         late_entry.heat = heat
         late_entry.shirt_number = shirt_number
