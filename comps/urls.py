@@ -28,6 +28,7 @@ urlpatterns = [
     path('<int:comp_id>/bad_couple_type', views.fix_couple_type, name="fix_couple_type"),
     path('<int:comp_id>/bad_couple_type/<int:count>', views.fix_couple_type, name="fix_couple_type"),
     path('heat/<int:heat_id>/', views.heat, name="heat"),
+    path('heat/<int:heat_id>/<int:sort_mode>', views.heat, name="heat"),
     path('heat/edit/<int:heat_id>/', views.edit_heat, name="edit_heat"),
     path('heat_entry/<int:entry_id>/', views.edit_heat_entry, name="edit_heat_entry"),
     path('clear_scoresheet_error/<int:error_id>/', views.delete_scoresheet_error, name="delete_scoresheet_error"),

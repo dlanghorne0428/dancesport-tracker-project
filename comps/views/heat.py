@@ -6,7 +6,7 @@ from comps.forms import HeatForm
 from rankings.rating_stats import couple_stats
 
 
-def heat(request, heat_id):
+def heat(request, heat_id, sort_mode=0):
     # only show edit button for valid users
     show_edit_button = request.user.is_superuser
 
@@ -25,9 +25,11 @@ def heat(request, heat_id):
             error = None
         entries = Heat_Entry.objects.filter(heat=h)
         if entries.count() > 0:
-            if entries.first().points is not None:
-                entries = entries.order_by('-points')
-                results_available = True
+            for e in entries:
+                if e.points is not None:
+                    entries = entries.order_by('-points')
+                    results_available = True
+                    break
             else:
                 for e in entries:
                     if h.style is None or h.style == Heat.UNKNOWN:
@@ -36,7 +38,18 @@ def heat(request, heat_id):
                         stats = couple_stats(e.couple, h.style)
                     e.rating = stats['rating']
                     e.save()
-                entries = entries.order_by('-rating', 'shirt_number')
+                if sort_mode == 0:
+                    entries = entries.order_by('-rating', 'shirt_number')
+                elif sort_mode == 1:
+                     entries = entries.order_by('rating', 'shirt_number')
+                elif sort_mode == 2:
+                    entries = entries.order_by('-shirt_number')
+                elif sort_mode == 3:
+                    entries = entries.order_by('shirt_number')
+                elif sort_mode == 4:
+                    entries = entries.order_by('-couple')
+                elif sort_mode == 5:
+                    entries = entries.order_by('couple')
 
         next_item = {'heat': h, 'entries': entries, 'results_available': results_available, 'error': error}
         heat_data.append(next_item)
