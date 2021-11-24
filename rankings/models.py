@@ -75,3 +75,6 @@ class Couple(models.Model):
                 return self.dancer_2 < c.dancer_2
         else:
             return self.dancer_1 < c.dancer_1
+
+    class Meta:
+        ordering = ["dancer_1"]
