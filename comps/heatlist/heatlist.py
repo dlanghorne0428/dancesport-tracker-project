@@ -1,6 +1,7 @@
 
 from rankings.models import Couple, Dancer
 from rankings.couple_matching import find_couple_exact_match
+from comps.models.comp_couple import Comp_Couple
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_error import Heatlist_Error
@@ -66,12 +67,18 @@ class Heatlist():
         couple_type = heat.couple_type()
         couple, code = find_couple_exact_match(dancer, partner, couple_type)
         heat_entry_obj = Heat_Entry()
-        # populate and save matching heat entry
+        comp_couple_obj = Comp_Couple()
+        # populate and save matching heat entry and comp_couple
         if couple is not None:
             heat_entry_obj.populate(heat, couple, code, shirt_number)
             entries_in_database = Heat_Entry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
             if entries_in_database.count() == 0 or heat.category == Heat.FORMATION:
                 heat_entry_obj.save()
+            comp_couple_in_database = Comp_Couple.objects.filter(comp=heat.comp, couple=couple)
+            if comp_couple_in_database.count() == 0:
+                comp_couple_obj.populate(heat.comp, couple, shirt_number)
+                print(comp_couple_obj)
+                comp_couple_obj.save()
         else:
             # populate and save partially completed heat entry
             heat_entry_obj.populate(heat, shirt_number=shirt_number)
