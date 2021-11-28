@@ -41,6 +41,7 @@ def couples(request, comp_id):
                 shirt_number = Heat_Entry.objects.filter(couple=c, heat__comp=comp).first().shirt_number
                 comp_couple.populate(comp, c, shirt_number)
                 comp_couple.save()
+            couples = Comp_Couple.objects.filter(comp=comp).order_by('couple')
 
     paginator = Paginator(couples,16)
     page_number = request.GET.get('page')
