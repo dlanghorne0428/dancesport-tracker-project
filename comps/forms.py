@@ -1,4 +1,5 @@
-from django.forms import ModelForm
+from django import forms
+from django.forms import Form, ModelForm
 from .models.comp import Comp
 
 class CompForm(ModelForm):
@@ -17,3 +18,8 @@ class HeatEntryForm(ModelForm):
     class Meta:
         model = Heat_Entry
         fields = ['shirt_number', 'result', 'points']
+
+
+class CompCoupleForm(Form):
+    name = forms.CharField(label="Last Name", required=False)
+    number = forms.CharField(label="Shirt Number", required=False)

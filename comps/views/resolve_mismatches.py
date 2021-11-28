@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
+from comps.models.comp_couple import Comp_Couple
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
@@ -89,6 +90,9 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 new_couple.couple_type = couple_type
                 try:
                     new_couple.save()
+                    comp_couple_obj = Comp_Couple()
+                    comp_couple_obj.populate(comp, new_couple, first_unmatched.entry, shirt_number)
+                    comp_couple_obj.save()
                     resolve_unmatched_entries(new_couple, code, similar_unmatched)
                 except:
                     new_couple.delete()
@@ -139,6 +143,10 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                             else: # neither name matches the first letter of last name, don't try to assign aliases
                                 print("Need alias for " + first_unmatched.dancer.name + " and " + first_unmatched.partner.name + " Couple is " + str(pm_couple))
 
+                        # save resolved couple in comp_couple
+                        comp_couple_obj = Comp_Couple()
+                        comp_couple_obj.populate(comp, pm_couple, first_unmatched.entry.shirt_number)
+                        comp_couple_obj.save()
                         resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
                         break
                 return redirect('comps:resolve_mismatches', comp_id = comp_id)
