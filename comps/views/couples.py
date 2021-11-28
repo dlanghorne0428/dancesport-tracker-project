@@ -34,6 +34,13 @@ def couples(request, comp_id):
     else:  # GET
         f = CompCoupleForm()
         couples = Comp_Couple.objects.filter(comp=comp).order_by('couple')
+        if len(couples) == 0:
+            all_couples = Couple.objects.filter(heat_entry__heat__comp=comp).distinct().order_by('dancer_1__name_last')
+            for c in all_couples:
+                comp_couple = Comp_Couple()
+                shirt_number = Heat_Entry.objects.filter(couple=c, heat__comp=comp).first().shirt_number
+                comp_couple.populate(comp, c, shirt_number)
+                comp_couple.save()
 
     paginator = Paginator(couples,16)
     page_number = request.GET.get('page')
