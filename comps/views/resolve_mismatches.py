@@ -91,7 +91,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 try:
                     new_couple.save()
                     comp_couple_obj = Comp_Couple()
-                    comp_couple_obj.populate(comp, new_couple, first_unmatched.entry, shirt_number)
+                    comp_couple_obj.populate(comp, new_couple, first_unmatched.entry.shirt_number)
                     comp_couple_obj.save()
                     resolve_unmatched_entries(new_couple, code, similar_unmatched)
                 except:
