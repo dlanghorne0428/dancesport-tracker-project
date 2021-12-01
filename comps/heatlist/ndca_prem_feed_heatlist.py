@@ -93,8 +93,12 @@ class NdcaPremFeedHeatlist(Heatlist):
             h.category = Heat.NORMAL_HEAT
 
         if h.extra == "" and 'Floor' in json_record:
-            h.extra = '[' + json_record['Floor'] + ']'
-            print(h.extra)
+            if json_record['Floor'] is not None:
+                h.extra = '[' + json_record['Floor'] + ']'
+
+        if h.extra == "" and 'Ballroom' in json_record:
+            if json_record['Ballroom'] is not None:
+                h.extra = '[' + json_record['Ballroom'] + ']'
 
         # find the heat time
         time_string = json_record['Rounds'][0]['Round_Time']
