@@ -33,7 +33,7 @@ class NdcaPremFeedResults(Results_Processor):
         # determine heat to search for in the scoresheet
         if e.heat.heat_number == 0:
             heat_string = e.heat.extra
-        elif len(e.heat.extra) > 0:
+        elif len(e.heat.extra) > 0 and e.heat.extra[0] != '[':
             heat_string = str(e.heat.heat_number) + e.heat.extra
         else:
             heat_string = str(e.heat.heat_number)

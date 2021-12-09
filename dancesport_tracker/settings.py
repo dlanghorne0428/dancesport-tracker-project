@@ -24,8 +24,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'xlc6j*k09&u-5z$-@j$ank^n!dof^h3)tjb84w^e+$#&^^zfzj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True   # for local
-DEBUG = False   # for production
+DEBUG = True   # for local
+#DEBUG = False   # for production
 
 ALLOWED_HOSTS = []
 
@@ -117,37 +117,37 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # caches for production
-servers = os.environ['MEMCACHIER_SERVERS']
-username = os.environ['MEMCACHIER_USERNAME']
-password = os.environ['MEMCACHIER_PASSWORD']
-
-CACHES = {
-    'default': {
-        # Use django-bmemcached
-        'BACKEND': 'django_bmemcached.memcached.BMemcached',
-
-        # TIMEOUT is not the connection timeout! It's the default expiration
-        # timeout that should be applied to keys! Setting it to `None`
-        # disables expiration.
-        'TIMEOUT': 15*60,  # was None
-
-        'LOCATION': servers,  # for production
-
-        'OPTIONS': {
-            'username': username,
-            'password': password,
-        }
-    }
-}
+# servers = os.environ['MEMCACHIER_SERVERS']
+# username = os.environ['MEMCACHIER_USERNAME']
+# password = os.environ['MEMCACHIER_PASSWORD']
+#
+# CACHES = {
+#     'default': {
+#         # Use django-bmemcached
+#         'BACKEND': 'django_bmemcached.memcached.BMemcached',
+#
+#         # TIMEOUT is not the connection timeout! It's the default expiration
+#         # timeout that should be applied to keys! Setting it to `None`
+#         # disables expiration.
+#         'TIMEOUT': 15*60,  # was None
+#
+#         'LOCATION': servers,  # for production
+#
+#         'OPTIONS': {
+#             'username': username,
+#             'password': password,
+#         }
+#     }
+# }
 
 #caches for local development
-# CACHES = {
-#   'default': {
-#       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#       'TIMEOUT': 15*60,
-#       'LOCATION': '127.0.0.1:11211',
-#   }
-# }
+CACHES = {
+  'default': {
+      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      'TIMEOUT': 15*60,
+      'LOCATION': '127.0.0.1:11211',
+  }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
