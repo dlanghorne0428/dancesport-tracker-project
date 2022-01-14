@@ -19,11 +19,12 @@ def couples(request, comp_id):
         else:
             search_parms = f.cleaned_data
             if len(search_parms['name']) > 0:
-                name = search_parms['name']   # filter on name
+                name = search_parms['name'].upper()  # filter on name
+                print(name)
                 couples = list()
                 all_couples = Comp_Couple.objects.filter(comp=comp)
                 for c in all_couples:
-                    if name in c.couple.dancer_1.name_last or name in c.couple.dancer_2.name_last:
+                    if name in c.couple.dancer_1.name_last.upper() or name in c.couple.dancer_2.name_last.upper():
                         couples.append(c)
             elif len(search_parms['number']) > 0:
                 number = search_parms['number']   # filter on number
