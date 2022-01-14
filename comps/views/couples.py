@@ -20,7 +20,6 @@ def couples(request, comp_id):
             search_parms = f.cleaned_data
             if len(search_parms['name']) > 0:
                 name = search_parms['name'].upper()  # filter on name
-                print(name)
                 couples = list()
                 all_couples = Comp_Couple.objects.filter(comp=comp)
                 for c in all_couples:
