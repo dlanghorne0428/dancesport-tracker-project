@@ -95,7 +95,6 @@ class CompMngrHeatlist(Heatlist):
             h.extra = fields[3][i:-num_chars]
             h.extra = h.extra.replace("Ballroom ", "")
             if len(h.extra) >= 20:
-                print("Too much extra:" + h.extra)
                 h.extra = h.extra[:18] + h.extra[-1]
 
     ################# READING THE HEATLIST HTML FILE ################################
