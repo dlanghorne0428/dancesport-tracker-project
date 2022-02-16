@@ -83,6 +83,9 @@ class CompOrgHeatlist(Heatlist):
                 else:
                     h.heat_number = 0
                 h.extra = number_string[end_index:]
+                h.extra = h.extra.replace("Ballroom ", "")
+                if len(h.extra) >= 20:
+                    h.extra = h.extra[:18] + h.extra[-1]                
 
         # save the heat time, determine if there are multiple rounds
         start_pos = items[item_index+2].find("-time") + len("-time") + 2
