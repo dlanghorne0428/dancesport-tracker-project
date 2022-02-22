@@ -136,12 +136,10 @@ class CompOrgHeatlist(Heatlist):
                         if len(in_database) == 0:
                             self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
 
-                else: # assign to {No, Partner} which should be at the end of the list
-                    partner = self.dancers[-1]
+                else: # assign to {No, Partner}
+                    partner_name = "{No, Partner}"
+                    partner = self.find_dancer(partner_name)
                     print(dancer.name + " " + partner.name)
-                    # in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
-                    # if len(in_database) == 0:
-                    #     self.build_heatlist_error(comp_ref, Heatlist_Error.NO_PARTNER_FOUND, dancer_name=dancer.name)
 
                 # partner found, go to next item
                 item_index += 1
