@@ -195,7 +195,7 @@ class CompOrgHeatlist(Heatlist):
         print(self.base_url)
 
         # open the base URL to extract a list of dancers
-        response = requests.get(self.base_url, timeout=1.25)
+        response = requests.get(self.base_url, timeout=5.0)
         competitors = response.text.split("},")
         print("Competitors = " + str(len(competitors)))
         for c in range(len(competitors)):
@@ -242,7 +242,7 @@ class CompOrgHeatlist(Heatlist):
         '''This method reads the heat information for the dancer at the given index.'''
         d = self.dancers[dancer_index]
         url = self.base_url + "&competitor=" + d.code
-        response = requests.get(url,timeout=5.0)
+        response = requests.get(url,timeout=10.0)
         self.get_heats_for_dancer(d, response.text, comp_ref)
         return d.name
 
