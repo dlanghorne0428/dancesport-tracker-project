@@ -207,4 +207,4 @@ class NdcaPremFeedResults(Results_Processor):
         #print("Requesting", url)
 
         # Make the HTML request and the data is returned as text.
-        return requests.get(url,timeout=5.0)
+        return requests.get(url,timeout=10.0)
