@@ -101,8 +101,13 @@ class NdcaPremFeedResults(Results_Processor):
                                 if len(couple_names) == 2:
                                     self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=c['Result'][-1], couple_names=couple_names)
                                 else:
-                                    print("error in late entry couple names")
-                                    xxx()
+                                    entry.result = result_str
+                                    res_error = Result_Error()
+                                    res_error.comp = entry.heat.comp
+                                    res_error.heat = entry.heat
+                                    res_error.couple = None
+                                    res_error.error = Result_Error.LATE_ENTRY
+                                    res_error.save()
 
                         # now we know the number of entries, calculate points
                         for e in entries:
