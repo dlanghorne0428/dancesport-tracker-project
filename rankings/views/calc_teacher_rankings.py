@@ -56,7 +56,7 @@ def calc_teacher_rankings(request):
     # filter by last name if necessary and paginate the results
     if last_name is not None:
         if len(last_name) > 0:
-            teacher_stats = list(filter(lambda dancer: last_name.lower() in dancer['teacher'].name_last.lower(), teacher_stats))
+            teacher_stats = list(filter(lambda dancer: last_name.lower() in dancer['instructor'].name_last.lower(), teacher_stats))
 
     paginator = Paginator(teacher_stats, 16)
     page_number = request.GET.get('page')
