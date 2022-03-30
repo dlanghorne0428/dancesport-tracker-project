@@ -97,7 +97,10 @@ class NdcaPremFeedResults(Results_Processor):
                                         break
 
                             else: # late entry in final
-                                couple_names = self.get_couple_names(c['Participants'])
+                                if 'Participants' in c:
+                                    couple_names = self.get_couple_names(c['Participants'])
+                                else:
+                                    couple_names = []
                                 if len(couple_names) == 2:
                                     self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=c['Result'][-1], couple_names=couple_names)
                                 else:
