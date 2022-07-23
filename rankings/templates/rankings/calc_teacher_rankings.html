@@ -8,7 +8,7 @@
 
 <div class="row">
 <div class="col-12 col-lg-10 offset-lg-1 bg-primary">
-  <form class="mx-auto" method="POST">
+  <form id="teacher-ranking-form" class="mx-auto" method="POST">
     {% csrf_token %}
     <div class="form-row align-items-end">
       <!-- <div class="form-group col-3">
@@ -25,7 +25,7 @@
       </div> -->
       <div class="form-group col-3">
           <label class="text-white" for="style">Style</label>
-          <select class="form-control id="style" name="style">
+          <select id='dance-style-select' class="form-control id="style" name="style">
               {% for s in styles %}
                 {% if s == selected_style %}
                   <option selected value={{ s }}>{{ s }}</option>
@@ -40,7 +40,7 @@
           <input class="form-control" id="last_name" name="last_name" type="text">
       </div>
       <div class="form-group col-2">
-        <input class="btn btn-info" type="submit" name="submit" value="Submit"/>
+        <input class="btn btn-info" type="submit" name="btn-submit" value="Submit"/>
       </div>
     </div>
   </form>
@@ -78,5 +78,24 @@
   </div>
 
 </div>
+
+  <script>
+    //get form
+    const teacher_ranking_form = document.getElementById("teacher-ranking-form");
+
+    // get form fields
+    const last_name = document.getElementById("last_name");
+    const dance_style = document.getElementById("dance-style-select");
+
+    // add event listener for changes to the selection on any of the form fields
+    last_name.addEventListener('change', mySubmitFunction);
+    dance_style.addEventListener('change', mySubmitFunction);
+
+
+    // submit the form when any of the events happen
+    function mySubmitFunction() {
+      teacher_ranking_form.submit();
+    };
+  </script>
 
 {% endblock %}
