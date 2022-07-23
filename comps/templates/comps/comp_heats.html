@@ -27,17 +27,17 @@
         </tr>
       </thead>
       <tbody>
-        <form class="mx-auto" method="get">
+        <form class="mx-auto" id='heat-filter-form' method="get">
           {% csrf_token %}
           <tr class="table-primary">
             <td class="text-center d-none d-sm-table-cell"><strong>Filter </strong></td>
-            <td class="text-center d-none d-sm-table-cell">Value: {{ filter.form.base_value }}</td>
-            <td class="text-center">{{ filter.form.category }}</td>
-            <td class="text-center">{{ filter.form.heat_number }}</td>
+            <td id='base-value-filter' class="text-center d-none d-sm-table-cell">Value: {{ filter.form.base_value }}</td>
+            <td id='category-filter' class="text-center">{{ filter.form.category }}</td>
+            <td id='heat-number-filter' class="text-center">{{ filter.form.heat_number }}</td>
             <td class="d-table-cell d-md-none"></td>
-            <td class="text-center d-none d-md-table-cell">{{ filter.form.style }}</td>
-            <td class="text-center">Info {{ filter.form.info }}</td>
-            <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="submit" value="Submit"/></td>
+            <td id='dance-style-filter' class="text-center d-none d-md-table-cell">{{ filter.form.style }}</td>
+            <td id='info-filter' class="text-center">Info {{ filter.form.info }}</td>
+            <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
           </tr>
         </form>
         {% for heat in page_obj %}
@@ -60,5 +60,28 @@
   </div>
 </div>
 
+  <script>
+    //get form
+    const heat_filter_form = document.getElementById("heat-filter-form");
+
+    // get form fields
+    const base_value = document.getElementById("base-value-filter");
+    const category = document.getElementById("category-filter");
+    const heat_number = document.getElementById("heat-number-filter");
+    const dance_style = document.getElementById("dance-style-filter");
+    const heat_info = document.getElementById("info-filter");
+    
+    // add event listener for changes to the selection on any of the form fields
+    base_value.addEventListener('change', mySubmitFunction);
+    category.addEventListener('change', mySubmitFunction);
+    heat_number.addEventListener('change', mySubmitFunction);
+    dance_style.addEventListener('change', mySubmitFunction);
+    heat_info.addEventListener('change', mySubmitFunction);
+
+    // submit the form when any of the events happen
+    function mySubmitFunction() {
+      heat_filter_form.submit();
+    };
+  </script>
 
 {% endblock %}

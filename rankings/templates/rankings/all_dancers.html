@@ -20,12 +20,12 @@
           </tr>
         </thead>
         <tbody>
-          <form class="mx-auto" method="get">
+          <form class="mx-auto"  id='dancer-filter-form' method="get">
             {% csrf_token %}
             <tr class="table-primary">
-              <td class="text-center"><strong>Filter </strong> {{ filter.form.name_last }}</td>
-              <td class="text-center">{{ filter.form.dancer_type }}</td>
-              <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="submit" value="Submit"/></td>
+              <td id='name-filter' class="text-center"><strong>Filter </strong> {{ filter.form.name_last }}</td>
+              <td id='dancer-type-filter' class="text-center">{{ filter.form.dancer_type }}</td>
+              <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
             </tr>
           </form>
           {% for dancer in page_obj %}
@@ -52,4 +52,22 @@
 
   </div>
 
+  <script>
+    //get form
+    const dancer_filter_form = document.getElementById("dancer-filter-form");
+
+    // get form fields
+    const last_name = document.getElementById("name-filter");
+    const dancer_type = document.getElementById("dancer-type-filter");
+
+    // add event listener for changes to the selection on any of the form fields
+    last_name.addEventListener('change', mySubmitFunction);
+    dancer_type.addEventListener('change', mySubmitFunction);
+
+
+    // submit the form when any of the events happen
+    function mySubmitFunction() {
+      dancer_filter_form.submit();
+    };
+  </script>
 {% endblock %}
