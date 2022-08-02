@@ -3,7 +3,8 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
 from rankings.couple_matching import split_name
-from rankings.models import Dancer, Couple
+from rankings.models.couple import Couple
+from rankings.models.dancer import Dancer
 from rankings.forms import DancerForm
 from rankings.filters import DancerFilter
 from rankings.rating_stats import couple_stats, instructor_stats, student_stats, pro_comp_stats, am_comp_stats

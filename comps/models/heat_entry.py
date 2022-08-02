@@ -1,6 +1,6 @@
 from django.db import models
 from comps.models.heat import Heat
-from rankings.models import Couple
+from rankings.models.couple import Couple
 
 
 class Heat_Entry(models.Model):

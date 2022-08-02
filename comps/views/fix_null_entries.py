@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
-from rankings.models import Couple
+from rankings.models.couple import Couple
 
 
 def fix_null_entries(request, comp_id):

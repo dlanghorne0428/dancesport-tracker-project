@@ -1,7 +1,7 @@
 from django.db import models
 from comps.models.comp import Comp
 from comps.models.heat import Heat
-from rankings.models import Couple
+from rankings.models.couple import Couple
 
 class Result_Error(models.Model):
     '''Define info about an anomaly found when processing a scoresheet.'''

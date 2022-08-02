@@ -1,7 +1,8 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
-from rankings.models import Couple, Dancer
+from rankings.models.couple import Couple
+from rankings.models.dancer import Dancer
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
