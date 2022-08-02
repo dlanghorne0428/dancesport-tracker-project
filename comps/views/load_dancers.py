@@ -25,7 +25,7 @@ def load_dancers(request, comp_id):
 
     if comp.heatsheet_file:
             heatlist = FileBasedHeatlist()
-            heatlist.open(comp.heatsheet_file)
+            heatlist.open(comp)
     else:
         if comp.url_data_format == Comp.COMP_MNGR:
             heatlist = CompMngrHeatlist()
