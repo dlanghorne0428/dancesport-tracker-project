@@ -1,0 +1,49 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12">
+      <h2 class="text-center">Elo Ratings</h2>
+    </div>
+    <div class="col-6">
+      <h3 class="text-right">{{ couple_type }}</h2>
+    </div>
+    <div class="col-6">
+      <h3 class="text-left">{{ dance_style }}</h2>
+    </div>
+  </div>
+
+  {{ error }}
+  <div class="row">
+    <div class="col-12 col-lg-8 offset-lg-2 p-0">
+      <table class="table table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th class='text-center'>Dancer 1</th>
+            <th></th>
+            <th class='text-center'>Dancer 2</th>
+            <th class='text-center'>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rating in page_obj %}
+          <tr>
+            <td class='text-center'><a href="{% url 'view_dancer' rating.couple.dancer_1.id %}">{{ rating.couple.dancer_1 }}</a></td>
+            <td class='text-center'>and</td>
+            <td class='text-center'><a href="{% url 'view_dancer' rating.couple.dancer_2.id %}">{{ rating.couple.dancer_2 }}</a></td>
+            <td class='text-center'><a href="{% url 'view_couple' rating.couple.id %}"">{{ rating.value|floatformat:2  }}</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% include "rankings/pagination.html" %}
+      
+      <p class='text-center mt-3'>Elo Ratings started in June 2021 at the Millenium Dancesport competition.</p>
+      
+    </div>
+  </div>
+
+
+{% endblock %}
