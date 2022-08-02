@@ -458,7 +458,6 @@ class Results_Processor():
         for e in entries:
             # if we don't already know the result for this entry
             if len(e.result) == 0:
-                #print(e, "Code:", e.code)
                 # get the scoresheet for this entry and process it
                 loop_count += 1
                 # if loop_count > 1:
