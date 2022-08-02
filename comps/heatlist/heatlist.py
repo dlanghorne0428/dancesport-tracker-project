@@ -1,8 +1,9 @@
 
-from rankings.models import Couple, Dancer
+from rankings.models.couple import Couple
+from rankings.models.dancer import Dancer
 from rankings.couple_matching import find_couple_exact_match
 from comps.models.comp_couple import Comp_Couple
-from comps.models.heat import Heat
+from comps.models.heat import Heat, UNKNOWN
 from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_error import Heatlist_Error
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
@@ -47,7 +48,6 @@ class Heatlist():
 
 
     def add_heat_to_database(self, heat, comp_ref):
-        #if heat.category == Heat.PRO_HEAT or heat.multi_dance():
         heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number, info=heat.info)
         if heats_in_database.count() > 0:
             h = heats_in_database.first()
@@ -56,7 +56,7 @@ class Heatlist():
             h.save()   # save the heat into the database
             if h.base_value == 0 and (h.category == Heat.PRO_HEAT or h.multi_dance()):
                 self.build_heatlist_error(comp_ref, Heatlist_Error.UNKNOWN_LEVEL, heat_ref=h)
-            if h.style == Heat.UNKNOWN and (h.category == Heat.PRO_HEAT or h.multi_dance()):
+            if h.style == UNKNOWN and (h.category == Heat.PRO_HEAT or h.multi_dance()):
                 self.build_heatlist_error(comp_ref, Heatlist_Error.UNKNOWN_STYLE, heat_ref=h)
         return h
 

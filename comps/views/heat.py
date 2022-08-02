@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from comps.models.heat import Heat
+from comps.models.heat import Heat, UNKNOWN
 from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_error import Heatlist_Error
 from comps.forms import HeatForm
@@ -32,7 +32,7 @@ def heat(request, heat_id, sort_mode=0):
                     break
             else:
                 for e in entries:
-                    if h.style is None or h.style == Heat.UNKNOWN:
+                    if h.style is None or h.style == UNKNOWN:
                         stats = couple_stats(e.couple)
                     else:
                         stats = couple_stats(e.couple, h.style)
@@ -41,7 +41,7 @@ def heat(request, heat_id, sort_mode=0):
                 if sort_mode == 0:
                     entries = entries.order_by('-rating', 'shirt_number')
                 elif sort_mode == 1:
-                     entries = entries.order_by('rating', 'shirt_number')
+                    entries = entries.order_by('rating', 'shirt_number')
                 elif sort_mode == 2:
                     entries = entries.order_by('-shirt_number')
                 elif sort_mode == 3:

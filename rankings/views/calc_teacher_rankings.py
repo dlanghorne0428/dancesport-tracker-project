@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from rankings.tasks import calc_teacher_ratings
 from comps.models.comp import Comp
-from comps.models.heat import Heat
+from comps.models.heat import Heat, DANCE_STYLE_CHOICES
 from comps.models.heat_entry import Heat_Entry
 from operator import itemgetter
 from decimal import Decimal
@@ -36,7 +36,7 @@ def calc_teacher_rankings(request):
 
         style = request.POST.get("style")
         index = style_labels.index(style)
-        heat_style = Heat.DANCE_STYLE_CHOICES[index][0]
+        heat_style = DANCE_STYLE_CHOICES[index][0]
 
         current_url = request.path
         url_string = current_url + "?style=" + heat_style
