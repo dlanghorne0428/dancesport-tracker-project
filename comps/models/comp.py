@@ -23,8 +23,8 @@ class Comp(models.Model):
     DATA_FORMAT_CHOICES = [
         (COMP_MNGR, 'Comp Manager'),
         (COMP_ORG, 'Comp Organizer'),
-        (NDCA_PREM , 'NDCA Premier'),
-        (NDCA_FEED , 'NDCA Premier - Feed'),
+        (NDCA_PREM , 'NDCA Premier - Old Format'),
+        (NDCA_FEED , 'NDCA Premier'),
         (O2CM, 'O2cm.com')
     ]
     url_data_format = models.CharField(
