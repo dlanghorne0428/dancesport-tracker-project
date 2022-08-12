@@ -18,6 +18,7 @@ from comps.models.comp import Comp
 from comps.models.heat import Heat, UNKNOWN
 from comps.models.heat_entry import Heat_Entry
 from comps.models.result_error import Result_Error
+from comps.views.update_elo_ratings import initial_elo_rating
 import time
 
 
@@ -190,6 +191,20 @@ def process_scoresheet_task(self, comp_data):
             if heat.time.date() >= datetime.now(tz=timezone(-timedelta(hours=4))).date():
                 progress_recorder.set_progress(index, num_heats, description= "Skipping - " + heat_str + " " + heat.info)
                 continue
+            
+            if heat.initial_elo_value is None:
+                elo_value = initial_elo_rating(heat.category, heat.info)
+                if elo_value is None:
+                    print("Unknown Initial Elo Rating" + str(heat))
+                    res_err = Result_Error()
+                    res_err.comp = comp
+                    res_err.heat = heat
+                    res_err.error = Result_Error.UNKNOWN_ELO_VALUE
+                    res_err.save()                
+                else:
+                    heat.initial_elo_value = elo_value
+                    heat.save()
+                
             if heat.category == Heat.PRO_HEAT or heat.multi_dance() or heat.dance_off:
                 if heat.style == UNKNOWN:
                     print("Unknown Heat Style " + str(heat))
