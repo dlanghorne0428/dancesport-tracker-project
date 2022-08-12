@@ -6,6 +6,7 @@ from comps.models.heat import DANCE_STYLE_CHOICES
 class EloRating(models.Model):
     couple = models.ForeignKey('Couple', on_delete=models.CASCADE)
     style = models.CharField(max_length = 4, choices = DANCE_STYLE_CHOICES, default="UNK")
+    num_events = models.IntegerField(default=0)
     value = models.FloatField(null=True, default=None)
     
     def __str__(self):
