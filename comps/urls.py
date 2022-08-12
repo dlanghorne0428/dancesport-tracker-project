@@ -9,6 +9,7 @@ urlpatterns = [
     path('<int:comp_id>/', views.comp_detail, name="comp_detail"),
     path('<int:comp_id>/clear', views.clear_comp, name="clear_comp"),
     path('<int:comp_id>/edit', views.edit_comp, name="edit_comp"),
+    path('<int:comp_id>/thisyear', views.this_year_comp, name="this_year_comp"),
     path('<int:comp_id>/heats', views.comp_heats, name="comp_heats"),
     path('<int:comp_id>/heats/?dancer=<int:dancer_id>', views.dancer_heats, name="dancer_heats"),
     path('<int:comp_id>/heats/?couple=<int:couple_id>', views.couple_heats, name="couple_heats"),
