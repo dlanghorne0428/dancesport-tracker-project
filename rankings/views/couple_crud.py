@@ -7,7 +7,7 @@ from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from rankings.forms import CoupleForm, CoupleTypeForm
-from rankings.rating_stats import couple_stats
+from rankings.models import EloRating
 
 ################################################
 # CRUD Views for Couple objects
@@ -59,16 +59,19 @@ def view_couple(request, couple_pk):
     show_admin_buttons = request.user.is_superuser
 
     couple = get_object_or_404(Couple, pk=couple_pk)
+    elo_ratings = EloRating.objects.filter(couple=couple).order_by('-value')
     all_comps = Comp.objects.all().order_by('-start_date')
-    stats = couple_stats(couple)
+    
     comps_for_couple = list()
     comps_with_mismatches = list()
+    
     for comp in all_comps:
         if Heat_Entry.objects.filter(heat__comp=comp).filter(couple=couple).count() > 0:
             comps_for_couple.append(comp)
         if comp.process_state in [Comp.HEATS_LOADED, Comp.SCORESHEETS_LOADED]:
             comps_with_mismatches.append(comp)
-    return render(request, 'rankings/view_couple.html', {'couple': couple, 'comps_for_couple': comps_for_couple, 'rating': stats['rating'],
+            
+    return render(request, 'rankings/view_couple.html', {'couple': couple, 'comps_for_couple': comps_for_couple, 'elo_ratings': elo_ratings,
                                                          'comps_with_mismatches': comps_with_mismatches,'show_admin_buttons': show_admin_buttons})
 
 
@@ -110,7 +113,6 @@ def edit_couple(request, couple_pk):
                 form = CoupleForm(data=request.POST, instance=couple)
                 form.save()
                 return redirect('view_couple', couple_pk)
-                #return redirect('all_couples')
             except ValueError:
                 return render(request, 'rankings/view_couple.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Couple":
@@ -132,7 +134,6 @@ def change_couple_type(request, couple_pk):
             form = CoupleTypeForm(data=request.POST, instance=couple)
             form.save()
             return redirect('view_couple', couple_pk)
-            #return redirect('all_couples')
         except ValueError:
             return render(request, 'rankings/change_couple_type.html', {'couple': couple, 'form': form, 'error': "Invalid data submitted."})
 
