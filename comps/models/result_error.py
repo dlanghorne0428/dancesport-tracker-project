@@ -19,6 +19,7 @@ class Result_Error(models.Model):
     NO_ERROR = "NO_ERR"
     UNKNOWN_LEVEL = "UNK_LEV"
     UNKNOWN_STYLE = "UNK_STYL"
+    UNKNOWN_ELO_VALUE = "UNK_ELO"
     HEAT_NOT_FOUND = "NO_SCORE"
     NO_ENTRIES_FOUND = "NO_ENT"
     NO_RESULTS_FOUND = "NO_RES"
@@ -30,6 +31,7 @@ class Result_Error(models.Model):
         (NO_ERROR , 'No Error'),
         (UNKNOWN_LEVEL, 'Unknown Event Level'),
         (UNKNOWN_STYLE, 'Unknown Event Style'),
+        (UNKNOWN_ELO_VALUE, 'Unknown Initial Elo Value'),
         (HEAT_NOT_FOUND, 'Heat Info Not Found'),
         (NO_ENTRIES_FOUND, 'No Entries in Heat'),
         (NO_RESULTS_FOUND, 'No Results Found for Heat'),
