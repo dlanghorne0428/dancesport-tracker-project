@@ -3,7 +3,11 @@
 {% block content %}
 <div class="row">
   <div class="col-12">
-    <h2 class="text-center">Edit Competition</h2>
+    {% if custom_title %}
+      <h2 class="text-center">{{ custom_title }}</h2>
+    {% else %}
+      <h2 class="text-center">Edit Competition</h2>
+    {% endif %}
 
     <h4 class="text-center">{{ error }}</h4>
 
