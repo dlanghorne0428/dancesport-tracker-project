@@ -49,6 +49,7 @@
           <a class="dropdown-item" href="{% url 'comps:create_heat' comp.id %}">Add Heat</a>
           <a class="dropdown-item" href="{% url 'comps:edit_comp' comp.id %}">Comp Info</a>
           <a class="dropdown-item" onclick="return confirm('Are you sure?')" href="{% url 'comps:clear_comp' comp.id %}">Clear All Data</a>
+          <a class="dropdown-item" href="{% url 'comps:this_year_comp' comp.id %}">Create for This Year</a>        
         </div>
       </span>
 
@@ -95,7 +96,7 @@
         <div class="dropdown-menu">
           <a class="dropdown-item" href="{% url 'comps:dancers' comp.id %}">Dancers</a>
           <a class="dropdown-item" href="{% url 'comps:couples' comp.id %}">Couples</a>
-          {% if comp.process_state == comp.RESULTS_RESOLVED %}
+          {% if comp.process_state == comp.RESULTS_RESOLVED or comp.process_state == comp.ELO_RATINGS_UPDATED %}
             <a class="dropdown-item" href="{% url 'comps:comp_heats' comp.id %}">Results</a>
           {% else %}
             <a class="dropdown-item" href="{% url 'comps:comp_heats' comp.id %}">Heats</a>
