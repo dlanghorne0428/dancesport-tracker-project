@@ -14,19 +14,19 @@
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
-            <th>Dancer 1</th>
+            <th class='text-center'>Dancer 1</th>
             <th></th>
-            <th>Dancer 2</th>
-            <th>Couple Type</th>
+            <th class='text-center'>Dancer 2</th>
+            <th class='text-center'>Couple Type</th>
           </tr>
         </thead>
         <tbody>
           {% for couple in page_obj %}
           <tr>
-            <td>{{ couple.dancer_1 }}</td>
-            <td>and</td>
-            <td>{{ couple.dancer_2 }}</td>
-            <td><a href="{% url 'view_couple' couple.id %}"">{{ couple.get_couple_type_display }}</a></td>
+            <td class='text-center'>{{ couple.dancer_1 }}</td>
+            <td class='text-center'>and</td>
+            <td class='text-center'>{{ couple.dancer_2 }}</td>
+            <td class='text-center'><a href="{% url 'view_couple' couple.id %}"">{{ couple.get_couple_type_display }}</a></td>
           </tr>
           {% endfor %}
         </tbody>
