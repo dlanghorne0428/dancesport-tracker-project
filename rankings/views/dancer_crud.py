@@ -3,10 +3,11 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
 from rankings.couple_matching import split_name
-from rankings.models import Dancer, Couple
+from rankings.models.couple import Couple
+from rankings.models.dancer import Dancer
 from rankings.forms import DancerForm
 from rankings.filters import DancerFilter
-from rankings.rating_stats import couple_stats, instructor_stats, student_stats, pro_comp_stats, am_comp_stats
+from rankings.models import EloRating
 
 ################################################
 # CRUD Views for Dancer objects
@@ -63,19 +64,17 @@ def view_dancer(request, dancer_pk):
             comps_with_mismatches.append(comp)
 
     dancer = get_object_or_404(Dancer, pk=dancer_pk)
-    if dancer.dancer_type == "PRO":
-        comp_rating = pro_comp_stats(dancer)['rating']
-        pro_am_rating = instructor_stats(dancer)['rating']
-    else:
-        comp_rating = am_comp_stats(dancer)['rating']
-        pro_am_rating = student_stats(dancer)['rating']
 
     couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1', 'dancer_2')
     partnerships = list()
     for c in couples:
-        partnership = {'couple': c, 'rating': couple_stats(c)['rating']}
+        ratings = EloRating.objects.filter(couple=c).order_by('-value')
+        if len(ratings) > 0:
+            partnership = {'couple': c, 'rating': ratings[0]}
+        else:
+            partnership = {'couple': c}
         partnerships.append(partnership)
-    return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'partnerships': partnerships, 'comp_rating': comp_rating, 'pro_am_rating': pro_am_rating,
+    return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'partnerships': partnerships,
                                                          'comps_with_mismatches': comps_with_mismatches, 'show_admin_buttons': show_admin_buttons})
 
 
@@ -93,7 +92,6 @@ def edit_dancer(request, dancer_pk):
                 form = DancerForm(request.POST, instance=dancer)
                 form.save()
                 return redirect('view_dancer', dancer.id)
-                # return redirect('all_dancers')
             except ValueError:
                 return render(request, 'rankings/edit_dancer.html', {'dancer': dancer, 'form': form, 'error': "Invalid data submitted."})
         elif submit == "Delete Dancer":

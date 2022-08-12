@@ -11,12 +11,12 @@
 
 <div class="row">
   <div class="col-lg-6 offset-3 border border-dark">
-    {% if heat_error %}
-      <p class="text-center bg-warning">{{ heat_error.get_error_display }}</p>
+    {% if error %}
+      <p class="text-center bg-warning">{{ error.get_error_display }}</p>
     {% endif %}
     <h3 class="text-center">Edit Heat Data</h3>
-    <p>{{ error }}</p>
-
+    
+    <p>{{ form_error }}</p>
     <form class="text-center" method="POST">
       {% csrf_token %}
       {{ form.as_p }}

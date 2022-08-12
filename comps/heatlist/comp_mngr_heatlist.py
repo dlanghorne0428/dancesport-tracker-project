@@ -2,7 +2,8 @@ import string
 import requests
 
 from django.db.models import Q
-from rankings.models import Couple, Dancer
+from rankings.models.couple import Couple
+from rankings.models.dancer import Dancer
 from comps.models.heat import Heat
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.models.heatlist_error import Heatlist_Error

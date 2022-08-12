@@ -31,21 +31,23 @@
     <h3 class="text-center">Partnerships</h3>
     <table class="table table-bordered table-sm">
       <tr>
-        <th>Dancer 1</th>
+        <th class='text-center'>Dancer 1</th>
         <th></th>
-        <th>Dancer 2</th>
+        <th class='text-center'>Dancer 2</th>
         <th class='text-center'>Category</th>
+        <th class='text-center'>Top Style</th>
         <th class='text-center'>Rating</th>
         <th>Action</th>
       </tr>
 
       {% for p in partnerships %}
       <tr>
-        <td>{{ p.couple.dancer_1 }}</td>
-        <td>and</td>
-        <td>{{ p.couple.dancer_2 }}</td>
+        <td class='text-center'>{{ p.couple.dancer_1 }}</td>
+        <td class='text-center'>and</td>
+        <td class='text-center'>{{ p.couple.dancer_2 }}</td>
         <td class='text-center'>{{ p.couple.get_couple_type_display }}</td>
-        <td class='text-center'>{{ p.rating }}</td>
+        <td class='text-center'>{{ p.rating.get_style_display }}</td>
+        <td class='text-center'>{{ p.rating.value|floatformat:2  }}</td>
         <td>
           {% if show_admin_buttons %}
             <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownActionButton" data-toggle="dropdown">Action</button>

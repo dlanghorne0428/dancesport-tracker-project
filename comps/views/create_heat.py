@@ -3,7 +3,7 @@ from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from comps.forms import HeatForm
-from rankings.models import Couple
+from rankings.models.couple import Couple
 
 
 def create_heat(request, comp_id, couple_id=None):

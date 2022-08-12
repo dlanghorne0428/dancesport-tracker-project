@@ -17,20 +17,20 @@
     <table class="table table-sm table-bordered">
       <thead class="thead-dark">
         <tr>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Title</th>
-          <th>Location</th>
+          <th class="text-center">Start Date</th>
+          <th class="text-center">End Date</th>
+          <th class="text-center">Title</th>
+          <th class="text-center">Location</th>
         </tr>
       </thead>
       <tbody>
         {% for comp in page_obj %}
           <tr>
-            <td>{{ comp.start_date }}</td>
-            <td>{{ comp.end_date }}</td>
+            <td class="text-center">{{ comp.start_date }}</td>
+            <td class="text-center">{{ comp.end_date }}</td>
 
-            <td><a href="{% url 'comps:comp_detail' comp.id %}"">{{ comp.title }}</a></td>
-            <td>{{ comp.location }}</td>
+            <td class="text-center"><a href="{% url 'comps:comp_detail' comp.id %}"">{{ comp.title }}</a></td>
+            <td class="text-center">{{ comp.location }}</td>
           </tr>
         {% endfor %}
       </tbody>

@@ -23,7 +23,10 @@
           <th colspan="2" class="text-center d-none d-sm-table-cell">Time</th>
           <th class="text-center">Category</th>
           <th class="text-center">Number</th>
-          <th colspan="3" class="text-center">Description</th>
+          <th colspan="2" class="text-center">Description</th>
+          {% if show_elo %}
+            <th class="text-center">Elo Value</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -37,7 +40,7 @@
             <td class="d-table-cell d-md-none"></td>
             <td id='dance-style-filter' class="text-center d-none d-md-table-cell">{{ filter.form.style }}</td>
             <td id='info-filter' class="text-center">Info {{ filter.form.info }}</td>
-            <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
+            <td class="text-center" hidden><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
           </tr>
         </form>
         {% for heat in page_obj %}
@@ -49,7 +52,14 @@
           {% else %}
             <td class="text-center">{{ heat.heat_number }}</td>
           {% endif %}
-          <td colspan="3" class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
+          <td colspan="2" class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
+          {% if show_elo %}
+            {% if heat.initial_elo_value %}
+              <td class="text-center">{{ heat.initial_elo_value }}</td>
+            {% else %}
+              <td></td>
+            {% endif %}
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>

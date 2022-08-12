@@ -2,9 +2,30 @@ import time
 from datetime import date, datetime, timezone, timedelta
 from django.db import models
 from comps.models.comp import Comp
-from rankings.models import Couple
+from rankings.models.couple import Couple
 from comps.scoresheet.calc_points import pro_heat_level, non_pro_heat_level
 
+# the different styles of ballroom dancing. couples are ranked in each style.
+SMOOTH = "SMOO"
+RHYTHM = "RHY"
+STANDARD = "STD"
+LATIN = "LAT"
+CABARET = "CAB" # also includes theater arts and showcases
+NIGHTCLUB = "NC"
+COUNTRY = "CTRY"
+COMBINED = "MIX" # for 9-dance, 10-dance events
+UNKNOWN = "UNK"
+DANCE_STYLE_CHOICES = [
+    (SMOOTH, "Smooth"),
+    (RHYTHM, "Rhythm"),
+    (STANDARD,  "Standard"),
+    (LATIN, "Latin"),
+    (CABARET, "Cabaret-Theater_Arts"),
+    (NIGHTCLUB, "Nightclub"),
+    (COUNTRY, "Country_Western"),
+    (COMBINED, "Combined"),
+    (UNKNOWN, "Unknown"),
+]
 
 class Heat(models.Model):
     '''Define information for a single heat'''
@@ -34,27 +55,7 @@ class Heat(models.Model):
     # determine the level and dance style.
     info = models.CharField(max_length=200)
 
-    # the different styles of ballroom dancing. couples are ranked in each style.
-    SMOOTH = "SMOO"
-    RHYTHM = "RHY"
-    STANDARD = "STD"
-    LATIN = "LAT"
-    CABARET = "CAB" # also includes theater arts and showcases
-    NIGHTCLUB = "NC"
-    COUNTRY = "CTRY"
-    COMBINED = "MIX" # for 9-dance, 10-dance events
-    UNKNOWN = "UNK"
-    DANCE_STYLE_CHOICES = [
-        (SMOOTH, "Smooth"),
-        (RHYTHM, "Rhythm"),
-        (STANDARD,  "Standard"),
-        (LATIN, "Latin"),
-        (CABARET, "Cabaret-Theater_Arts"),
-        (NIGHTCLUB, "Nightclub"),
-        (COUNTRY, "Country_Western"),
-        (COMBINED, "Combined"),
-        (UNKNOWN, "Unknown"),
-    ]
+    # the dance style for this heat
     style = models.CharField(max_length = 4, choices = DANCE_STYLE_CHOICES, default="UNK")
 
     # this field indicates the when the heat is scheduled to be danced
@@ -69,6 +70,12 @@ class Heat(models.Model):
     # this field stores the base point value for the winner of a final round only heat
     # value increases if preliminary rounds are danced
     base_value = models.IntegerField(blank=True)
+
+    # this field stores the initial elo rating for this heat
+    initial_elo_value = models.IntegerField(null=True)
+    
+    # this field indicates if the elo ratings have been updated with the results of this heat
+    elo_applied = models.BooleanField(default=False)
 
 
     def set_level(self):
@@ -129,30 +136,34 @@ class Heat(models.Model):
         '''This function determines the dance style based on the heat description.'''
         s = self.info
         if "Smooth" in s:
-            self.style = Heat.SMOOTH
+            self.style = SMOOTH
         elif "Rhythm" in s:
-            self.style = Heat.RHYTHM
+            self.style = RHYTHM
         elif "Latin" in s:
-            self.style = Heat.LATIN
+            self.style = LATIN
         elif "Standard" in s or "Ballroom" in s or "Balroom" in s or "Ballrom" in s:
-            self.style = Heat.STANDARD
+            self.style = STANDARD
         elif "Nightclub" in s or "Night Club" in s or "NightClub" in s or "Niteclub" in s or "Nite Club" in s or "Caribbean" in s or "Club Dance" in s:
-            self.style = Heat.NIGHTCLUB
+            self.style = NIGHTCLUB
         elif "Country" in s:
-            self.style = Heat.COUNTRY
+            self.style = COUNTRY
         elif "Cabaret" in s or "Theatre" in s or "Theater" in s or "Exhibition" in s:
-            self.style = Heat.CABARET
+            self.style = CABARET
         else:
             #TODO: ask user?
             if self.multi_dance():
                 print("Unknown style for heat " + s)
-            self.style = Heat.UNKNOWN
+            self.style = UNKNOWN
 
 
     def set_time(self, time_str, day_of_week_str, time_format="%I:%M%p", date_string=None):
         if date_string is not None:
-            date_fields = date_string.split('/')
-            heat_date = date(int(date_fields[2]), int(date_fields[0]), int(date_fields[1]))
+            if '/' in date_string:
+                date_fields = date_string.split('/')
+                heat_date = date(int(date_fields[2]), int(date_fields[0]), int(date_fields[1]))
+            else:
+                date_fields = date_string.split('-')                
+                heat_date = date(int(date_fields[0]), int(date_fields[1]), int(date_fields[2]))            
         else:
             comp_start_date = self.comp.start_date.isocalendar()
             days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -194,17 +205,17 @@ class Heat(models.Model):
            "High School" in s or "Elementary School" in s or \
            "-TB" in s or "Teddy Bear" in s or " TB" in s or "TB " in s:
 
-           # Under 21 heats and BYU class heats are sometimes listed as youth, but should not be treated as juniors
-           if "U21" in s or "Under 21" in s or "Under-21" in s or "BYU" in s:
+            # Under 21 heats and BYU class heats are sometimes listed as youth, but should not be treated as juniors
+            if "U21" in s or "Under 21" in s or "Under-21" in s or "BYU" in s:
                 return False
-           else:
-               return True
+            else:
+                return True
         else:
             return False
 
 
     def couple_type(self):
-        if self.category == "Pro heat" or self.category == "PH": #Heat.PRO_HEAT:
+        if self.category == "Pro heat" or self.category == "PH": 
             return Couple.PRO_COUPLE
         elif self.amateur_heat():
             if self.junior_heat():

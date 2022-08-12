@@ -23,8 +23,8 @@ class Comp(models.Model):
     DATA_FORMAT_CHOICES = [
         (COMP_MNGR, 'Comp Manager'),
         (COMP_ORG, 'Comp Organizer'),
-        (NDCA_PREM , 'NDCA Premier'),
-        (NDCA_FEED , 'NDCA Premier - Feed'),
+        (NDCA_PREM , 'NDCA Premier - Old Format'),
+        (NDCA_FEED , 'NDCA Premier'),
         (O2CM, 'O2cm.com')
     ]
     url_data_format = models.CharField(
@@ -42,6 +42,7 @@ class Comp(models.Model):
     heatsheet_load_time = models.DateTimeField(null=True, default=default_time)
 
     scoresheet_url = models.URLField(blank=True)
+    scoresheet_file = models.FileField(upload_to=comp_logo_path, blank=True, storage=RawMediaCloudinaryStorage())
 
     # the different states of processing a competition
     INITIAL = "IN"
@@ -53,6 +54,7 @@ class Comp(models.Model):
     HEAT_ENTRIES_MATCHED = "CEM"
     SCORESHEETS_LOADED = "SSL"
     RESULTS_RESOLVED = "RR"
+    ELO_RATINGS_UPDATED = "ELO"
     COMPLETE = "FIN"
     PROCESS_STATE_CHOICES = [
         (INITIAL, 'Comp Initialized'),
@@ -64,6 +66,7 @@ class Comp(models.Model):
         (HEAT_ENTRIES_MATCHED, 'Heat Entries Matched'),
         (SCORESHEETS_LOADED, 'Scoresheets Loaded'),
         (RESULTS_RESOLVED, 'Results Resolved '),
+        (ELO_RATINGS_UPDATED, 'Elo Ratings Updated '),
         (COMPLETE, 'Processing Complete')
     ]
 

@@ -1,6 +1,6 @@
 from django.db import models
 from comps.models.heat import Heat
-from rankings.models import Couple
+from rankings.models.couple import Couple
 
 
 class Heat_Entry(models.Model):
@@ -17,8 +17,11 @@ class Heat_Entry(models.Model):
     # store the result placement, could be a digit 1 - 9, or a string indicating the prelim round
     result = models.CharField(max_length=12, blank=True)
 
-    # store the point value earned by this couple in this heatsheet
+    # store the point value earned by this couple in this heat
     points = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+
+    # store the elo rating adjustment for this couple's performance in this heat
+    elo_adjust = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     # store the power rating of this couple, prior to this heat being danced
     rating = models.DecimalField(max_digits=5, decimal_places=2, null=True)

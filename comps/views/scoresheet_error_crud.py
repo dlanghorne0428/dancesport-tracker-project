@@ -23,6 +23,10 @@ def repair_scoresheet_error(request, error_id):
         heat = scoresheet_error.heat
         if heat is not None:
             heat.delete()
+    elif scoresheet_error.error == Result_Error.UNKNOWN_ELO_VALUE:
+        heat = scoresheet_error.heat
+        if heat.initial_elo_value is None:
+            return redirect("comps:heat", heat.id)
 
     comp = scoresheet_error.comp
     scoresheet_error.delete()

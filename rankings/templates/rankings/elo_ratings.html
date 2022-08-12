@@ -1,0 +1,83 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12">
+      <h2 class="text-center">Elo Ratings</h2>
+    </div>
+    <div class="col-12">
+      <h3 class="text-center">{{ dance_style }} {{ couple_type }}</h2>
+    </div>
+  </div>
+
+  <p class='text-center bg-warning my-3'>{{ error }}</p>
+  
+
+  <form class="mx-auto" id="elo-ranking-form" method="POST">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-lg-3 offset-lg-6">
+        <input class="form-control" id="last_name" name="last_name" type="text" placeholder='Last Name'>
+      </div>
+      <button type="submit" class="btn btn-primary">Find</button>
+    </div>
+  </form>
+  
+  <div class="row">
+    <div class="col-12 col-lg-8 offset-lg-2 p-0">
+      <table class="table table-bordered table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th class='text-center'>Ranking</th>
+            {% if couple_type == 'Pro-Am' or couple_type == 'Junior_Pro-Am' %}
+              <th class='text-center'>Student</th>
+              <th></th>
+              <th class='text-center'>Teacher</th>
+            {% else %}
+              <th class='text-center'>Leader</th>
+              <th></th>
+              <th class='text-center'>Follower</th>
+            {% endif %}
+            <th class='text-center'>Events</th>
+            <th class='text-center'>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for couple in page_obj %}
+          <tr>
+            <td class='text-center'>{{ couple.index }}</td>
+            <td class='text-center'><a href="{% url 'view_dancer' couple.rating.couple.dancer_1.id %}">{{ couple.rating.couple.dancer_1 }}</a></td>
+            <td class='text-center'>and</td>
+            <td class='text-center'><a href="{% url 'view_dancer' couple.rating.couple.dancer_2.id %}">{{ couple.rating.couple.dancer_2 }}</a></td>
+            <td class='text-center'>{{ couple.rating.num_events }}</td>
+            <td class='text-center'><a href="{% url 'view_couple' couple.rating.couple.id %}"">{{ couple.rating.value|floatformat:2  }}</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% include "rankings/pagination.html" %}
+      
+      <p class='text-center mt-3'>Elo Ratings started in June 2021 at the Millenium Dancesport competition.</p>
+      
+    </div>
+  </div>
+
+  <script>
+    //get form
+    const elo_ranking_form = document.getElementById("elo-ranking-form");
+
+    // get form fields
+    const last_name = document.getElementById("last_name");
+
+    // add event listener for changes to the selection on any of the form fields
+    last_name.addEventListener('change', mySubmitFunction);
+
+    // submit the form when any of the events happen
+    function mySubmitFunction() {
+      elo_ranking_form.submit();
+    };
+  </script>
+  
+{% endblock %}

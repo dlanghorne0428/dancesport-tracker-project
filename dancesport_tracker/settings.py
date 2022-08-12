@@ -141,13 +141,13 @@ CACHES = {
 }
 
 #caches for local development
-# CACHES = {
-#   'default': {
-#       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#       'TIMEOUT': 15*60,
-#       'LOCATION': '127.0.0.1:11211',
-#   }
-# }
+#CACHES = {
+  #'default': {
+      #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      #'TIMEOUT': 15*60,
+      #'LOCATION': '127.0.0.1:11211',
+  #}
+#}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -161,6 +161,9 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# model default
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files (CSS, JavaScript, Images)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

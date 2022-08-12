@@ -1,6 +1,6 @@
 from django.db import models
 from comps.models.comp import Comp
-from rankings.models import Couple
+from rankings.models.couple import Couple
 
 
 class Comp_Couple(models.Model):

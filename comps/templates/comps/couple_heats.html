@@ -26,15 +26,24 @@
           <th class="text-center">Number</th>
           <th class="text-center d-none d-sm-table-cell">Time</th>
           <th class="text-center">Description</th>
+          <th class="text-center">Result</th>
+          <th class="text-center">Elo Change</th>
         </tr>
       </thead>
       <tbody>
-        {% for heat in page_obj %}
+        {% for entry in page_obj %}
         <tr>
-          <td class="text-center">{{ heat.get_category_display }}</td>
-          <td class="text-center">{{ heat.heat_number }}{{ heat.extra }}</td>
-          <td class="text-center d-none d-sm-table-cell">{{ heat.time }}</td>
-          <td class="text-center"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
+          <td class="text-center">{{ entry.heat.get_category_display }}</td>
+          <td class="text-center">{{ entry.heat.heat_number }}{{ entry.heat.extra }}</td>
+          <td class="text-center d-none d-sm-table-cell">{{ entry.heat.time }}</td>
+          <td class="text-center"><a href="{% url 'comps:heat' entry.heat.id %}">{{ entry.heat.info}}</a></td>
+          {% if entry.result|length > 0 %}
+            <td class="text-center">{{ entry.result }}</td>
+            <td class="text-center">{{ entry.elo_adjust}}</td>
+          {% else %}
+            <td></td>
+            <td></td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>

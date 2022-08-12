@@ -15,9 +15,10 @@ from .scoresheet.ndca_prem_results import NdcaPremResults
 from .scoresheet.ndca_prem_feed_results import NdcaPremFeedResults
 from .scoresheet.o2cm_results import O2cmResults
 from comps.models.comp import Comp
-from comps.models.heat import Heat
+from comps.models.heat import Heat, UNKNOWN
 from comps.models.heat_entry import Heat_Entry
 from comps.models.result_error import Result_Error
+from comps.views.update_elo_ratings import initial_elo_rating
 import time
 
 
@@ -106,7 +107,66 @@ def process_scoresheet_task(self, comp_data):
 
     progress_recorder = ProgressRecorder(self)
 
-    if comp.scoresheet_url:
+    if comp.scoresheet_file:
+        results_file = comp.scoresheet_file
+        results_file.open(mode="rt")
+        while True:
+            try:
+                line = results_file.readline().decode().strip()
+            except:
+                print("read failure")
+                break
+            print(line)
+            if line.startswith('Comp Name'):
+                continue
+            if line.startswith('Results'):
+                num_heats = int(line.split('\t')[1])
+                progress_recorder.set_progress(0, num_heats, description="Reading file for results")
+                index = 0
+                continue
+            if line.startswith('--'):
+                break
+            heat_data = line.split('\t')
+            category = heat_data[0]
+            heat_number = int(heat_data[1])
+            time_string = heat_data[2]
+            heat_info = heat_data[3]
+            matching_heat = Heat.objects.filter(comp=comp, heat_number=heat_number, info=heat_info)
+            if len(matching_heat) == 0:
+                print("No matching heats")
+            elif len(matching_heat) > 1:
+                print("More than one matching heat")
+            else:
+                heat = matching_heat[0]
+                index += 1
+                progress_recorder.set_progress(index, num_heats, description=heat_info)
+            while len(line) > 0:
+                # these are the entries
+                line = results_file.readline().decode().strip() 
+                if len(line) == 0:
+                    continue
+                entry_info = line.split('\t')
+                shirt_number = entry_info[1]
+                result = entry_info[2]
+                points = entry_info[3]
+                matching_entry = Heat_Entry.objects.filter(heat=heat, shirt_number=shirt_number)
+                if len(matching_entry) == 0:
+                    print("No matching entries")
+                elif len(matching_entry) > 1:
+                    print("More than one matching heat")
+                else:
+                    entry = matching_entry[0]
+                    if result is None or points is None:
+                        continue
+                    entry.result = result
+                    entry.points = points
+                    entry.save()
+                    #print(str(entry) + ' ' + result + ' ' + str(points))
+                    
+        unmatched_entries = 0
+        results_file.close()    
+    
+    elif comp.scoresheet_url:
         if comp.url_data_format == Comp.COMP_MNGR:
             scoresheet = CompMngrResults()
         elif comp.url_data_format == Comp.NDCA_PREM:
@@ -131,8 +191,22 @@ def process_scoresheet_task(self, comp_data):
             if heat.time.date() >= datetime.now(tz=timezone(-timedelta(hours=4))).date():
                 progress_recorder.set_progress(index, num_heats, description= "Skipping - " + heat_str + " " + heat.info)
                 continue
+            
+            if heat.initial_elo_value is None:
+                elo_value = initial_elo_rating(heat.category, heat.info)
+                if elo_value is None:
+                    print("Unknown Initial Elo Rating" + str(heat))
+                    res_err = Result_Error()
+                    res_err.comp = comp
+                    res_err.heat = heat
+                    res_err.error = Result_Error.UNKNOWN_ELO_VALUE
+                    res_err.save()                
+                else:
+                    heat.initial_elo_value = elo_value
+                    heat.save()
+                
             if heat.category == Heat.PRO_HEAT or heat.multi_dance() or heat.dance_off:
-                if heat.style == Heat.UNKNOWN:
+                if heat.style == UNKNOWN:
                     print("Unknown Heat Style " + str(heat))
                     res_err = Result_Error()
                     res_err.comp = comp
@@ -184,10 +258,11 @@ def process_scoresheet_task(self, comp_data):
                 heat.delete()
 
         unmatched_entries = len(scoresheet.late_entries)
-        result = [index, unmatched_entries]
-        if unmatched_entries == 0:
-            comp.process_state = comp.RESULTS_RESOLVED
-        else:
-            comp.process_state = comp.SCORESHEETS_LOADED
-        comp.save()
-        return result
+        
+    result = [index, unmatched_entries]
+    if unmatched_entries == 0:
+        comp.process_state = comp.RESULTS_RESOLVED
+    else:
+        comp.process_state = comp.SCORESHEETS_LOADED
+    comp.save()
+    return result

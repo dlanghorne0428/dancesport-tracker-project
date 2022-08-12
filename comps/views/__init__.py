@@ -22,4 +22,7 @@ from .load_heats import *
 from .load_scoresheets import *
 from .resolve_dancers import *
 from .resolve_mismatches import *
+from .save_heatlists import *
+from .save_scoresheets import *
 from .scoresheet_error_crud import *
+from .update_elo_ratings import *
