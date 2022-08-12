@@ -71,6 +71,12 @@ class Heat(models.Model):
     # value increases if preliminary rounds are danced
     base_value = models.IntegerField(blank=True)
 
+    # this field stores the initial elo rating for this heat
+    initial_elo_value = models.IntegerField(null=True)
+    
+    # this field indicates if the elo ratings have been updated with the results of this heat
+    elo_applied = models.BooleanField(default=False)
+
 
     def set_level(self):
         if self.category == "PH":
