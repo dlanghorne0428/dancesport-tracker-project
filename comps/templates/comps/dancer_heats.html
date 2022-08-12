@@ -20,6 +20,8 @@
           <th class="text-center d-none d-sm-table-cell">Time</th>
           <th class="text-center">Description</th>
           <th class="text-center">Couple</th>
+          <th class="text-center">Result</th>
+          <th class="text-center">Elo Change</th>
         </tr>
       </thead>
       <tbody>
@@ -34,6 +36,13 @@
           <td class="text-center d-none d-sm-table-cell">{{ entry.heat.time }}</td>
           <td class="text-center"><a href="{% url 'comps:heat' entry.heat.id %}">{{ entry.heat.info}}</a></td>
           <td class="text-center"><a href="{% url 'comps:couple_heats' comp.id entry.couple.id %}">{{ entry.couple}}</a></td>
+          {% if entry.result|length > 0 %}
+            <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
+            <td class="text-center">{{ entry.elo_adjust}}</td>
+          {% else %}
+            <td></td>
+            <td></td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>
