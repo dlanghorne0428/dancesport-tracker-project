@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.heat import Heat, UNKNOWN
 from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_error import Heatlist_Error
+from comps.models.result_error import Result_Error
 from comps.forms import HeatForm
 from rankings.rating_stats import couple_stats
 
@@ -20,9 +21,14 @@ def heat(request, heat_id, sort_mode=0):
         results_available = False
         errors = Heatlist_Error.objects.filter(heat=h)
         if len(errors) > 0:
-            error = errors.first()
+            error = errors.first().get_error_display()
         else:
             error = None
+        if error is None:
+            errors = Result_Error.objects.filter(heat=h)
+            if len(errors) > 0:
+                error = errors.first().get_error_display()
+                
         entries = Heat_Entry.objects.filter(heat=h)
         if entries.count() > 0:
             for e in entries:
