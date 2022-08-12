@@ -63,7 +63,7 @@
             </th>
             {% if item.results_available %}
               <th class="text-center">Result</th>
-              <th class="text-center">Points</th>
+              <th class="text-center">Elo Change</th>
             {% else %}
               <th class="text-center">
                 <a href="{% url 'comps:heat' item.heat.id 1 %}">&darr;</a>
@@ -100,8 +100,8 @@
                   <td class="text-center">{{ entry.result }}</td>
                 {% endif %}
               {% endif %}
-              {% if entry.points %}
-                <td class="text-center">{{ entry.points}}</td>
+              {% if entry.elo_adjust %}
+                <td class="text-center">{{ entry.elo_adjust}}</td>
               {% endif %}
             {% else %}
               {% if show_edit_button %}
