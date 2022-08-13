@@ -65,7 +65,7 @@ def update_elo_ratings(request, comp_id):
                 return render(request, 'comps/heat.html', {'comp': comp, 'heat_data': heat_data, 'show_edit_button': True})
             else:
                 initial_rating = h.initial_elo_value   
-                #print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
+                print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
             
             rating_list = list()
             elo_inputs = list()
