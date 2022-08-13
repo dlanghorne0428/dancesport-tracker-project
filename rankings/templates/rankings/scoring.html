@@ -2,16 +2,45 @@
 
 {% block content %}
 
-<h1 class='text-center d-none d-md-block'>DanceSport Tracker Ranking System</h1>
-<h2 class='text-center d-block d-md-none'>Ranking System</h2>
+<h1 class='text-center'>DanceSport Tracker Rating System</h1>
 <br />
 
 <div class="row">
 
-  <div class="col-12 col-lg-6 p-0 border border-dark">
-    <h3 class="text-center">Ranking Groups</h3>
+  <div class="col-12 col-lg-6 p-2 border border-dark">
+    <h3 class="text-center">About the Elo rating system</h3>
     <ul>
-      <li>There is a separate ranking list for each combination of couple type and dance style (Smooth, Rhythm, Standard, Latin, Cabaret, etc.)</li>
+      <li>The <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating system </a> was developed to calculate the relative skill levels of chess players.</li>
+      <li>It is also used as a rating system in football, baseball, basketball, pool, table tennis, and various board games and esports.</li>
+      <li>The difference in the ratings between two players serves as a predictor of the outcome of a match. Two players with equal ratings who play against each other are expected to score an equal number of wins.</li>
+      <li>A player's Elo rating is represented by a number which may change depending on the outcome of rated games played. After every game, the winning player takes points from the losing one.</li>
+      <li>The difference between the ratings of the winner and loser determines the total number of points gained or lost after a game. If the higher-rated player wins, then only a few rating points will be taken from the lower-rated player. However, if the lower-rated player scores an upset win, many rating points will be transferred.</li>
+    </ul>
+  </div>
+  <div class="col-12 col-lg-6 p-2 border border-dark">
+    <h3 class="text-center">Adapting Elo ratings for DanceSport</h3>
+    <ul>
+      <li>The Elo rating system was designed for two-player games.</li>
+      <li>The DanceSport tracker rating system is based on this <a href="https://towardsdatascience.com/developing-a-generalized-elo-rating-system-for-multiplayer-games-b9b495e87802" target="-blank">article</a> by Danny Cunningham, which defines a multi-player Elo method where each contest is treated a series of head-to-head matchups.</li>
+      <li>For example, a three-couple heat has three distinct matchups (A vs. B, A vs. C, B vs. C)</li>
+      <li>Initial ratings are based on the first event entered by each couple since June 2021.</li>
+      <ul>
+        <li>Open Professional events have an initial rating of 1750.</li>
+        <li>Rising Star Professional events have an initial rating of 1500.</li>
+        <li>Amateur Championships and Pro-Am Gold/Open events have an initial rating of 1250.</li>
+        <li>Amateur Pre-Champ and Pro-Am Silver/Closed events have an initial rating of 1000.</li>    
+        <li>Pro-Am Bronze/Newcomer events have an initial rating of 750.</li>  
+      </ul>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-12 col-lg-6 p-2 border border-dark">
+    <h3 class="text-center">Rating Groups</h3>
+    <ul>
+      <li>Each combination of couple type and dance style (Smooth, Rhythm, Standard, Latin, Cabaret, etc.) have separate ratings.</li>
       <li>There are five types of couples:</li>
         <ul>
           <li>Professional Couples</li>
@@ -22,234 +51,14 @@
         </ul>
     </ul>
   </div>
-  <div class="col-12 col-lg-6 p-0 border border-dark">
-    <h3 class="text-center">Earning Points</h3>
+  <div class="col-12 col-lg-6 p-2 border border-dark">
+    <h3 class="text-center">Rating Points</h3>
     <ul>
-      <li>Couples earn points based on their performance at NDCA competitions.</li>
-      <li>All Multi-dance heats earn points.</li>
-      <li>Professional Cabaret / Showdance / Theater Arts events earn points.</li>
-      <li>Single-dance freestyle heats do not earn points. These results are not stored in DanceSport Tracker.</li>
-      <li>Points are calculated based on three factors
-        <ol>
-          <li>Heat Value</li>
-          <li>Number of Preliminary Rounds</li>
-          <li>Couple Placement or Number of Recall Votes</li>
-        </ol>
-      </li>
-    </ul>
-  </div>
-  <div class="col-12 col-lg-4 p-0 border border-dark">
-    <h3 class="text-center">Heat Value</h3>
-    <h5 class="text-center">Professional Heats</h5>
-    <table class="table table-sm table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th class="text-center">Description</th>
-          <th class="text-center">Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">Open</td>
-          <td class="text-center">20</td>
-        </tr>
-        <tr>
-          <td class="text-center">Rising Star</td>
-          <td class="text-center">10</td>
-        </tr>
-        <tr>
-          <td class="text-center">Novice, Basics</td>
-          <td class="text-center">5</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col-12 col-lg-4 p-0 border border-dark">
-    <h3 class="text-center">Heat Value</h3>
-    <h5 class="text-center">Pro-Am Heats</h5>
-    <table class="table table-sm table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th class="text-center">Description</th>
-          <th class="text-center">Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">Gold</td>
-          <td class="text-center">20</td>
-        </tr>
-        <tr>
-          <td class="text-center">Silver</td>
-          <td class="text-center">15</td>
-        </tr>
-        <tr>
-          <td class="text-center">Bronze</td>
-          <td class="text-center">10</td>
-        </tr>
-        <tr>
-          <td class="text-center">Newcomer, Novice</td>
-          <td class="text-center">5</td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th class="text-center">Bonus Words</th>
-          <th class="text-center">Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">Open, Scholarship, World</td>
-          <td class="text-center">+5 each</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col-12 col-lg-4 p-0 border border-dark">
-    <h3 class="text-center">Heat Value</h3>
-    <h5 class="text-center">Amateur Heats</h5>
-    <table class="table table-sm table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th class="text-center">Description</th>
-          <th class="text-center">Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">Championship, Grand Slam</td>
-          <td class="text-center">20</td>
-        </tr>
-        <tr>
-          <td class="text-center">Pre-Champ</td>
-          <td class="text-center">15</td>
-        </tr>
-        <tr>
-          <td class="text-center">Novice</td>
-          <td class="text-center">5</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col-12 p-0 border border-dark">
-    <h3 class="text-center">Preliminary Rounds</h3>
-    <p class="text-center">For each preliminary round danced, the Heat Value is increased by 10.</p>
-    <ul> <strong>Some Examples</strong>
-      <li>An Open Professional event with a quarterfinal has a value of <strong>40</strong> (20 + 10 for semis + 10 for quarters)</li>
-      <li>An Pro-Am Silver Scholarship event with a semifinal has a value of <strong>30</strong> (15 + 5 for scholarship + 10 for semis)</li>
-      <li>An Amateur Pre-Champ event with no preliminary rounds has a value of <strong>15</strong></li>
+      <li>A Couple's rating is based on their performance at NDCA competitions, starting with the Millenium DanceSport in June 2021.</li>
+      <li>All Multi-dance heats count for points.</li>
+      <li>Professional Cabaret / Showdance / Theater Arts events count for points.</li>
+      <li>Single-dance freestyle heats do not count for points. These results are not stored in DanceSport Tracker.</li>
     </ul>
   </div>
 </div>
-<div class="row">
-  <div class="col-12 col-lg-6 p-0 border border-dark">
-    <h3 class="text-center">Placements</h3>
-    <h5 class="text-center">Finalists</h5>
-    <p class="text-center">Each couple earns a percentage of the heat value based on their placement and the number of couples entered in the heat.</p>
-    <table class="table table-sm table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th class="text-center">Entries</th>
-          <th class="text-center">1st</th>
-          <th class="text-center">2nd</th>
-          <th class="text-center">3rd</th>
-          <th class="text-center">4th</th>
-          <th class="text-center">5th</th>
-          <th class="text-center">6th</th>
-          <th class="text-center">7th +</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">One</td>
-          <td class="text-center">60%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Two</td>
-          <td class="text-center">75%</td>
-          <td class="text-center">35%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Three</td>
-          <td class="text-center">90%</td>
-          <td class="text-center">60%</td>
-          <td class="text-center">35%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Four</td>
-          <td class="text-center">100%</td>
-          <td class="text-center">70%</td>
-          <td class="text-center">50%</td>
-          <td class="text-center">35%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Five or more</td>
-          <td class="text-center">100%</td>
-          <td class="text-center">80%</td>
-          <td class="text-center">65%</td>
-          <td class="text-center">50%</td>
-          <td class="text-center">40%</td>
-          <td class="text-center">35%</td>
-          <td class="text-center">30%</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col-12 col-lg-6 p-0 border border-dark">
-    <h3 class="text-center">Placements</h3>
-    <h5 class="text-center">Non-finalists</h5>
-    <p class="text-center px-1">Each couple earns a percentage of the heat value based on the number of rounds and their number of recall votes when they were eliminated.</p>
-    <table class="table table-sm table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th class="text-center">Rounds</th>
-          <th class="text-center">Semis</th>
-          <th class="text-center">Qtrs</th>
-          <th class="text-center">Rd 3</th>
-          <th class="text-center">Rd 2</th>
-          <th class="text-center">Rd 1</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="text-center">Two</td>
-          <td class="text-center">1% to 25%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Three</td>
-          <td class="text-center">15% to 25%</td>
-          <td class="text-center">1% to 10%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Four</td>
-          <td class="text-center">20% to 25%</td>
-          <td class="text-center">10% to 15%</td>
-          <td class="text-center">N/A</td>
-          <td class="text-center">N/A</td>
-          <td class="text-center">1% to 5%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Five</td>
-          <td class="text-center">25% to 30%</td>
-          <td class="text-center">15% to 20%</td>
-          <td class="text-center">N/A</td>
-          <td class="text-center">7% to 12%</td>
-          <td class="text-center">1% to 5%</td>
-        </tr>
-        <tr>
-          <td class="text-center">Six</td>
-          <td class="text-center">25% to 30%</td>
-          <td class="text-center">19% to 23%</td>
-          <td class="text-center">13% to 17%</td>
-          <td class="text-center">7% to 11%</td>
-          <td class="text-center">1% to 5%</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
 {% endblock %}
