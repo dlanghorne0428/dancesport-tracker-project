@@ -62,10 +62,10 @@
             <a class="nav-link" href="{% url 'home' %}">Home<span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'all_dancers' %}">Dancers</a>
+            <a class="nav-link" href="{% url 'comps:all_comps' %}">Competitions</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'comps:all_comps' %}">Competitions</a>
+            <a class="nav-link" href="{% url 'all_dancers' %}">Dancers</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
@@ -120,13 +120,6 @@
                 </ul>
               </li>
             </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">Rankings</a>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="{% url 'calc_rankings' %}">Couples</a>
-              <a class="dropdown-item" href="{% url 'calc_teacher_rankings' %}">Teachers</a>
-            </div>
           </li>
         </ul>
       </div>
