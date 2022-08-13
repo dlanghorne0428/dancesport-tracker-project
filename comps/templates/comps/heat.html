@@ -63,11 +63,15 @@
             </th>
             {% if item.results_available %}
               <th class="text-center">Result</th>
-              <th class="text-center">Elo Change</th>
+              {% if comp.process_state == 'ELO'%}
+                <th class="text-center">Elo Change</th>
+              {% else %}
+                <th class="text-center">Points</th> 
+              {% endif %}
             {% else %}
               <th class="text-center">
                 <a href="{% url 'comps:heat' item.heat.id 1 %}">&darr;</a>
-                Rating
+                Elo Rating
                 <a href="{% url 'comps:heat' item.heat.id 0 %}">&uarr;</a>
               </th>
             {% endif %}
@@ -100,8 +104,10 @@
                   <td class="text-center">{{ entry.result }}</td>
                 {% endif %}
               {% endif %}
-              {% if entry.elo_adjust %}
+              {% if comp.process_state == 'ELO'%}
                 <td class="text-center">{{ entry.elo_adjust}}</td>
+              {% else %}
+                <td class="text-center">{{ entry.points}}</td>
               {% endif %}
             {% else %}
               {% if show_edit_button %}
