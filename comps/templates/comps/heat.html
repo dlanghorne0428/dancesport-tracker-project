@@ -97,7 +97,7 @@
                 {% if entry.result|length > 0 %}
                   <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
                 {% else %}
-                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">Edit</a></td>
+                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">None</a></td>
                 {% endif %}
               {% else %}
                 {% if entry.result|length > 0 %}
@@ -114,7 +114,7 @@
                 {% if entry.rating %}
                   <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.rating}}</a></td>
                 {% else %}
-                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">Edit</a></td>
+                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">None</a></td>
                 {% endif %}
               {% else %}
                 {% if entry.rating %}
