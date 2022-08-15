@@ -4,7 +4,7 @@ from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_error import Heatlist_Error
 from comps.models.result_error import Result_Error
 from comps.forms import HeatForm
-from rankings.rating_stats import couple_stats
+from rankings.models.elo_rating import EloRating
 
 
 def heat(request, heat_id, sort_mode=0):
@@ -38,12 +38,18 @@ def heat(request, heat_id, sort_mode=0):
                     break
             else:
                 for e in entries:
+                    ratings = EloRating.objects.filter(couple=e.couple).order_by('-value')
+                    
                     if h.style is None or h.style == UNKNOWN:
-                        stats = couple_stats(e.couple)
+                        if len(ratings) > 0:
+                            e.rating = ratings[0].value
+                            e.save()                            
                     else:
-                        stats = couple_stats(e.couple, h.style)
-                    e.rating = stats['rating']
-                    e.save()
+                        style_rating = ratings.filter(style=h.style)
+                        if len(style_rating) > 0:
+                            e.rating = style_rating[0].value
+                            e.save()
+
                 if sort_mode == 0:
                     entries = entries.order_by('-rating', 'shirt_number')
                 elif sort_mode == 1:

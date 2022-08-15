@@ -24,7 +24,7 @@ class Heat_Entry(models.Model):
     elo_adjust = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     # store the power rating of this couple, prior to this heat being danced
-    rating = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    rating = models.DecimalField(max_digits=8, decimal_places=2, null=True)
 
 
     def populate(self, heat_obj, couple_obj=None, scoresheet_code=None, shirt_number="???"):
