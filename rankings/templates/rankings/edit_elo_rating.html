@@ -1,0 +1,35 @@
+{% extends "rankings/base.html" %}
+
+{% block content %}
+
+<h2 class='text-center'>{{ rating.couple }}</h2>
+<h3 class='text-center'>{{ rating.get_style_display }}</h3>
+<br />
+
+<div class="row">
+  <div class="col-4 offset-4 border border-dark">
+    <h3 class="text-center">Edit Elo Rating</h3>
+    <p>{{ error }}</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="label">Number of Events</label>
+          {{ form.num_events}}
+      </div>
+      <div class="form-group">
+        <label class="label">Elo Rating</label>
+          {{ form.value}}
+      </div>
+      <div class="text-center mt-3">
+        <input class="btn btn-danger" type="submit" name="submit" value = "Save" onclick="return confirm('Are you sure?')"/>
+      </div>
+      <div class="text-center mt-2">
+        <input class="btn btn-secondary" type="submit" name="submit" value="Cancel" />
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}

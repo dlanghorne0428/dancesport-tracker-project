@@ -1,6 +1,13 @@
 from django.db import models
 from django.forms import ModelForm, ModelChoiceField
-from .models import Dancer, Couple
+from .models.dancer import Dancer
+from .models.couple import Couple
+from .models.elo_rating import EloRating
+
+class EloRatingForm(ModelForm):
+    class Meta:
+        model = EloRating
+        fields = ['num_events', 'value']  
 
 class DancerForm(ModelForm):
     class Meta:

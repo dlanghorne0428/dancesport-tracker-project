@@ -27,13 +27,19 @@
     <table class="table table-bordered table-sm">
       <tr>
         <th class="text-center">Style</th>
+        <th class="text-center">Events</th>
         <th class="text-center">Rating</th>
       </tr>
 
       {% for r in elo_ratings %}
         <tr>
           <td class="text-center"><a href="{% url 'show_elo_ratings' r.couple.couple_type r.style %}">{{ r.get_style_display }}</a></td>
-          <td class="text-center">{{ r.value|floatformat:2}}</td>
+          <td class="text-center">{{ r.num_events}}</td>
+          {% if show_admin_buttons %}
+            <td class="text-center"><a href="{% url 'edit_elo_ratings' r.couple.id r.style %}">{{ r.value|floatformat:2}}</a></td>
+          {% else %}
+            <td class="text-center">{{ r.value|floatformat:2}}</td>
+          {% endif %}  
         </tr>
       {% endfor %}
     </table>

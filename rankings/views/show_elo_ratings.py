@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.heat import DANCE_STYLE_CHOICES
+from rankings.forms import EloRatingForm
 from rankings.models.couple import Couple
 from rankings.models.elo_rating import EloRating
 
@@ -44,3 +45,26 @@ def show_elo_ratings(request, couple_type, dance_style):
     paginator = Paginator(couple_data, 16)
     page_obj = paginator.get_page(page_number)
     return render(request, 'rankings/elo_ratings.html', {'page_obj': page_obj, 'dance_style': style_label, 'couple_type': couple_type_label})
+
+
+def edit_elo_ratings(request, couple_pk,  dance_style):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    
+    couple = get_object_or_404(Couple, pk=couple_pk)
+    elo_rating = EloRating.objects.get(couple=couple, style=dance_style)
+    
+    if request.method == "GET":
+        form = EloRatingForm(instance=elo_rating)
+        return render(request, 'rankings/edit_elo_rating.html', {'rating': elo_rating, 'form': form})
+    else:
+        submit = request.POST.get("submit")
+        if submit == "Save":
+            try:
+                form = EloRatingForm(data=request.POST,instance=elo_rating)
+                form.save()
+                return redirect('view_couple', couple_pk)
+            except ValueError:
+                return render(request, 'rankings/edit_elo_rating.html', {'rating': elo_rating, 'form': form, 'error': "Invalid data submitted."})
+        else:
+            return redirect('view_couple', couple_pk)      
