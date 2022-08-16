@@ -11,7 +11,7 @@ from rankings.models.elo_rating import EloRating
 def initial_elo_rating(category, info):
     info_up = info.upper()
     if category == "PH":
-        if "RISING STAR" in info_up or "RS" in info_up or "NOVICE" in info_up or "BASIC" in info_up or "PRE-CHAMP" in info_up:
+        if "RISING STAR" in info_up or "RS" in info_up or "NOVICE" in info_up or "BASIC" in info_up or "PRE-CHAMP" in info_up or "CLOSED" in info_up:
             return 1500
         else:
             return 1750
