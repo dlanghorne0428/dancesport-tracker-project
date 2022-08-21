@@ -206,7 +206,7 @@ class Heat(models.Model):
            "-TB" in s or "Teddy Bear" in s or " TB" in s or "TB " in s:
 
             # Under 21 heats and BYU class heats are sometimes listed as youth, but should not be treated as juniors
-            if "U21" in s or "Under 21" in s or "Under-21" in s or "BYU" in s:
+            if "U21" in s or "Under 21" in s or "Under-21" in s or "BYU" in s or "BOTB" in s:
                 return False
             else:
                 return True
