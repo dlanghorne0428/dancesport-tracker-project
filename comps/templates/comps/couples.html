@@ -11,23 +11,23 @@
 
   <div class="row align-items-start">
     <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 p-0 border border-dark">
-      <form class="text-center" method="POST">
-        {% csrf_token %}
-        <span class="mx-2"><strong>Find </strong></span>
-        {{ form.as_table}}
-        <input class="btn btn-sm btn-primary mx-2" type="submit" name="submit" value = "Apply"/>
-      </form>
-    </div>
-    <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 p-0 border border-dark">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
-            <th class='text-center' colspan="4">Couple</th>
-            <th class='text-center'>Number</th>
-            <th></th>
+            <th class='text-center' colspan="4" style="width: 70%;">Couple</th>
+            <th class='text-center' style="width: 15%;">Number</th>
+            <th style="{width: 15%;}"></th>
           </tr>
         </thead>
         <tbody>
+          <form class="mx-auto" id='couple-filter-form' method="POST">
+            {% csrf_token %}
+            <tr class="table-primary">
+              <td colspan="4"  id='name-filter' class="text-center"><strong>Filter </strong> {{ form.name }}</td>
+              <td id='number-filter' class="text-center">{{ form.number }}</td>
+              <td class="text-center"><input class="btn btn-primary btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
+            </tr>
+          </form>
         {% for comp_couple in page_obj %}
           <tr>
             <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' comp_couple.couple.dancer_1.id %}">{{ comp_couple.couple.dancer_1 }}</a></td>
@@ -49,5 +49,23 @@
     </div>
   </div>
 
+  <script>
+    //get form
+    const couple_filter_form = document.getElementById("couple-filter-form");
+
+    // get form fields
+    const last_name = document.getElementById("name-filter");
+    const shirt_number = document.getElementById("number-filter");
+
+    // add event listener for changes to the selection on any of the form fields
+    last_name.addEventListener('change', mySubmitFunction);
+    shirt_number.addEventListener('change', mySubmitFunction);
+
+
+    // submit the form when any of the events happen
+    function mySubmitFunction() {
+      couple_filter_form.submit();
+    };
+  </script>
 
 {% endblock %}
