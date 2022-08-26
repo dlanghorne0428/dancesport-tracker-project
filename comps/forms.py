@@ -36,5 +36,5 @@ class CompCoupleForm(Form):
     name = forms.CharField(label="Last Name", required=False)
     number = forms.CharField(label="Shirt Number", required=False)
 
-    name.widget.attrs.update(size='40', placeholder='dancer-last-name')    
+    name.widget.attrs.update(size='25', placeholder='dancer-last-name')    
     number.widget.attrs.update(size='5')
