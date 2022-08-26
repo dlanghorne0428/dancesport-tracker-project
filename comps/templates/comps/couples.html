@@ -31,14 +31,15 @@
         {% for comp_couple in page_obj %}
           <tr>
             <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' comp_couple.couple.dancer_1.id %}">{{ comp_couple.couple.dancer_1 }}</a></td>
-            <td class='text-center'>and</td>
+            <td class='text-center d-sm-none'>-</td>
+            <td class='text-center d-none d-sm-table-cell'>and</td>
             <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' comp_couple.couple.dancer_2.id %}">{{ comp_couple.couple.dancer_2 }}</a></td>
             <td class='text-center'>{{ comp_couple.couple.get_couple_type_display }}</td>
             <td class='text-center'>{{ comp_couple.shirt_number }}</td>
             {% if comp.process_state == comp.RESULTS_RESOLVED or comp.process_state == comp.ELO_RATINGS_UPDATED %}
-              <td class='text-center'><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id comp_couple.couple.id %}">View Results</a></td>
+              <td class='text-center'><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id comp_couple.couple.id %}">Results</a></td>
             {% else %}
-              <td class='text-center'><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id comp_couple.couple.id %}">View Heats</a></td>
+              <td class='text-center'><a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'comps:couple_heats' comp.id comp_couple.couple.id %}">Heats</a></td>
             {% endif %}
           </tr>
         {% endfor %}

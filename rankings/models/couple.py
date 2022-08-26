@@ -12,11 +12,11 @@ class Couple(models.Model):
     AMATEUR_COUPLE = 'AMC'
     JR_AMATEUR_COUPLE = 'JAC'
     COUPLE_TYPE_CHOICES = [
-        (PRO_COUPLE, 'Professionals'),
+        (PRO_COUPLE, 'Professional'),
         (PRO_AM_COUPLE, 'Pro-Am'),
-        (JR_PRO_AM_COUPLE , 'Junior_Pro-Am'),
-        (AMATEUR_COUPLE, 'Amateurs'),
-        (JR_AMATEUR_COUPLE , 'Junior_Amateurs'),
+        (JR_PRO_AM_COUPLE , 'Junior Pro-Am'),
+        (AMATEUR_COUPLE, 'Amateur'),
+        (JR_AMATEUR_COUPLE , 'Junior Amateur'),
     ]
     couple_type = models.CharField(
         max_length=3,
