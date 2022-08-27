@@ -12,7 +12,7 @@ services:
       - key: CLOUDINARY_URL # Imported from Heroku app
         value: cloudinary://378113367543324:xxA1Bn4ruWnj4Au-uzR5iexa1CE@hqqltiz09
       - key: DEBUG_COLLECTSTATIC # Imported from Heroku app
-        value: 1
+        value: 0
       - key: MEMCACHIER_SERVERS # Imported from Heroku app
         value: mc4.dev.ec2.memcachier.com:11211
       - key: MEMCACHIER_USERNAME # Imported from Heroku app
