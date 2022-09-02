@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import django_heroku
+import dj_database_url
+#import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,15 +22,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'xlc6j*k09&u-5z$-@j$ank^n!dof^h3)tjb84w^e+$#&^^zfzj'
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True   # for local
-DEBUG = False   # for production
+DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = []
 
-
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,16 +53,15 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',    
+    # Simplified static file serving.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Simplified static file serving.
-    # https://warehouse.python.org/project/whitenoise/
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'dancesport_tracker.urls'
@@ -85,16 +87,12 @@ WSGI_APPLICATION = 'dancesport_tracker.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dst_db',
-        'USER': 'dlanghorne',
-        'PASSWORD': 'Elephant1234',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+    'default': dj_database_url.config(
+        # Feel free to alter this value to suit your needs.
+        default='postgresql://postgres:postgres@localhost:5432/dlanghorne',
+        conn_max_age=600
+    )
 }
 
 
@@ -117,28 +115,29 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # caches for production
-servers = os.environ['MEMCACHIER_SERVERS']
-username = os.environ['MEMCACHIER_USERNAME']
-password = os.environ['MEMCACHIER_PASSWORD']
+#servers = os.environ['MEMCACHIER_SERVERS']
+#username = os.environ['MEMCACHIER_USERNAME']
+#password = os.environ['MEMCACHIER_PASSWORD']
 
-CACHES = {
-    'default': {
-        # Use django-bmemcached
-        'BACKEND': 'django_bmemcached.memcached.BMemcached',
+#CACHES = {
+    #'default': {
+        ## Use django-bmemcached
+        #'BACKEND': 'django_bmemcached.memcached.BMemcached',
 
-        # TIMEOUT is not the connection timeout! It's the default expiration
-        # timeout that should be applied to keys! Setting it to `None`
-        # disables expiration.
-        'TIMEOUT': 15*60,  # was None
+        ## TIMEOUT is not the connection timeout! It's the default expiration
+        ## timeout that should be applied to keys! Setting it to `None`
+        ## disables expiration.
+        #'TIMEOUT': 15*60,  # was None
 
-        'LOCATION': servers,  # for production
+        #'LOCATION': servers,  # for production
 
-        'OPTIONS': {
-            'username': username,
-            'password': password,
-        }
-    }
-}
+        #'OPTIONS': {
+            #'username': username,
+            #'password': password,
+        #}
+    #}
+#}
+
 
 #caches for local development
 #CACHES = {
@@ -166,15 +165,16 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files (CSS, JavaScript, Images)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+if not DEBUG:
+    # Tell Django to copy statics to the `staticfiles` directory
+    # in your application directory on Render.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # Turn on WhiteNoise storage backend that takes care of compressing static files
+    # and creating unique names for each version so they can safely be cached forever.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'    
 
 CELERY_BROKER_URL = os.environ['REDIS_URL']
 CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
@@ -184,4 +184,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-django_heroku.settings(locals())
+#django_heroku.settings(locals())
