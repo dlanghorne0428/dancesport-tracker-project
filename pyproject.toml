@@ -21,7 +21,7 @@ whitenoise = "^6.2.0"
 cloudinary = "^1.29.0"
 dj3-cloudinary-storage = "^0.0.6"
 python-dateutil = "^2.8.2"
-multielo = {git = "https://github.com/djcunningham0/multielo.git"}
+#multielo = {git = "https://github.com/djcunningham0/multielo.git"}
 
 [build-system]
 requires = ["poetry-core"]
