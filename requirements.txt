@@ -13,5 +13,4 @@ python-dateutil
 requests
 Pillow
 whitenoise
-django-bmemcached==0.3.0
 git+https://github.com/djcunningham0/multielo.git
