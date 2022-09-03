@@ -10,6 +10,6 @@ numpy==1.23.1
 python-dateutil==2.8.2
 python-decouple==3.6
 requests==2.27.1
-Pillow==9.1.0
+Pillow==9.1.1
 whitenoise==6.2.0
 git+https://github.com/djcunningham0/multielo.git
