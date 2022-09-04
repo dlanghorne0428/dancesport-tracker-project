@@ -125,7 +125,7 @@ USE_L10N = True
 USE_TZ = True
 
 # model default
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
