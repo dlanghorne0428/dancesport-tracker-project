@@ -139,8 +139,8 @@ if not DEBUG:
     # and creating unique names for each version so they can safely be cached forever.
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'    
 
-#CELERY_BROKER_URL = os.environ['REDIS_URL']
-#CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
+CELERY_BROKER_URL = os.environ['REDIS_URL']
+CELERY_RESULT_BACKEND = os.environ['REDIS_URL']
 
 # Media
 MEDIA_URL = '/media/'
