@@ -7,8 +7,10 @@ def comp_detail(request, comp_id):
     show_load_time = False
 
     comp = get_object_or_404(Comp, pk=comp_id)
+    print(comp)
     if comp.heatsheet_load_time is not None:
         if comp.heatsheet_load_time > Comp.default_time:
+            print(comp.heatsheet_load_time)
             show_load_time = True
 
     return render(request, "comps/comp_detail.html", {'comp':comp, 'show_load_buttons': show_load_buttons, 'show_load_time': show_load_time})
