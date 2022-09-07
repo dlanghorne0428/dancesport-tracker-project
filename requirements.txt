@@ -45,4 +45,4 @@ virtualenv-clone==0.5.7
 wcwidth==0.2.5
 whitenoise==6.2.0
 wrapt==1.14.1
-+git+https://github.com/djcunningham0/multielo.git
+git+https://github.com/djcunningham0/multielo.git
