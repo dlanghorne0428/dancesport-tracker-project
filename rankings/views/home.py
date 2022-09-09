@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from comps.models.comp import Comp
 
 def home(request):
+    current_comps = list()
     active_comps = Comp.objects.exclude(location='CANCELED')
     current_comps = active_comps.exclude(start_date__gt=datetime.date.today()).exclude(end_date__lt=datetime.date.today() - timedelta(days=2)).order_by('start_date') 
 

@@ -28,7 +28,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY', default='your secret key')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-
+#ALLOWED_HOSTS = ["*"]
     
 # Application definition
 
@@ -84,6 +84,18 @@ WSGI_APPLICATION = 'dancesport_tracker.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+#DATABASES = {
+    #'default': {
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'NAME': os.environ["PGDATABASE"],
+        #'USER': os.environ["PGUSER"],
+        #'PASSWORD': os.environ["PGPASSWORD"],
+        #'HOST': os.environ["PGHOST"],
+        #'PORT': os.environ["PGPORT"],
+    #}
+#}
+
+
 DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
