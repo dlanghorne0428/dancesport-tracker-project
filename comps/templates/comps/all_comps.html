@@ -30,7 +30,7 @@
             <td colspan="2" class='text-right'><strong>Filter </strong></td>
             <td id='title-filter' class="text-center">{{ filter.form.title }}</td>
             <td id='location-filter' class="text-center">{{ filter.form.location }}</td>
-            <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
+            <td hidden class="text-center"><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
           </tr>
         </form>
         {% for comp in page_obj %}
@@ -48,17 +48,20 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
   <script>
     //get form
     const comp_filter_form = document.getElementById("comp-filter-form");
 
     // get form fields
     const title = document.getElementById("title-filter");
-    const location = document.getElementById("location-filter");
+    const comp_location = document.getElementById("location-filter");
 
     // add event listener for changes to the selection on any of the form fields
     title.addEventListener('change', mySubmitFunction);
-    location.addEventListener('change', mySubmitFunction);
+    comp_location.addEventListener('change', mySubmitFunction);
 
 
     // submit the form when any of the events happen
@@ -66,5 +69,4 @@
       comp_filter_form.submit();
     };
   </script>
-
 {% endblock %}
