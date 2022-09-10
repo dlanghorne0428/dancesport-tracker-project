@@ -7,7 +7,7 @@ def all_comps(request):
     # only show add button for valid users
     show_add_button = request.user.is_superuser
 
-    #comps = Comp.objects.order_by('-start_date', 'title')
+    # get the list of comps, potentially filtered
     f = CompFilter(request.GET, queryset=Comp.objects.all().order_by('-start_date', 'title'))
     
     paginator = Paginator(f.qs, 16)
