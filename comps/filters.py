@@ -5,7 +5,7 @@ from .models.heat import Heat
 
 class CompFilter(django_filters.FilterSet):
 
-    title = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'size':24}))
+    title = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'size':18}))
     location = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'size':12}))
 
 
