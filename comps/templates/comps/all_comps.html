@@ -24,6 +24,16 @@
         </tr>
       </thead>
       <tbody>
+        <form class="mx-auto" id='comp-filter-form' method="get">
+          {% csrf_token %}
+          <tr class="table-primary">
+            <td></td>
+            <td></td>
+            <td id='title-filter' class="text-center"><strong>Filter </strong>{{ filter.form.title }}</td>
+            <td id='location-filter' class="text-center">{{ filter.form.location }}</td>
+            <td class="text-center" hidden><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
+          </tr>
+        </form>
         {% for comp in page_obj %}
           <tr>
             <td class="text-center">{{ comp.start_date }}</td>
@@ -39,5 +49,23 @@
   </div>
 </div>
 
+  <script>
+    //get form
+    const comp_filter_form = document.getElementById("comp-filter-form");
+
+    // get form fields
+    const title = document.getElementById("title-filter");
+    const location = document.getElementById("lodcation-filter");
+
+    // add event listener for changes to the selection on any of the form fields
+    title.addEventListener('change', mySubmitFunction);
+    location.addEventListener('change', mySubmitFunction);
+
+
+    // submit the form when any of the events happen
+    function mySubmitFunction() {
+      comp_filter_form.submit();
+    };
+  </script>
 
 {% endblock %}
