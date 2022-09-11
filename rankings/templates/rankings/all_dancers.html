@@ -23,9 +23,9 @@
           <form class="mx-auto"  id='dancer-filter-form' method="get">
             {% csrf_token %}
             <tr class="table-primary">
-              <td id='name-filter' class="text-center"><strong>Filter </strong> {{ filter.form.name_last }}</td>
+              <td id='name-filter' class="text-center">{{ filter.form.name_last }}</td>
               <td id='dancer-type-filter' class="text-center">{{ filter.form.dancer_type }}</td>
-              <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
+              <td class="text-center"><input class="btn btn-info btn-sm" type="submit" name="btn-submit" value="&#128269;"/></td>
             </tr>
           </form>
           {% for dancer in page_obj %}

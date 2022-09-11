@@ -1,21 +1,22 @@
 from django.db import models
 from datetime import date
 
+# dancer type has choices
+PRO = 'PRO'
+ADULT_AMATEUR = 'AM'
+JUNIOR_AMATEUR = 'JR'
+DANCER_TYPE_CHOICES = [
+    (PRO, 'Professional'),
+    (ADULT_AMATEUR, 'Amateur'),
+    (JUNIOR_AMATEUR , 'Junior'),
+]
+
 class Dancer(models.Model):
     # name fields
     name_first = models.CharField(max_length=25)
     name_middle = models.CharField(max_length=25, blank=True)
     name_last = models.CharField(max_length=50)
 
-    # dancer type has choices
-    PRO = 'PRO'
-    ADULT_AMATEUR = 'AM'
-    JUNIOR_AMATEUR = 'JR'
-    DANCER_TYPE_CHOICES = [
-        (PRO, 'Professional'),
-        (ADULT_AMATEUR, 'Amateur'),
-        (JUNIOR_AMATEUR , 'Junior'),
-    ]
     dancer_type = models.CharField(
         max_length=3,
         choices=DANCER_TYPE_CHOICES,
