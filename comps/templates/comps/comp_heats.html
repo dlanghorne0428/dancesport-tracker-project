@@ -74,14 +74,12 @@
     const heat_filter_form = document.getElementById("heat-filter-form");
 
     // get form fields
-    const base_value = document.getElementById("base-value-filter");
     const category = document.getElementById("category-filter");
     const heat_number = document.getElementById("heat-number-filter");
     const dance_style = document.getElementById("dance-style-filter");
     const heat_info = document.getElementById("info-filter");
     
     // add event listener for changes to the selection on any of the form fields
-    base_value.addEventListener('change', mySubmitFunction);
     category.addEventListener('change', mySubmitFunction);
     heat_number.addEventListener('change', mySubmitFunction);
     dance_style.addEventListener('change', mySubmitFunction);
