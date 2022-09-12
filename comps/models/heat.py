@@ -27,24 +27,24 @@ DANCE_STYLE_CHOICES = [
     (UNKNOWN, "Unknown"),
 ]
 
-# the heat categories
-# Each category has a separate sequence of heat numbers
-PRO_HEAT = 'PH'
-NORMAL_HEAT = 'NH'
-SOLO = "SO"
-FORMATION = "4M"
-CATEGORY_CHOICES = [
-    (PRO_HEAT, "Pro heat"),
-    (NORMAL_HEAT, "Heat"),
-    (SOLO, "Solo"),
-    (FORMATION, "Formation")
-]
-
 
 class Heat(models.Model):
     '''Define information for a single heat'''
     # refer to the competition that hosted this heat
     comp = models.ForeignKey('Comp', on_delete=models.CASCADE)
+    
+    # the heat categories
+    # Each category has a separate sequence of heat numbers
+    PRO_HEAT = 'PH'
+    NORMAL_HEAT = 'NH'
+    SOLO = "SO"
+    FORMATION = "4M"
+    CATEGORY_CHOICES = [
+        (PRO_HEAT, "Pro heat"),
+        (NORMAL_HEAT, "Heat"),
+        (SOLO, "Solo"),
+        (FORMATION, "Formation")
+    ]    
 
     category = models.CharField(max_length = 2, choices = CATEGORY_CHOICES, default = NORMAL_HEAT)
     heat_number = models.IntegerField()
