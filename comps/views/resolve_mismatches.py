@@ -92,7 +92,8 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                     new_couple.save()
                     comp_couple_obj = Comp_Couple()
                     comp_couple_obj.populate(comp, new_couple, first_unmatched.entry.shirt_number)
-                    comp_couple_obj.save()
+                    if Comp_Couple.objects.filter(couple=new_couple, comp=comp).count() == 0:
+                        comp_couple_obj.save()
                     resolve_unmatched_entries(new_couple, code, similar_unmatched)
                 except:
                     new_couple.delete()
@@ -146,7 +147,8 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                         # save resolved couple in comp_couple
                         comp_couple_obj = Comp_Couple()
                         comp_couple_obj.populate(comp, pm_couple, first_unmatched.entry.shirt_number)
-                        comp_couple_obj.save()
+                        if Comp_Couple.objects.filter(couple=pm_couple, comp=comp).count() == 0:
+                            comp_couple_obj.save()
                         resolve_unmatched_entries(pm_couple, pm_code, similar_unmatched, submit == "Override Type")
                         break
                 return redirect('comps:resolve_mismatches', comp_id = comp_id)
