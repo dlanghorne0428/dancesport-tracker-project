@@ -14,40 +14,40 @@
 
 {% for item in heat_data %}
   <div class="row">
-    <div class="col-2">
-      {% if forloop.counter == 1 %}
+  
+    {% if forloop.counter == 1 %}
+      <div class="col-3 text-left">
         {% if prev_heat_id %}
-          <a class="text-left" href="{% url 'comps:heat' prev_heat_id %}" class="btn btn-link">Previous Heat</a>
+          <a class="btn btn-link" href="{% url 'comps:heat' prev_heat_id %}">Previous Heat</a>
         {% endif %}
-      {% endif %}
-    </div>
-    <div class="col-8">
-      {% if forloop.counter == 1 %}
+      </div>
+      <div class="col-6">
         <h3 class="text-center d-none d-lg-block">{{ item.heat.time }}</h3>
         <h4 class="text-center d-block d-lg-none">{{ item.heat.time }}</h4>
-      {% endif %}
+      </div>
+      <div class="col-3 text-right">
+        {% if next_heat_id %}
+          <a class="btn btn-link" href="{% url 'comps:heat' next_heat_id %}">Next Heat</a>
+        {% endif %}
+      </div>
+    {% endif %}
+    
+    <div class="col-12">
       {% if show_edit_button %}
-        <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h4>
-        <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h5>
+        <h4 class="text-center d-none d-lg-block">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h4>
+        <h5 class="text-center d-block d-lg-none">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }} <a href="{% url 'comps:edit_heat' item.heat.id %}" class="badge badge-link">Edit</a></h5>
         {% if item.error %}
           <p class="text-center bg-warning mt-0">{{ item.error }}</p>
         {% endif %}
       {% else %}
-        <h4 class="text-center d-none d-lg-block mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h4>
-        <h5 class="text-center d-block d-lg-none mt-3">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h5>
-      {% endif %}
-    </div>
-    <div class="col-2">
-      {% if forloop.counter == 1 %}
-        {% if next_heat_id %}
-          <a class="text-right" href="{% url 'comps:heat' next_heat_id %}" class="btn btn-link">Next Heat</a>
-        {% endif %}
+        <h4 class="text-center d-none d-lg-block">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h4>
+        <h5 class="text-center d-block d-lg-none">{{ item.heat.get_category_display }} {{ item.heat.heat_number}}{{item.heat.extra}}: {{ item.heat.info }}</h5>
       {% endif %}
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-12 col-xl-10 offset-xl-1 border border-dark p-0">
+  <div class="row mb-2">
+    <div class="col-12 col-xl-10 offset-xl-1 p-0">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
@@ -64,7 +64,7 @@
             {% if item.results_available %}
               <th class="text-center">Result</th>
               {% if comp.process_state == 'ELO'%}
-                <th class="text-center">Elo Change</th>
+                <th class="text-center">Rating +/-</th>
               {% else %}
                 <th class="text-center">Points</th> 
               {% endif %}
