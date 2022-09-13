@@ -17,8 +17,10 @@
     <table class="table table-sm table-bordered">
       <thead class="thead-dark">
         <tr>
-          <th class="text-center">Start Date</th>
-          <th class="text-center">End Date</th>
+          <th class="text-center d-none d-md-table-cell">Start Date</th>
+          <th class="text-center d-none d-md-table-cell">End Date</th>
+          <th colspan="2" class="text-center d-table-cell d-md-none">Dates</th>
+          
           <th class="text-center">Title</th>
           <th class="text-center">Location</th>
         </tr>
@@ -27,15 +29,15 @@
         <form class="mx-auto" id='comp-filter-form' method="get">
           {% csrf_token %}
           <tr class="table-primary">
-            <td colspan="2" class='text-right'><input class="btn btn-outline-light btn-sm" type="submit" name="btn-submit" value="&#128270;"/></td>
+            <td colspan="2" class='text-right'><input type="submit" name="btn-submit" value="&#128270;"/></td>
             <td id='title-filter' class="text-center">{{ filter.form.title }}</td>
             <td id='location-filter' class="text-center">{{ filter.form.location }}</td>
           </tr>
         </form>
         {% for comp in page_obj %}
           <tr>
-            <td class="text-center">{{ comp.start_date }}</td>
-            <td class="text-center">{{ comp.end_date }}</td>
+            <td class="text-center">{{ comp.start_date|date:"n/j/y" }}</td>
+            <td class="text-center">{{ comp.end_date|date:"n/j/y" }}</td>
 
             <td class="text-center"><a href="{% url 'comps:comp_detail' comp.id %}"">{{ comp.title }}</a></td>
             <td class="text-center">{{ comp.location }}</td>
