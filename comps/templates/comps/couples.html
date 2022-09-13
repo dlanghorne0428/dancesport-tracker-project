@@ -23,9 +23,9 @@
           <form class="mx-auto" id='couple-filter-form' method="POST">
             {% csrf_token %}
             <tr class="table-primary">
-              <td colspan="4"  id='name-filter' class="text-center"><strong>Filter </strong> {{ form.name }}</td>
+              <td colspan="4"  id='name-filter' class="text-center">{{ form.name }}</td>
               <td id='number-filter' class="text-center">{{ form.number }}</td>
-              <td class="text-center"><input class="btn btn-primary btn-sm" type="submit" name="btn-submit" value="Submit"/></td>
+              <td class="text-center"><input  type="submit" name="btn-submit" value="&#128269;"/></td>
             </tr>
           </form>
         {% for comp_couple in page_obj %}

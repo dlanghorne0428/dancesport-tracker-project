@@ -108,7 +108,7 @@
         <div class="col-12 text-center">
           <a class="btn btn-info" href="{% url 'comps:dancers' comp.id %}">Dancers</a>
           <a class="btn btn-info" href="{% url 'comps:couples' comp.id %}">Couples</a>
-          {% if comp.process_state == comp.RESULTS_RESOLVED %}
+          {% if comp.process_state == comp.RESULTS_RESOLVED or comp.process_state == comp.ELO_RATINGS_UPDATED %}
             <a class="btn btn-info" href="{% url 'comps:comp_heats' comp.id %}">Results</a>
           {% else %}
             <a class="btn btn-info" href="{% url 'comps:comp_heats' comp.id %}">Heats</a>

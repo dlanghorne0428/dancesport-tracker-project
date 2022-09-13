@@ -34,7 +34,7 @@
         <form class="mx-auto" id='heat-filter-form' method="get">
           {% csrf_token %}
           <tr class="table-primary">
-            <td class="text-right d-none d-sm-table-cell"> <input class="btn btn-outline-light btn-sm" type="submit" name="btn-submit" value="&#128270;"/></td>
+            <td class="text-right d-none d-sm-table-cell"> <input type="submit" name="btn-submit" value="&#128270;"/></td>
             <td id='category-filter' class="text-center">{{ filter.form.category }}</td>
             <td id='heat-number-filter' class="text-center">{{ filter.form.heat_number }}</td>
             <td id='dance-style-filter' class="text-center d-none d-md-table-cell">{{ filter.form.style }}</td>
@@ -43,7 +43,7 @@
         </form>
         {% for heat in page_obj %}
         <tr>
-          <td class="text-center d-none d-sm-table-cell">{{ heat.time }}</td>
+          <td class="text-center d-none d-sm-table-cell">{{ heat.time|date:"D h:i A" }}</td>
           <td class="text-center">{{ heat.get_category_display }}</td>
           {% if heat.extra %}
             <td class="text-center">{{ heat.heat_number }}{{ heat.extra }}</td>
