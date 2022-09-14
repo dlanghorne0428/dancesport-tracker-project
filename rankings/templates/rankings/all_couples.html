@@ -24,7 +24,8 @@
           {% for couple in page_obj %}
           <tr>
             <td class='text-center'>{{ couple.dancer_1 }}</td>
-            <td class='text-center'>and</td>
+            <td class='text-center d-sm-none'>-</td>
+            <td class='text-center d-none d-sm-table-cell'>and</td>
             <td class='text-center'>{{ couple.dancer_2 }}</td>
             <td class='text-center'><a href="{% url 'view_couple' couple.id %}"">{{ couple.get_couple_type_display }}</a></td>
           </tr>

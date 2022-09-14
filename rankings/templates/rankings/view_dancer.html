@@ -43,7 +43,8 @@
       {% for p in partnerships %}
       <tr>
         <td class='text-center'>{{ p.couple.dancer_1 }}</td>
-        <td class='text-center'>and</td>
+        <td class='text-center d-sm-none'>-</td>
+        <td class='text-center d-none d-sm-table-cell'>and</td>
         <td class='text-center'>{{ p.couple.dancer_2 }}</td>
         <td class='text-center'>{{ p.couple.get_couple_type_display }}</td>
         <td class='text-center'>{{ p.rating.get_style_display }}</td>

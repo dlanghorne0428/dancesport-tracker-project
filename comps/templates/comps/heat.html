@@ -85,7 +85,8 @@
             {% else %}
               <td>TBD</td>
             {% endif %}
-            <td class="text-center">and</td>
+            <td class='text-center d-sm-none'>-</td>
+            <td class='text-center d-none d-sm-table-cell'>and</td>
             {% if entry.couple.dancer_2 %}
               <td class="text-center"><a class="text-dark" href="{% url 'view_dancer' entry.couple.dancer_2.id %}">{{ entry.couple.dancer_2 }}</a></td>
             {% else %}

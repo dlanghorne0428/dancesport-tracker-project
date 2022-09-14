@@ -20,13 +20,13 @@
     <table class="table table-bordered table-sm">
       <thead class="thead-dark">
         <tr>
-          <th class="text-center d-none d-sm-table-cell">Time</th>
+          <th class="text-center">Time</th>
           <th class="text-center">Category</th>
           <th class="text-center">Number</th>
           <th class="text-center d-table-cell d-md-none">Description</th>
           <th colspan="2" class="text-center d-none d-md-table-cell">Description</th>
           {% if show_elo %}
-            <th class="text-center">Elo Value</th>
+            <th class="text-center d-none d-sm-table-cell">Elo Value</th>
           {% endif %}
         </tr>
       </thead>
@@ -34,7 +34,7 @@
         <form class="mx-auto" id='heat-filter-form' method="get">
           {% csrf_token %}
           <tr class="table-primary">
-            <td class="text-right d-none d-sm-table-cell"> <input type="submit" name="btn-submit" value="&#128270;"/></td>
+            <td class="text-right"> <input type="submit" name="btn-submit" value="&#128270;"/></td>
             <td id='category-filter' class="text-center">{{ filter.form.category }}</td>
             <td id='heat-number-filter' class="text-center">{{ filter.form.heat_number }}</td>
             <td id='dance-style-filter' class="text-center d-none d-md-table-cell">{{ filter.form.style }}</td>
@@ -43,7 +43,7 @@
         </form>
         {% for heat in page_obj %}
         <tr>
-          <td class="text-center d-none d-sm-table-cell">{{ heat.time|date:"D h:i A" }}</td>
+          <td class="text-center">{{ heat.time|date:"D h:i A" }}</td>
           <td class="text-center">{{ heat.get_category_display }}</td>
           {% if heat.extra %}
             <td class="text-center">{{ heat.heat_number }}{{ heat.extra }}</td>
@@ -54,9 +54,9 @@
           <td colspan="2" class="text-center d-none d-md-table-cell"><a href="{% url 'comps:heat' heat.id %}">{{ heat.info}}</a></td>
           {% if show_elo %}
             {% if heat.initial_elo_value %}
-              <td class="text-center">{{ heat.initial_elo_value }}</td>
+              <td class="text-center d-none d-sm-table-cell">{{ heat.initial_elo_value }}</td>
             {% else %}
-              <td></td>
+              <td class="d-none d-sm-table-cell"></td>
             {% endif %}
           {% endif %}
         </tr>
