@@ -56,20 +56,25 @@
               Couple
               <a href="{% url 'comps:heat' item.heat.id 4 %}">&uarr;</a>
             </th>
-            <th class="text-center d-none d-sm-table-cell">
-              <a href="{% url 'comps:heat' item.heat.id 3 %}">&darr;</a>
-                Shirt Number
-              <a href="{% url 'comps:heat' item.heat.id 2 %}">&uarr;</a>
-            </th>
             {% if item.results_available %}
+              <th class="text-center d-none d-sm-table-cell">
+                <a href="{% url 'comps:heat' item.heat.id 3 %}"> &darr; </a>
+                  Shirt #
+                <a href="{% url 'comps:heat' item.heat.id 2 %}"> &uarr; </a>
+              </th>
               <th class="text-center">Result</th>
               {% if comp.process_state == 'ELO'%}
-                <th class="text-center">Rating +/-</th>
+                <th class="text-center d-none d-sm-table-cell">Rating +/-</th>
               {% else %}
-                <th class="text-center">Points</th> 
+                <th class="text-center d-none d-sm-table-cell">Points</th> 
               {% endif %}
             {% else %}
               <th class="text-center">
+                <a href="{% url 'comps:heat' item.heat.id 3 %}"> &darr; </a>
+                  Shirt #
+                <a href="{% url 'comps:heat' item.heat.id 2 %}"> &uarr; </a>
+              </th>
+              <th class="text-center d-none d-sm-table-cell">
                 <a href="{% url 'comps:heat' item.heat.id 1 %}">&darr;</a>
                 Elo Rating
                 <a href="{% url 'comps:heat' item.heat.id 0 %}">&uarr;</a>
@@ -92,8 +97,8 @@
             {% else %}
               <td>TBD</td>
             {% endif %}
-            <td class="text-center d-none d-sm-table-cell">{{ entry.shirt_number }}</td>
             {% if item.results_available %}
+              <td class="text-center d-none d-sm-table-cell">{{ entry.shirt_number }}</td>
               {% if show_edit_button %}
                 {% if entry.result|length > 0 %}
                   <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.result }}</a></td>
@@ -106,20 +111,21 @@
                 {% endif %}
               {% endif %}
               {% if comp.process_state == 'ELO'%}
-                <td class="text-center">{{ entry.elo_adjust}}</td>
+                <td class="text-center d-none d-sm-table-cell">{{ entry.elo_adjust}}</td>
               {% else %}
-                <td class="text-center">{{ entry.points}}</td>
+                <td class="text-center d-none d-sm-table-cell">{{ entry.points}}</td>
               {% endif %}
             {% else %}
+              <td class="text-center">{{ entry.shirt_number }}</td>
               {% if show_edit_button %}
                 {% if entry.rating %}
-                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.rating}}</a></td>
+                  <td class="text-center d-none d-sm-table-cell"><a href="{% url 'comps:edit_heat_entry' entry.id %}">{{ entry.rating}}</a></td>
                 {% else %}
-                  <td class="text-center"><a href="{% url 'comps:edit_heat_entry' entry.id %}">None</a></td>
+                  <td class="text-center d-none d-sm-table-cell"><a href="{% url 'comps:edit_heat_entry' entry.id %}">None</a></td>
                 {% endif %}
               {% else %}
                 {% if entry.rating %}
-                  <td class="text-center">{{ entry.rating}}</td>
+                  <td class="text-center d-none d-sm-table-cell">{{ entry.rating}}</td>
                 {% endif %}
               {% endif %}
             {% endif %}
