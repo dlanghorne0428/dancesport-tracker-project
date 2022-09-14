@@ -99,7 +99,7 @@
           {% if comp.process_state == comp.RESULTS_RESOLVED or comp.process_state == comp.ELO_RATINGS_UPDATED %}
             <a class="dropdown-item" href="{% url 'comps:comp_heats' comp.id %}">Results</a>
           {% else %}
-            <a class="dropdown-item" href="{% url 'comps:comp_heats' comp.id %}">Heats</a>
+            <a class="dropdown-item" href="{% url 'comps:comp_heats' comp.id %}">Program</a>
           {% endif %}
         </div>
       </span>
@@ -111,7 +111,7 @@
           {% if comp.process_state == comp.RESULTS_RESOLVED or comp.process_state == comp.ELO_RATINGS_UPDATED %}
             <a class="btn btn-info" href="{% url 'comps:comp_heats' comp.id %}">Results</a>
           {% else %}
-            <a class="btn btn-info" href="{% url 'comps:comp_heats' comp.id %}">Heats</a>
+            <a class="btn btn-info" href="{% url 'comps:comp_heats' comp.id %}">Program</a>
           {% endif %}
         </div>
       </div>
