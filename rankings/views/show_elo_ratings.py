@@ -8,43 +8,74 @@ from rankings.models.elo_rating import EloRating
 #from operator import itemgetter
 
 
-def show_elo_ratings(request, couple_type, dance_style):
-
-    elo_ratings = EloRating.objects.filter(style=dance_style, couple__couple_type=couple_type, value__isnull=False).order_by('-value')
-    if len(elo_ratings) == 0:
-        return render(request, 'rankings/elo_ratings.html', {'dance_style': dance_style, 'couple_type': couple_type, 'error': "No Ratings Available"})
-
-    style_label = elo_ratings[0].get_style_display()
-    couple_type_label = elo_ratings[0].couple.get_couple_type_display()
-
+def show_elo_ratings(request):
     
+    couple_types = Couple.COUPLE_TYPE_CHOICES
+    couple_type_choices = list()
+    for c in couple_types:
+        couple_type_choices.append(c[0])
+    couple_type_labels = list()
+    for c in couple_types:
+        couple_type_labels.append(c[1])
+
+    styles = DANCE_STYLE_CHOICES
+    style_choices = list()
+    for s in styles:
+        style_choices.append(s[0])
+    style_labels = list()
+    for s in styles:
+        style_labels.append(s[1])
+
     if request.method == "GET":
-        last_name = request.GET.get('last_name')
         page_number = request.GET.get('page')
+        heat_couple_type = request.GET.get('type')
+        if heat_couple_type is None:
+            heat_couple_type = "PRC"
+        index = couple_type_choices.index(heat_couple_type)
+        couple_type = couple_type_labels[index]
+
+        heat_style = request.GET.get('style')
+        if heat_style is None:
+            heat_style = "SMOO"
+        index = style_choices.index(heat_style)
+        style = style_labels[index]
+
+        last_name = request.GET.get('last_name') 
+        
     else:
         page_number = 1
-        url_string = request.path
-        last_name = request.POST.get('last_name')
+        couple_type_index = int(request.POST.get("couple_type"))
+        #index = couple_type_labels.index(couple_type)
+        heat_couple_type = Couple.COUPLE_TYPE_CHOICES[couple_type_index][0]
+        style = request.POST.get("style")
+        index = style_labels.index(style)
+        heat_style = DANCE_STYLE_CHOICES[index][0]
+        current_url = request.path
+        url_string = current_url +"?type=" + heat_couple_type + "&style=" + heat_style
+        last_name = request.POST.get("last_name")
         if last_name is not None:
-            url_string += "?last_name=" + last_name  
+            url_string += "&last_name=" + last_name
         return redirect(url_string)
-        
+
+    elo_ratings = EloRating.objects.filter(style=heat_style, couple__couple_type=heat_couple_type, value__isnull=False).order_by('-value')
+
     couple_data = list()
     index = 1
     for r in elo_ratings:
         couple_data.append({'index': index, 'rating': r})
         index += 1
-    
+
     # filter for last name and paginate the rankings
     if last_name is not None:
         if len(last_name) > 0:
             couple_data = list(filter(lambda dancer: last_name.lower() in dancer['rating'].couple.dancer_1.name_last.lower()  or \
                                                      last_name.lower() in dancer['rating'].couple.dancer_2.name_last.lower(), couple_data))
 
-    
+
     paginator = Paginator(couple_data, 16)
     page_obj = paginator.get_page(page_number)
-    return render(request, 'rankings/elo_ratings.html', {'page_obj': page_obj, 'dance_style': style_label, 'couple_type': couple_type_label})
+    return render(request, 'rankings/elo_ratings.html', {'page_obj': page_obj, 'styles': style_labels, 'selected_style': style,
+                                                         'couple_types': couple_type_labels, 'selected_couple_type': couple_type})
 
 
 def edit_elo_ratings(request, couple_pk,  dance_style):

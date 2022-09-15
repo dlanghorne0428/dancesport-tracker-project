@@ -33,7 +33,7 @@
 
       {% for r in elo_ratings %}
         <tr>
-          <td class="text-center"><a href="{% url 'show_elo_ratings' r.couple.couple_type r.style %}">{{ r.get_style_display }}</a></td>
+          <td class="text-center"><a href="{% url 'show_elo_ratings' %}?type={{ r.couple.couple_type }}&style={{ r.style }}">{{ r.get_style_display }}</a></td>
           <td class="text-center">{{ r.num_events}}</td>
           {% if show_admin_buttons %}
             <td class="text-center"><a href="{% url 'edit_elo_ratings' r.couple.id r.style %}">{{ r.value|floatformat:2}}</a></td>
