@@ -1,6 +1,6 @@
 import django_filters
 from django import forms
-from .models import Dancer
+from .models.dancer import Dancer
 
 class DancerFilter(django_filters.FilterSet):
     name_last = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'size':16, 'placeholder': 'last name'}))
