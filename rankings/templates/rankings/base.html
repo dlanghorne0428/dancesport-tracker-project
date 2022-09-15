@@ -67,59 +67,8 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'all_dancers' %}">Dancers</a>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-              data-toggle="dropdown" aria-expanded="false">Elo Ratings
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <li>
-                <a class="dropdown-item" href="#">Professionals &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PRC' 'SMOO' %}">Smooth</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PRC' 'RHY' %}">Rhythm</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PRC' 'STD' %}">Standard</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PRC' 'LAT' %}">Latin</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PRC' 'CAB' %}">Cabaret</a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">Pro-Am &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PAC' 'SMOO' %}">Smooth</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PAC' 'RHY' %}">Rhythm</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PAC' 'STD' %}">Standard</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PAC' 'LAT' %}">Latin</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'PAC' 'NC' %}">Night Club</a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">Am-Am &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'AMC' 'SMOO' %}">Smooth</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'AMC' 'RHY' %}">Rhythm</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'AMC' 'STD' %}">Standard</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'AMC' 'LAT' %}">Latin</a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">Juniors &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JAC' 'SMOO' %}">Smooth</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JAC' 'RHY' %}">Rhythm</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JAC' 'STD' %}">Standard</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JAC' 'LAT' %}">Latin</a></li>
-                </ul>
-              </li>
-              <li>
-                <a class="dropdown-item" href="#">JrAm-Pro &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JPC' 'SMOO' %}">Smooth</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JPC' 'RHY' %}">Rhythm</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JPC' 'STD' %}">Standard</a></li>
-                  <li><a class="dropdown-item" href="{% url 'show_elo_ratings' 'JPC' 'LAT' %}">Latin</a></li>
-                </ul>
-              </li>
-            </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'show_elo_ratings' %}">Ratings</a>
           </li>
         </ul>
       </div>
