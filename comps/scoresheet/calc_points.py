@@ -134,6 +134,31 @@ def calc_points(level, placement, num_competitors = 6, rounds = "F", score = 0, 
         return max_pts * percent / 100
     else:  # only one entry
         return max_pts * 0.6
+    
+
+def initial_elo_rating(category, info):
+    info_up = info.upper()
+    if category == "PH":
+        if "RISING STAR" in info_up or "RS" in info_up or "NOVICE" in info_up or "BASIC" in info_up or "PRE-CHAMP" in info_up or "CLOSED" in info_up:
+            return 1500
+        else:
+            return 1750
+
+    if 'GOLD' in info_up:
+        return 1250
+    if 'SILVER' in info_up:
+        return 1000
+    if 'BRONZE' in info_up or 'NEWCOMER' in info_up or 'NOVICE' in info_up:
+        return 750
+    if 'PRE-CHAMP' in info_up or 'PRE CHAMP' in info_up or 'PRECHAMP' in info_up or 'RISING STAR' in info_up or 'CLOSED' in info_up:
+        return 1000 
+    if 'OPEN' in info_up or 'ADVANCED' in info_up or 'SCHOLAR' in info_up or 'CHAMP' in info_up or 'SLAM' in info_up or 'DSS' in info_up or "DANCESPORT SERIES" in info_up:
+        return 1250
+    if 'CHALLENGE' in info_up:
+        return 1000
+    else:
+        print('Unknown level for ' + info)
+        return None
 
 
 '''Main program for testing'''
