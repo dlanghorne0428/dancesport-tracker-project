@@ -4,5 +4,6 @@ from .calc_teacher_rankings import *
 from .couple_crud import *
 from .dancer_crud import *
 from .home import *
+from .recalc_elo_ratings import *
 from .show_elo_ratings import *
 from .user_access import *

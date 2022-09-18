@@ -29,6 +29,7 @@ urlpatterns = [
     path('login/', views.loginuser, name="loginuser"),
     path('logout/', views.logoutuser, name="logoutuser"),
     path('elo/', views.show_elo_ratings, name="show_elo_ratings"),
+    path('elo_recalc/', views.recalc_elo_ratings, name="recalc_elo_ratings"),
     path('elo_edit/<int:couple_pk>/<str:dance_style>', views.edit_elo_ratings, name="edit_elo_ratings"),
     #path('rankings/', views.calc_rankings, name="calc_rankings"),
     #path('rankings/teachers', views.calc_teacher_rankings, name="calc_teacher_rankings"),

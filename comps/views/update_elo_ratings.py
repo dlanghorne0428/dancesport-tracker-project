@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
-from comps.tasks import update_elo_ratings_for_comp
+from comps.tasks import update_elo_ratings_for_comps
 from rankings.models.elo_rating import EloRating
                 
 
@@ -15,7 +15,10 @@ def update_elo_ratings(request, comp_id):
     if comp.process_state != Comp.RESULTS_RESOLVED:
         return redirect("comps:comp_detail", comp_id)
     
-    result = update_elo_ratings_for_comp.delay(comp_id)
+    comp_list = list()
+    comp_list.append(comp_id)
+    
+    result = update_elo_ratings_for_comps.delay(comp_list)
     
     return render(request, 'comps/update_elo_ratings.html', context={'task_id': result.task_id, 'comp': comp})
     

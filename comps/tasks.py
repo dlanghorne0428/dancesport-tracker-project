@@ -20,6 +20,7 @@ from comps.models.heat import Heat, UNKNOWN
 from comps.models.heat_entry import Heat_Entry
 from comps.models.result_error import Result_Error
 from comps.scoresheet.calc_points import initial_elo_rating
+from rankings.models.elo_rating import EloRating
 from multielo import MultiElo
 import numpy
 import time
@@ -272,87 +273,90 @@ def process_scoresheet_task(self, comp_data):
 
 
 @shared_task(bind=True)
-def update_elo_ratings_for_comp(self, comp_id):
+def update_elo_ratings_for_comps(self, comp_id_list):
     progress_recorder = ProgressRecorder(self)
 
-    comp = get_object_or_404(Comp, pk=comp_id)
+    for comp_id in comp_id_list:
+        comp = get_object_or_404(Comp, pk=comp_id)
+        
+        # initialize the multi-elo entries
+        elo = MultiElo(score_function_base=1.25)
+        
+        heats = Heat.objects.filter(comp=comp).order_by('time', 'heat_number')    
+        progress_recorder.set_progress(0, len(heats))
     
-    # initialize the multi-elo entries
-    elo = MultiElo(score_function_base=1.25)
-    
-    heats = Heat.objects.filter(comp=comp).order_by('time', 'heat_number')    
-    progress_recorder.set_progress(0, len(heats))
-
-    index = 0
-    result = len(heats)
-    # for each heat in this comp
-    for h in heats:
-        
-        index += 1
-        
-        # skip this heat if elo ratings have already been applied
-        if h.elo_applied:
-            info = ("Elo rating already applied: " + str (h))
-            print(info)
-        
-        else:
-            info = ("Updated Elo ratings for: " + str (h))
-            # get the entries for this heat in order of their results
-            entries = Heat_Entry.objects.filter(heat=h).order_by('-points')
+        index = 0
+        result = len(heats)
+        # for each heat in this comp
+        for h in heats:
             
-            # if there are multiple entries, update elo ratings for each entry
-            if len(entries) > 1:
-                # determine initial elo rating for entries with no previous rating
-                if h.initial_elo_value is None:
-                    heat_data = list()
-                    heat_data.append({'heat': h, 'entries': entries, 'results_available': False, 'error': "Unable to determine initial elo rating"})
-                    result = heat_data
-                    break
-                else:
-                    initial_rating = h.initial_elo_value   
-                    print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
+            index += 1
+            
+            # skip this heat if elo ratings have already been applied
+            if h.elo_applied:
+                info = ("Elo rating already applied: " + str (h))
+                progress_recorder.set_progress(index, len(heats), description=info)
+                print(info)
+            
+            else:
+                info = ("Updated Elo ratings for: " + str (h))
+                # get the entries for this heat in order of their results
+                entries = Heat_Entry.objects.filter(heat=h).order_by('-points')
                 
-                rating_list = list()
-                elo_inputs = list()
-                # for each entry
-                for e in entries:
-                    # get their existing elo rating or create one with initial rating
-                    try:
-                        rating = EloRating.objects.get(couple=e.couple, style=h.style)
-                        if rating.value is None:
+                # if there are multiple entries, update elo ratings for each entry
+                if len(entries) > 1:
+                    # determine initial elo rating for entries with no previous rating
+                    if h.initial_elo_value is None:
+                        heat_data = list()
+                        heat_data.append({'heat': h, 'entries': entries, 'results_available': False, 'error': "Unable to determine initial elo rating"})
+                        result = heat_data
+                        break
+                    else:
+                        initial_rating = h.initial_elo_value   
+                        print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
+                    
+                    rating_list = list()
+                    elo_inputs = list()
+                    # for each entry
+                    for e in entries:
+                        # get their existing elo rating or create one with initial rating
+                        try:
+                            rating = EloRating.objects.get(couple=e.couple, style=h.style)
+                            if rating.value is None:
+                                rating.value = initial_rating
+                                rating.save()
+                        except EloRating.DoesNotExist:
+                            rating = EloRating()
+                            rating.couple = e.couple
+                            rating.style = h.style
                             rating.value = initial_rating
                             rating.save()
-                    except EloRating.DoesNotExist:
-                        rating = EloRating()
-                        rating.couple = e.couple
-                        rating.style = h.style
-                        rating.value = initial_rating
-                        rating.save()
-                        
-                    rating_list.append(rating)
-                    elo_inputs.append(rating.value)
-                
-                new_ratings = elo.get_new_ratings(numpy.array(elo_inputs))
-                
-                for index in range(len(rating_list)):
-                    difference = new_ratings[index] - elo_inputs[index]
-                    #print('  ' + str(rating_list[index]) + ' ' + str(round(new_ratings[index], 2)) + ' ' + str(round(difference, 2)))
-    
-                    entries[index].elo_adjust = difference
-                    entries[index].save()
-                    rating_list[index].value = new_ratings[index]
-                    rating_list[index].num_events += 1
-                    rating_list[index].save()
+                            
+                        rating_list.append(rating)
+                        elo_inputs.append(rating.value)
                     
-                h.elo_applied = True
-                h.save()            
+                    new_ratings = elo.get_new_ratings(numpy.array(elo_inputs))
+                    
+                    for index in range(len(rating_list)):
+                        difference = new_ratings[index] - elo_inputs[index]
+                        #print('  ' + str(rating_list[index]) + ' ' + str(round(new_ratings[index], 2)) + ' ' + str(round(difference, 2)))
         
-    else:
-        # processed all heats, set process state accordingly
-        comp.process_state = Comp.ELO_RATINGS_UPDATED
-        comp.save()            
-    
-    progress_recorder.set_progress(index, len(heats), description=h.info)
+                        entries[index].elo_adjust = difference
+                        entries[index].save()
+                        rating_list[index].value = new_ratings[index]
+                        rating_list[index].num_events += 1
+                        rating_list[index].save()
+                        
+                    h.elo_applied = True
+                    progress_recorder.set_progress(index, len(heats), description=info)
+                    h.save()            
+            
+        else:
+            # processed all heats, set process state accordingly
+            comp.process_state = Comp.ELO_RATINGS_UPDATED
+            comp.save()            
+        
+
 
     
     return result
