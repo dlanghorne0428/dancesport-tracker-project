@@ -24,10 +24,16 @@
         <tr>
           <th class="text-center">Category</th>
           <th class="text-center">Number</th>
-          <th class="text-center d-none d-sm-table-cell">Time</th>
+          {% if results_available %}
+            <th class="text-center d-none d-sm-table-cell">Time</th>
+          {% else %}
+            <th class="text-center">Time</th>
+          {% endif %}
           <th class="text-center">Description</th>
-          <th class="text-center">Result</th>
-          <th class="text-center">Elo Change</th>
+          {% if results_available %}
+            <th class="text-center">Result</th>
+            <th class="text-center">Elo Change</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -35,14 +41,20 @@
         <tr>
           <td class="text-center">{{ entry.heat.get_category_display }}</td>
           <td class="text-center">{{ entry.heat.heat_number }}{{ entry.heat.extra }}</td>
-          <td class="text-center d-none d-sm-table-cell">{{ entry.heat.time }}</td>
-          <td class="text-center"><a href="{% url 'comps:heat' entry.heat.id %}">{{ entry.heat.info}}</a></td>
-          {% if entry.result|length > 0 %}
-            <td class="text-center">{{ entry.result }}</td>
-            <td class="text-center">{{ entry.elo_adjust}}</td>
+          {% if results_available %}
+            <td class="text-center d-none d-sm-table-cell">{{ entry.heat.time }}</td>
           {% else %}
-            <td></td>
-            <td></td>
+            <td class="text-center">{{ entry.heat.time|date:"D h:i A"  }}</td>
+          {% endif %}
+          <td class="text-center"><a href="{% url 'comps:heat' entry.heat.id %}">{{ entry.heat.info}}</a></td>
+          {% if results_available %}
+            {% if entry.result|length > 0 %}
+              <td class="text-center">{{ entry.result }}</td>
+              <td class="text-center">{{ entry.elo_adjust}}</td>
+            {% else %}
+              <td></td>
+              <td></td>
+            {% endif %}
           {% endif %}
         </tr>
         {% endfor %}
