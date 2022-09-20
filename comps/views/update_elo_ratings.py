@@ -1,10 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
 
 from comps.models.comp import Comp
-from comps.models.heat import Heat
-from comps.models.heat_entry import Heat_Entry
 from comps.tasks import update_elo_ratings_for_comps
-from rankings.models.elo_rating import EloRating
                 
 
 def update_elo_ratings(request, comp_id):
