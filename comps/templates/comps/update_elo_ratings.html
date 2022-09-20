@@ -1,0 +1,46 @@
+{% extends "rankings/base.html" %}
+{% load static %}
+{% block content %}
+{% if comp %}
+  <h1 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h1>
+  <h2 class="text-center">Updating Elo Ratings</h2>
+{% else %}
+  <h1 class="text-center">Recalculating Elo Ratings</h1>
+{% endif %}
+
+<div class='progress-wrapper'>
+  <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+</div>
+<div id="progress-bar-message">Waiting for progress to start...</div>
+
+<div id="celery-result"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+<script>
+  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+  function customProgress(progressBarElement, progressBarMessageElement, progress) {
+      progressBarElement.style.backgroundColor = '#68a9ef';
+      progressBarElement.style.width = progress.percent + "%";
+      var description = progress.description || "";
+      progressBarMessageElement.innerHTML = description + ' - event ' + progress.current + ' of ' + progress.total;
+    }
+
+  function customResult(resultElement, result) {
+    $( resultElement ).append(
+      $('<p>').text('Updated ratings for ' + result + " events." )
+    );
+  }
+
+  $(function () {
+    CeleryProgressBar.initProgressBar(progressUrl, {
+      onProgress: customProgress,
+      onResult: customResult,
+    })
+  });
+</script>
+
+{% endblock %}
