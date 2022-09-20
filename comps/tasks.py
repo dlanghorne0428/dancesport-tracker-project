@@ -276,26 +276,65 @@ def process_scoresheet_task(self, comp_data):
 def update_elo_ratings_for_comps(self, comp_id_list):
     progress_recorder = ProgressRecorder(self)
 
+    total_heats = 0
+    
+    # multiple comp IDs indicate we are recalculating the ratings from scratch
+    if len(comp_id_list) > 1:
+        print('Clearing couple elo ratings')
+        ratings = EloRating.objects.all()
+        progress_recorder.set_progress(0, len(ratings), description='clearing couple ratings')
+        
+        couple_index = 0
+        for r in ratings:
+            couple_index += 1   # increment progress indicator
+            r.value = None      # claar rating
+            r.num_events = 0    # reset number of events for this couple / style
+            r.save()   
+            progress_recorder.set_progress(couple_index, len(ratings), description='clearing couple ratings')
+    
+    # determine how many heats there are to recalculate
     for comp_id in comp_id_list:
         comp = get_object_or_404(Comp, pk=comp_id)
+        heats = Heat.objects.filter(comp=comp).order_by('time', 'heat_number') 
         
-        # initialize the multi-elo entries
-        elo = MultiElo(score_function_base=1.25)
+        # if recalculating all the ratings, reset the process state 
+        if len(comp_id_list) > 1:
+            if comp.process_state in [Comp.ELO_RATINGS_UPDATED, Comp.COMPLETE]:
+                comp.process_state = Comp.RESULTS_RESOLVED
+                comp.save() 
+            # if recalculating all the ratings, clear elo_applied flag for all heats
+            for h in heats:
+                if h.elo_applied:
+                    h.elo_applied = False
+                    h.save()     
         
-        heats = Heat.objects.filter(comp=comp).order_by('time', 'heat_number')    
-        progress_recorder.set_progress(0, len(heats))
+        # add the number of heats for this comp to the total. 
+        # If this is the only comp being processed this still works
+        total_heats += len(heats)
+        progress_recorder.set_progress(0, total_heats, description='collecting heats')
+        
+    heat_index = 0
     
-        index = 0
-        result = len(heats)
+    # initialize the multi-elo entries
+    elo = MultiElo(score_function_base=1.25)    
+    
+    for comp_id in comp_id_list:
+        # if recalculating all ratings, get the comp and heats for this comp id
+        # if only processing one comp, we already have the comp and heats
+        if len(comp_id_list) > 1:
+            comp = get_object_or_404(Comp, pk=comp_id)    
+            heats = Heat.objects.filter(comp=comp).order_by('time', 'heat_number')    
+    
+        result = total_heats
         # for each heat in this comp
         for h in heats:
             
-            index += 1
+            heat_index += 1
             
             # skip this heat if elo ratings have already been applied
             if h.elo_applied:
                 info = ("Elo rating already applied: " + str (h))
-                progress_recorder.set_progress(index, len(heats), description=info)
+                progress_recorder.set_progress(heat_index, total_heats, description=info)
                 print(info)
             
             else:
@@ -306,14 +345,12 @@ def update_elo_ratings_for_comps(self, comp_id_list):
                 # if there are multiple entries, update elo ratings for each entry
                 if len(entries) > 1:
                     # determine initial elo rating for entries with no previous rating
-                    if h.initial_elo_value is None:
-                        heat_data = list()
-                        heat_data.append({'heat': h, 'entries': entries, 'results_available': False, 'error': "Unable to determine initial elo rating"})
-                        result = heat_data
-                        break
+                    if h.initial_elo_value is None:                    
+                        print("No initial Elo value for " + str(h))   
+                        continue
                     else:
                         initial_rating = h.initial_elo_value   
-                        print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
+                        #print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
                     
                     rating_list = list()
                     elo_inputs = list()
@@ -348,7 +385,7 @@ def update_elo_ratings_for_comps(self, comp_id_list):
                         rating_list[index].save()
                         
                     h.elo_applied = True
-                    progress_recorder.set_progress(index, len(heats), description=info)
+                    progress_recorder.set_progress(heat_index, total_heats, description=info)
                     h.save()            
             
         else:
@@ -356,7 +393,5 @@ def update_elo_ratings_for_comps(self, comp_id_list):
             comp.process_state = Comp.ELO_RATINGS_UPDATED
             comp.save()            
         
-
-
     
     return result
