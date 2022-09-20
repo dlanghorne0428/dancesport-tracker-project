@@ -117,21 +117,29 @@ class Heat(models.Model):
             return False
         if "Solo Star" in s or "NP" in s:
             return False
-        left_pos = s.find('(')
-        right_pos = s.find(')')
-        if left_pos > -1 and right_pos > -1:
-            if "/" in s[left_pos:right_pos] or "," in s[left_pos:right_pos]:
-                return True
+        
+        num_parends = s.count('(')
+        left_pos = 0
+        for index in range(num_parends):
+            left_pos = s.find('(', left_pos)
+            right_pos = s.find(')', left_pos)
+            if left_pos > -1 and right_pos > -1:
+                if "/" in s[left_pos:right_pos] or "," in s[left_pos:right_pos]:
+                    return True
+                else:
+                    left_pos += 1
         else: # check for brackets
-            left_pos = s.find('[')
-            right_pos = s.find(']')
-            if left_pos == -1 or right_pos == -1:
-                return False
-            # ensure more than one character between the brackets
-            if right_pos > left_pos + 2:
-                return True
-            else:
-                return False
+            num_brackets = s.count('[')
+            left_pos = 0
+            for index in range(num_brackets):
+                left_pos = s.find('[', left_pos)
+                right_pos = s.find(']', left_pos)
+                if left_pos > -1 and right_pos > -1:
+                    # ensure more than one character between the brackets
+                    if right_pos > left_pos + 2:
+                        return True
+                    
+        return False
 
 
     def set_dance_style(self):
