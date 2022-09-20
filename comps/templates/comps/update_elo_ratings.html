@@ -1,8 +1,12 @@
 {% extends "rankings/base.html" %}
 {% load static %}
 {% block content %}
-<h1 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h1>
-<h2 class="text-center">Updating Elo Ratings</h2>
+{% if comp %}
+  <h1 class="text-center"><a class=text-dark href="{% url 'comps:comp_detail' comp.id %}">{{ comp.title }}</a></h1>
+  <h2 class="text-center">Updating Elo Ratings</h2>
+{% else %}
+  <h1 class="text-center">Recalculating Elo Ratings</h1>
+{% endif %}
 
 <div class='progress-wrapper'>
   <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
