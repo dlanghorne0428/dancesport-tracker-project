@@ -11,9 +11,11 @@
 
   <div class="row align-items-start">
 
-    <div class="col border border-dark">
-
+    <div class="col-6 border border-dark">
       <h4>Names from Heatlist</h4>
+          
+      {% include "rankings/pagination.html" %}
+      
       <ul>
         {% for dancer in page_obj %}
           {% if dancer.formatting_needed %}
@@ -23,11 +25,9 @@
           {% endif %}
         {% endfor %}
       </ul>
-
-      {% include "rankings/pagination.html" %}
     </div>
 
-    <div class="col border border-dark">
+    <div class="col-6 border border-dark">
       <h4 class="text-center">Format Name</h4>
       {% if current_name %}
         <div class="alert alert-info text-center" role="alert">

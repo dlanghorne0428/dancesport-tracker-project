@@ -13,8 +13,9 @@
   </div>
 </div>
 
-<div class="row align-items-start">
+{% include "rankings/pagination.html" %}
 
+<div class="row align-items-start">
 
   <div class="col-12 col-xl-10 offset-xl-1 px-0 border border-dark">
     <table class="table table-bordered table-sm">
@@ -63,9 +64,6 @@
         {% endfor %}
       </tbody>
     </table>
-
-    {% include "rankings/pagination.html" %}
-
   </div>
 </div>
 

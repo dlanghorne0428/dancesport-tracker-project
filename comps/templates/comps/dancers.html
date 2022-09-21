@@ -8,6 +8,8 @@
       <h3 class="text-center">Dancers</h3>
     </div>
   </div>
+  
+  {% include "rankings/pagination.html" %}
 
   <div class="row align-items-start">
     <div class="col-12 col-lg-8 offset-lg-2 border border-dark px-0">
@@ -41,8 +43,6 @@
           {% endfor %}
         </tbody>
       </table>
-
-      {% include "rankings/pagination.html" %}
     </div>
   </div>
   
