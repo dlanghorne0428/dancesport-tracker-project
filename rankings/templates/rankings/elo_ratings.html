@@ -10,6 +10,8 @@
 
   <p class='text-center bg-warning my-3'>{{ error }}</p>
   
+  {% include "rankings/pagination.html" %}
+  
   <div class="row">
     <div class="col-12 col-md-10 offset-md-1 pl-1 pl-md-3 bg-primary">
       <form class="mx-auto" id="elo-ranking-form" method="POST">
@@ -49,7 +51,7 @@
   </div>
   
   <div class="row">
-    <div class="col-12 col-md-10 offset-md-1 px-0">
+    <div class="col-12 col-md-10 offset-md-1 px-0 border border-dark">
       <table class="table table-bordered table-sm">
         <thead class="thead-dark">
           <tr>
@@ -80,8 +82,6 @@
           {% endfor %}
         </tbody>
       </table>
-
-      {% include "rankings/pagination.html" %}
       
       <p class='text-center mt-3'>Elo Ratings started in June 2021 at the Millenium Dancesport competition.</p>
       

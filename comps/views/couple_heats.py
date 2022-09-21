@@ -15,7 +15,6 @@ def couple_heats(request, comp_id, couple_id):
     couple = get_object_or_404(Couple, pk=couple_id)
     
     results_available = comp.process_state in [Comp.RESULTS_RESOLVED, Comp.ELO_RATINGS_UPDATED, Comp.COMPLETE]
-    print(results_available)
 
     heat_entries = Heat_Entry.objects.filter(heat__comp=comp, couple=couple).order_by('heat__time')
     paginator = Paginator(heat_entries, 16)
