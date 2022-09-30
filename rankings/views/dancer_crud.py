@@ -54,7 +54,7 @@ def all_dancers(request):
     return render(request, 'rankings/all_dancers.html', {'page_obj': page_obj, 'filter': f, 'show_admin_buttons': show_admin_buttons})
 
 
-def view_dancer(request, dancer_pk):
+def view_dancer(request, dancer_pk, couple_pk=None):
     # only show add and edit buttons for valid users
     show_admin_buttons = request.user.is_superuser
     all_comps = Comp.objects.all().order_by('-start_date')
@@ -64,6 +64,11 @@ def view_dancer(request, dancer_pk):
             comps_with_mismatches.append(comp)
 
     dancer = get_object_or_404(Dancer, pk=dancer_pk)
+    if couple_pk is not None:
+        marked_couple = get_object_or_404(Couple, pk=couple_pk) 
+        print(marked_couple)
+    else:
+        marked_couple = None
 
     couples = Couple.objects.filter(Q(dancer_1=dancer) | Q(dancer_2=dancer)).order_by('dancer_1', 'dancer_2')
     partnerships = list()
@@ -75,6 +80,7 @@ def view_dancer(request, dancer_pk):
             partnership = {'couple': c}
         partnerships.append(partnership)
     return render(request, 'rankings/view_dancer.html', {'dancer': dancer, 'partnerships': partnerships,
+                                                         'marked_partnership': marked_couple,
                                                          'comps_with_mismatches': comps_with_mismatches, 'show_admin_buttons': show_admin_buttons})
 
 

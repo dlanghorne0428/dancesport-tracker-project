@@ -41,29 +41,45 @@
       </tr>
 
       {% for p in partnerships %}
-      <tr>
-        <td class='text-center'>{{ p.couple.dancer_1 }}</td>
-        <td class='text-center d-sm-none'>-</td>
-        <td class='text-center d-none d-sm-table-cell'>and</td>
-        <td class='text-center'>{{ p.couple.dancer_2 }}</td>
-        <td class='text-center'>{{ p.couple.get_couple_type_display }}</td>
-        <td class='text-center'>{{ p.rating.get_style_display }}</td>
-        <td class='text-center'>{{ p.rating.value|floatformat:2  }}</td>
-        <td>
-          {% if show_admin_buttons %}
-            <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownActionButton" data-toggle="dropdown">Action</button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="{% url 'view_couple' p.couple.id %}">View</a>
-              <a class="dropdown-item" href="{% url 'change_couple_type' p.couple.id %}">Change Type</a>
-              <a class="dropdown-item" onclick="return confirm('Are you sure?')" href="{% url 'delete_couple' p.couple.id %}">Delete</a>
-              <a class="dropdown-item" href="{% url 'edit_couple' p.couple.id %}">Edit</a>
-              <a class="dropdown-item" href="{% url 'flip_couple' p.couple.id %}">Flip</a>
-            </div>
-          {% else %}
-            <a class="btn btn-primary btn-sm" href="{% url 'view_couple' p.couple.id %}">View</a>
-          {% endif %}
-        </td>
-      </tr>
+      
+        {% if p.couple.id == marked_partnership.id %}
+          <tr class='table-active'>
+        {% else %}
+          <tr>
+        {% endif %}
+
+          <td class='text-center'>{{ p.couple.dancer_1 }}</td>
+          <td class='text-center d-sm-none'>-</td>
+          <td class='text-center d-none d-sm-table-cell'>and</td>
+          <td class='text-center'>{{ p.couple.dancer_2 }}</td>
+          <td class='text-center'>{{ p.couple.get_couple_type_display }}</td>
+          <td class='text-center'>{{ p.rating.get_style_display }}</td>
+          <td class='text-center'>{{ p.rating.value|floatformat:2  }}</td>
+          <td>
+            {% if show_admin_buttons %}
+              {% if p.couple.id == marked_partnership.id %}
+                <span>Marked</span>
+              {% else %}
+                <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownActionButton" data-toggle="dropdown">Action</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="{% url 'view_couple' p.couple.id %}">View</a>
+                  <a class="dropdown-item" href="{% url 'change_couple_type' p.couple.id %}">Change Type</a>
+                  <a class="dropdown-item" onclick="return confirm('Are you sure?')" href="{% url 'delete_couple' p.couple.id %}">Delete</a>
+                  <a class="dropdown-item" href="{% url 'edit_couple' p.couple.id %}">Edit</a>
+                  <a class="dropdown-item" href="{% url 'flip_couple' p.couple.id %}">Flip</a>
+                  {% if marked_partnership %}
+                    <a class="dropdown-item" href="{% url 'combine_couples' marked_partnership.id p.couple.id %}">Merge</a>
+                    <a class="dropdown-item" href="{% url 'view_dancer' dancer.id %}">Unmark</a>
+                  {% else %}
+                    <a class="dropdown-item" href="{% url 'view_dancer' dancer.id p.couple.id %}">Mark</a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% else %}
+              <a class="btn btn-primary btn-sm" href="{% url 'view_couple' p.couple.id %}">View</a>
+            {% endif %}
+          </td>
+        </tr>
       {% endfor %}
     </table>
     {% if show_admin_buttons %}
