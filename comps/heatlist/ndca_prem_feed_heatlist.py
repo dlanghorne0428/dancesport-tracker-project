@@ -185,6 +185,9 @@ class NdcaPremFeedHeatlist(Heatlist):
         data = json.loads(response.text)
         print(len(data['Result']))
         for c in data['Result']:
+            if c['Type'] != 'Attendee':
+                print("Skipping: " + c['Type'] + ' ' + str(c['Name']))
+                continue;
             d = Heatlist_Dancer()
             d.load_from_ndca_premier_feed(c)
             d.comp = comp
