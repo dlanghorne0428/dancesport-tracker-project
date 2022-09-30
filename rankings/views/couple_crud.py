@@ -84,6 +84,7 @@ def combine_couples(request, couple_pk, couple2_pk):
     for entry in couple2_heat_entries:
         entry.couple = couple
         entry.save()
+    couple2.delete()
     return redirect('view_couple', couple_pk)
 
 
