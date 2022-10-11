@@ -147,12 +147,12 @@ class Results_Processor():
         # if extra field was TBD or BOBR, there may be more than one, so include the heat info field
         if e.heat.extra in ["TBD", "BOBR"]:
             heat_string += e.heat.extra + ": " + e.heat.info
-        elif len(e.heat.extra) > 0 and e.heat.extra[0].isalpha():
-            # if the extra field is a single character, include it (Heat 123A:)
-            heat_string += e.heat.extra[0] + ":"
+        elif len(e.heat.extra) > 0 and e.heat.extra.isalpha():
+            # if the extra field are alphanumerics, include them
+            heat_string += e.heat.extra + ":"
         else: # need the colon directly after the number, to distinguish 5 from 51, etc.
             heat_string += ":"
-
+        
         heat_info_from_scoresheet = None
 
         # If there are parenthesis in the heat info, the heat has multiple dances
