@@ -77,7 +77,7 @@ class Heatlist():
             comp_couple_in_database = Comp_Couple.objects.filter(comp=heat.comp, couple=couple)
             if comp_couple_in_database.count() == 0:
                 comp_couple_obj.populate(heat.comp, couple, shirt_number)
-                print(comp_couple_obj)
+                #print(comp_couple_obj)
                 comp_couple_obj.save()
         else:
             # populate and save partially completed heat entry
