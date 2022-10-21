@@ -30,7 +30,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 #ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default=[])
+CSRF_TRUSTED_ORIGINS = ['https://dancesport-tracker.up.railway.app']
     
 # Application definition
 
