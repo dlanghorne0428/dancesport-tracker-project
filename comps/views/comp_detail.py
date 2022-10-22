@@ -20,5 +20,5 @@ def comp_detail(request, comp_id):
             show_load_time = True
             print(show_load_time)
 
-    return redirect("comps:edit_comp", comp_id)
+    return redirect(request, "rankings/edit_comp.html", comp.id)
     #return render(request, "comps/comp_detail.html", {'comp':comp, 'show_load_buttons': show_load_buttons, 'show_load_time': show_load_time})
