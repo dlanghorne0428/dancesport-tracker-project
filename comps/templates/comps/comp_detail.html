@@ -3,7 +3,17 @@
 {% load static %}
 {% load cloudinary %}
 {% block content %}
+<div class="row">
 
+  {% if comp.logo != "" %}
+    <div class="d-none d-md-block col-12 p-0 text-center">
+      {% cloudinary comp.logo.public_id  height=324 width=576 crop="fit" %}
+    </div>
+    <div class="d-block d-md-none col-12 p-0 text-center">
+      {% cloudinary comp.logo.public_id  height=180 width=320 crop="fit" %}
+    </div>
+  {% endif %}
+</div>
 
 <div class="row">
   <div class="col-12">
