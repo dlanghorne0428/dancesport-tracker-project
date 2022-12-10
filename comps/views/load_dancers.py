@@ -52,7 +52,7 @@ def load_dancers(request, comp_id):
     print("Found " + str(len(dancers_in_comp)) + " dancers.")
     for d in heatlist.dancers:
 
-        if dancers_in_comp.contains(d):
+        if dancers_in_comp.filter(name=d.name).count() > 0:
             print("Found " + d.name)          
         else:
             print("Adding " + d.name)
