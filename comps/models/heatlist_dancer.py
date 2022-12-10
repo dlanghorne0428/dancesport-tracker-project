@@ -137,3 +137,6 @@ class Heatlist_Dancer(models.Model):
 
     def __str__(self):
         return self.name + ' ' + str(self.comp)
+
+    class Meta:
+        ordering = ['comp']
