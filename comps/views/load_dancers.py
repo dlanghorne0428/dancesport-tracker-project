@@ -50,7 +50,10 @@ def load_dancers(request, comp_id):
     for d in heatlist.dancers:
         in_database = Heatlist_Dancer.objects.filter(name = d.name, comp=comp)
         if in_database.count() == 0:
+            print("Adding " + d.name)
             d.save()
+        else:
+            print("Found " + d.name)
 
     comp.process_state = Comp.DANCERS_LOADED
     comp.save()
