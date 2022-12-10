@@ -48,9 +48,9 @@ def load_dancers(request, comp_id):
         heatlist.dancers.append(d)
 
     for d in heatlist.dancers:
+        print("Processing " + d.name)
         in_database = Heatlist_Dancer.objects.filter(name = d.name, comp=comp)
         if in_database.count() == 0:
-            print("Adding " + d.name)
             d.save()
         else:
             print("Found " + d.name)
