@@ -47,6 +47,7 @@ def load_dancers(request, comp_id):
         d.comp = comp
         heatlist.dancers.append(d)
 
+    print("looking for dancers in this comp")
     dancers_in_comp = Heatlist_Dancer.objects.filter(comp=comp)
     for d in heatlist.dancers:
 
