@@ -47,9 +47,11 @@ def load_dancers(request, comp_id):
         d.comp = comp
         heatlist.dancers.append(d)
 
+    print("Attempting to load " + str(len(heatlist.dancers)) + 'dancers')
     print("looking for dancers in this comp")
     dancers_in_comp = Heatlist_Dancer.objects.filter(comp=comp)
     print("Found " + str(len(dancers_in_comp)) + " dancers.")
+
     for d in heatlist.dancers:
 
         if dancers_in_comp.filter(name=d.name).count() > 0:
