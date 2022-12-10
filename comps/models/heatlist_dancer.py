@@ -102,6 +102,7 @@ class Heatlist_Dancer(models.Model):
         '''This method populates the object from a JSON object from a heatlist in NDCA Premier format.'''
         # find the dancer's name
         name_field = json_record["Name"]
+        print(name_field)
         if len(name_field) == 2 and name_field[0] is not None and name_field[1] is not None:
             self.name = name_field[1] + ", " + name_field[0]
         else:
