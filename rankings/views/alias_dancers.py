@@ -12,9 +12,10 @@ def alias_dancers(request, level=2):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     
-    no_comp_list = Heatlist_Dancer.objects.filter(comp__is_null=True)
+    print("Looking for Heatlist Dancers with no comp")
+    no_comp_list = Heatlist_Dancer.objects.filter(comp__isnull=True)
     if len(no_comp_list) > 0:
-        print("Removing " + len(no_comp_list) + 'entries')
+        print("Removing " + str(len(no_comp_list)) + ' entries')
         for d in no_comp_list:
             d.delete()
 
