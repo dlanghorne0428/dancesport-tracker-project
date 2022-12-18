@@ -83,7 +83,6 @@ def process_dancers_task(self, comp_data, heatlist_data):
                     d.save()
                 except IntegrityError:
                     print("Duplicate key: " + str(d.id))
-                    d.id += 1
                     num_tries += 1
                     if num_tries == 5:
                         return -1
