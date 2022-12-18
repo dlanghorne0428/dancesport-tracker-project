@@ -2,6 +2,7 @@ from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 from datetime import datetime, date, timezone, timedelta
 from django.core import serializers
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from .heatlist.file_based_heatlist import FileBasedHeatlist
 from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
@@ -74,18 +75,20 @@ def process_dancers_task(self, comp_data, heatlist_data):
         d = heatlist_dancers[index]
         progress_recorder.set_progress(index + 1, num_dancers, description=d.name)
         if dancers_in_comp.filter(name=d.name).count() == 0:      
-            print("Adding " + d.name + ' ' + str(d.id))
+            print("Adding " + d.name)
             saved = False
+            num_tries = 0
             while not saved:
                 try:
-                    Heatlist_Dancer.objects.get(id=d.id)
-                except Heatlist_Dancer.DoesNotExist:
                     d.save()
-                    saved = True
-                    break
-                else:
-                    print("avoiding duplicate object")
+                except IntegrityError:
+                    print("Duplicate key: " + str(d.id))
                     d.id += 1
+                    num_tries += 1
+                    if num_tries == 5:
+                        return -1
+                else:
+                    saved = True
 
     result = num_dancers
     comp.process_state = Comp.DANCERS_LOADED
