@@ -1,3 +1,4 @@
+from django.core import serializers
 from django.shortcuts import render, redirect
 from comps.models.comp import Comp
 from comps.models.heatlist_dancer import Heatlist_Dancer
@@ -8,6 +9,7 @@ from comps.heatlist.comp_organizer_heatlist import CompOrgHeatlist
 from comps.heatlist.ndca_prem_heatlist import NdcaPremHeatlist
 from comps.heatlist.ndca_prem_feed_heatlist import NdcaPremFeedHeatlist
 from comps.heatlist.o2cm_heatlist import O2cmHeatlist
+from comps.tasks import process_dancers_task
 
 
 def load_dancers(request, comp_id):
@@ -47,18 +49,8 @@ def load_dancers(request, comp_id):
         d.comp = comp
         heatlist.dancers.append(d)
 
-    print("Attempting to load " + str(len(heatlist.dancers)) + 'dancers')
-    print("looking for dancers in this comp")
-    dancers_in_comp = Heatlist_Dancer.objects.filter(comp=comp)
-    print("Found " + str(len(dancers_in_comp)) + " dancers.")
-
-    for d in heatlist.dancers:
-
-        if dancers_in_comp.filter(name=d.name).count() == 0:      
-            print("Adding " + d.name)
-            d.save()
-
-    comp.process_state = Comp.DANCERS_LOADED
-    comp.save()
-
-    return redirect("comps:resolve_dancers", comp.id)
+    comp_data = serializers.serialize("json", comp_objects)
+    heatlist_dancer_data = serializers.serialize("json", heatlist.dancers)
+    
+    result = process_dancers_task.delay(comp_data, heatlist_dancer_data)
+    return render(request, 'comps/process_dancers.html', context={'task_id': result.task_id, 'comp': comp})
