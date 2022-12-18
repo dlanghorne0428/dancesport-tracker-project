@@ -75,8 +75,18 @@ def process_dancers_task(self, comp_data, heatlist_data):
         progress_recorder.set_progress(index + 1, num_dancers, description=d.name)
         if dancers_in_comp.filter(name=d.name).count() == 0:      
             print("Adding " + d.name)
-            d.save()        
-        
+            saved = False
+            while not saved:
+                try:
+                    Heatlist_Dancer.objects.get(id=d.id)
+                except Heatlist_Dancer.DoesNotExist:
+                    d.save()
+                    saved = True
+                    break
+                
+                print("avoiding duplicate object")
+                d.id += 1
+
     result = num_dancers
     comp.process_state = Comp.DANCERS_LOADED
     comp.save()     
