@@ -183,7 +183,7 @@ class NdcaPremFeedHeatlist(Heatlist):
         url= "http://ndcapremier.com/feed/heatlists/?cyi=" + self.comp_id
         response = requests.get(url)
         data = json.loads(response.text)
-        print(len(data['Result']))
+        print("Dancers found: " + str(len(data['Result'])))
         for c in data['Result']:
             if c['Type'] != 'Attendee':
                 print("Skipping: " + c['Type'] + ' ' + str(c['Name']))

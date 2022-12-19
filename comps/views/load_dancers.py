@@ -1,3 +1,4 @@
+from django.core import serializers
 from django.shortcuts import render, redirect
 from comps.models.comp import Comp
 from comps.models.heatlist_dancer import Heatlist_Dancer
@@ -8,6 +9,7 @@ from comps.heatlist.comp_organizer_heatlist import CompOrgHeatlist
 from comps.heatlist.ndca_prem_heatlist import NdcaPremHeatlist
 from comps.heatlist.ndca_prem_feed_heatlist import NdcaPremFeedHeatlist
 from comps.heatlist.o2cm_heatlist import O2cmHeatlist
+from comps.tasks import process_dancers_task
 
 
 def load_dancers(request, comp_id):
@@ -47,12 +49,8 @@ def load_dancers(request, comp_id):
         d.comp = comp
         heatlist.dancers.append(d)
 
-    for d in heatlist.dancers:
-        in_database = Heatlist_Dancer.objects.filter(name = d.name, comp=comp)
-        if in_database.count() == 0:
-            d.save()
-
-    comp.process_state = Comp.DANCERS_LOADED
-    comp.save()
-
-    return redirect("comps:resolve_dancers", comp.id)
+    comp_data = serializers.serialize("json", comp_objects)
+    heatlist_dancer_data = serializers.serialize("json", heatlist.dancers)
+    
+    result = process_dancers_task.delay(comp_data, heatlist_dancer_data)
+    return render(request, 'comps/process_dancers.html', context={'task_id': result.task_id, 'comp': comp})

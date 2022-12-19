@@ -2,6 +2,7 @@ from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 from datetime import datetime, date, timezone, timedelta
 from django.core import serializers
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from .heatlist.file_based_heatlist import FileBasedHeatlist
 from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
@@ -18,6 +19,7 @@ from .scoresheet.o2cm_results import O2cmResults
 from comps.models.comp import Comp
 from comps.models.heat import Heat, UNKNOWN
 from comps.models.heat_entry import Heat_Entry
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.models.result_error import Result_Error
 from comps.scoresheet.calc_points import initial_elo_rating
 from rankings.models.elo_rating import EloRating
@@ -55,6 +57,47 @@ def clear_comp_task(self, comp_data, heat_data):
 
 
 @shared_task(bind=True)
+def process_dancers_task(self, comp_data, heatlist_data):
+    for deserialized_object in serializers.deserialize("json", comp_data):
+        comp = deserialized_object.object
+    heatlist_dancers = list()
+    for deserialized_object in serializers.deserialize("json", heatlist_data):
+        heatlist_dancers.append(deserialized_object.object)
+    num_dancers = len(heatlist_dancers)
+
+    progress_recorder = ProgressRecorder(self)    
+    
+    print("Attempting to load " + str(num_dancers) + ' dancers')
+    progress_recorder.set_progress(0, num_dancers)
+    dancers_in_comp = Heatlist_Dancer.objects.filter(comp=comp)
+
+    for index in range(num_dancers):  
+        d = heatlist_dancers[index]
+        progress_recorder.set_progress(index + 1, num_dancers, description=d.name)
+        if dancers_in_comp.filter(name=d.name).count() == 0:      
+            saved = False
+            num_tries = 0
+            # this try/except was added to workaround duplicate key problems
+            # with the PostGres database on railway, which got out of sync.
+            while not saved:
+                try:
+                    d.save()
+                except IntegrityError:
+                    print("Duplicate key for " + d.name)
+                    num_tries += 1
+                    if num_tries == 10:
+                        print("Unable to add " + d.name)
+                        return -1
+                else:
+                    saved = True
+
+    result = num_dancers
+    comp.process_state = Comp.DANCERS_LOADED
+    comp.save()     
+    return result
+    
+    
+@shared_task(bind=True)
 def process_heatlist_task(self, comp_data, heatlist_data):
     for deserialized_object in serializers.deserialize("json", comp_data):
         comp = deserialized_object.object
@@ -63,7 +106,7 @@ def process_heatlist_task(self, comp_data, heatlist_data):
         heatlist_dancers.append(deserialized_object.object)
     num_dancers = len(heatlist_dancers)
 
-    progress_recorder = ProgressRecorder(self)
+    progress_recorder = ProgressRecorder(self)  
 
     if comp.heatsheet_file:
         heatlist = FileBasedHeatlist()

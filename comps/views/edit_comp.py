@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
+from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.forms import CompForm, CompTitleForm
 
 
@@ -39,7 +40,7 @@ def this_year_comp(request, comp_id):
     if request.method == "GET":
         current_year = date.today().year
         
-        # create fom to rename last year's comp
+        # create form to rename last year's comp
         comp.title = current_title + ' - ' + str(current_year - 1)
         form = CompTitleForm(instance=comp)
         return render(request, 'comps/edit_comp.html', {'form':form, 'custom_title': 'Edit Competition Title for Previous Year'})
@@ -51,6 +52,12 @@ def this_year_comp(request, comp_id):
                 form.save()
             except ValueError:
                 return render(request, 'comps/edit_comp.html', {'form': form, 'custom_title': 'Edit Competition Title for Previous Year', 'error': "Invalid data submitted."})
+            
+            # remove heatlist_dancer objects from last year's comp
+            last_year_dancers = Heatlist_Dancer.objects.filter(comp=comp)
+            print("Deleting " + str(len(last_year_dancers)) + " alias dancers from last year comp.")
+            for d in last_year_dancers:
+                d.delete()
                                 
             # create future comp with specific fields from current comp
             future_comp = Comp()
