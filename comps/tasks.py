@@ -75,16 +75,18 @@ def process_dancers_task(self, comp_data, heatlist_data):
         d = heatlist_dancers[index]
         progress_recorder.set_progress(index + 1, num_dancers, description=d.name)
         if dancers_in_comp.filter(name=d.name).count() == 0:      
-            print("Adding " + d.name)
             saved = False
             num_tries = 0
+            # this try/except was added to workaround duplicate key problems
+            # with the PostGres database on railway, which got out of sync.
             while not saved:
                 try:
                     d.save()
                 except IntegrityError:
-                    print("Duplicate key: " + str(d.id))
+                    print("Duplicate key for " + d.name)
                     num_tries += 1
-                    if num_tries == 5:
+                    if num_tries == 10:
+                        print("Unable to add " + d.name)
                         return -1
                 else:
                     saved = True
