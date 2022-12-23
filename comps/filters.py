@@ -7,6 +7,7 @@ class CompFilter(django_filters.FilterSet):
 
     title = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'size':18}))
     location = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'size':12}))
+    process_state = django_filters.ChoiceFilter(choices=Comp.PROCESS_STATE_CHOICES, empty_label="Any Status") 
 
 
 class HeatFilter(django_filters.FilterSet):
