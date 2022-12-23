@@ -5,7 +5,7 @@
 <div class="row">
   <div class="col-12">
     <h2 class="text-center">Competitions</h2>
-    {% if show_add_button %}
+    {% if superuser_access %}
     <div class="text-center my-1">
       <a class="btn btn-primary" href="{% url 'comps:create_comp' %}">Add New Competition</a>
     </div>
@@ -26,6 +26,9 @@
           
           <th class="text-center">Title</th>
           <th class="text-center">Location</th>
+          {% if superuser_access %}
+            <th class="text-center">Status</th>
+          {% endif %} 
         </tr>
       </thead>
       <tbody>
@@ -35,6 +38,9 @@
             <td colspan="2" class='text-right'><input type="submit" name="btn-submit" value="&#128270;"/></td>
             <td id='title-filter' class="text-center">{{ filter.form.title }}</td>
             <td id='location-filter' class="text-center">{{ filter.form.location }}</td>
+            {% if superuser_access %}
+              <td id='status-filter' class="text-center">{{ filter.form.process_state }}</th>
+            {% endif %} 
           </tr>
         </form>
         {% for comp in page_obj %}
@@ -44,6 +50,9 @@
 
             <td class="text-center"><a href="{% url 'comps:comp_detail' comp.id %}"">{{ comp.title }}</a></td>
             <td class="text-center">{{ comp.location }}</td>
+            {% if superuser_access %}
+              <td class="text-center">{{ comp.get_process_state_display }}</th>
+            {% endif %} 
           </tr>
         {% endfor %}
       </tbody>
@@ -61,12 +70,17 @@
     // get form fields
     const title = document.getElementById("title-filter");
     const comp_location = document.getElementById("location-filter");
+    {% if superuser_access %}
+        const process_state = document.getElementById("status-filter");
+    {% endif %}
 
     // add event listener for changes to the selection on any of the form fields
     title.addEventListener('change', mySubmitFunction);
     comp_location.addEventListener('change', mySubmitFunction);
-
-
+    {% if superuser_access %}
+        process_state.addEventListener('change', mySubmitFunction);
+    {% endif %}
+    
     // submit the form when any of the events happen
     function mySubmitFunction() {
       comp_filter_form.submit();
