@@ -4,18 +4,20 @@
 {% block content %}
   <div class="row">
     <div class="col-12">
-      <h2 class="text-center">Dancers with Alias Names</h2>
+      {% if level > 1 %}
+        <h2 class="text-center">Dancers with Repeated Aliases</h2>
+      {% else %}
+        <h2 class="text-center">Dancers with Alias Names</h2>
+      {% endif %}
     </div>
   </div>
 
   <div class="row mb-2">
     <div class="col-12 text-center">
         {% if level > 1 %}
-          <a class="btn btn-secondary" href="{% url 'alias_dancers' 1 %}">All Aliases</a>
-          <a class="btn btn-primary" href="{% url 'alias_dancers' 2 %}">Repeated Aliases</a>
+          <a class="btn btn-primary" href="{% url 'alias_dancers' 1 %}">Show All Aliases</a>
         {% else %}
-          <a class="btn btn-primary" href="{% url 'alias_dancers' 1 %}">All Aliases</a>
-          <a class="btn btn-secondary" href="{% url 'alias_dancers' 2 %}">Repeated Aliases</a>
+          <a class="btn btn-primary" href="{% url 'alias_dancers' 2 %}">Show Repeated Aliases Only</a>
         {% endif %}
     </div>
   </div>
@@ -34,6 +36,15 @@
           </tr>
         </thead>
         <tbody>
+          <form class="mx-auto"  id='alias-filter-form' method="POST">
+            {% csrf_token %}
+            <tr class="table-primary">
+              <td id='alias-filter' class="text-center">{{ form.alias }}</td>
+              <td id='name-filter' class="text-center">{{ form.name }}</td>
+              <td id='comp-filter' class="text-center">{{ form.comp }}</td>
+              <td class="text-center"><input type="submit" name="btn-submit" value="&#128269;"/></td>
+            </tr>
+          </form>
           {% for d in page_obj %}
             <tr>
               <td class="text-center">{{ d.name }}</td>

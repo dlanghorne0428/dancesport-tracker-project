@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from comps.forms import HeatListDancerForm
 from comps.models.comp import Comp
 from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
@@ -17,21 +18,39 @@ def alias_dancers(request, level=2):
     if len(no_comp_list) > 0:
         print("Removing " + str(len(no_comp_list)) + ' entries')
         for d in no_comp_list:
-            d.delete()
-
+            d.delete()    
+    
     alias_dancers = Heatlist_Dancer.objects.exclude(alias__isnull=True).order_by('name', 'comp__start_date')
-    if level == 2:
-        doubles = list()
-        for i in range(1, len(alias_dancers)):
-            if alias_dancers[i-1].name == alias_dancers[i].name and alias_dancers[i-1].alias == alias_dancers[i].alias:
-                doubles.append(alias_dancers[i])
-        paginator = Paginator(doubles, 16)
-    else:
-        paginator = Paginator(alias_dancers, 16)
+
+    if request.method == 'GET':
+        f = HeatListDancerForm()
+        if level == 2:
+            doubles = list()
+            for i in range(1, len(alias_dancers)):
+                if alias_dancers[i-1].name == alias_dancers[i].name and alias_dancers[i-1].alias == alias_dancers[i].alias:
+                    doubles.append(alias_dancers[i])
+            paginator = Paginator(doubles, 16)
+        else:
+            paginator = Paginator(alias_dancers, 16)        
+
+    else: # POST
+        f = HeatListDancerForm(request.POST)
+        if not f.is_valid():
+            return redirect (comps.all_comps)
+        else:
+            filter_parms = f.cleaned_data
+            if len(filter_parms['comp']) > 0:
+                alias_dancers = alias_dancers.filter(comp__title__contains=filter_parms['comp'])
+            if len(filter_parms['alias']) > 0:
+                alias_dancers = alias_dancers.filter(alias__name_last__contains=filter_parms['alias'])
+            if len(filter_parms['name']) > 0:
+                alias_dancers = alias_dancers.filter(name__contains=filter_parms['name'])             
+            
+            paginator = Paginator(alias_dancers, 16)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'rankings/alias_dancers.html', {'page_obj': page_obj, 'level': level })
+    return render(request, 'rankings/alias_dancers.html', {'form': f, 'page_obj': page_obj, 'level': level })
 
 
 def aliases_for_dancer(request, hld_pk):

@@ -38,3 +38,14 @@ class CompCoupleForm(Form):
 
     name.widget.attrs.update(size='25', placeholder='dancer-last-name')    
     number.widget.attrs.update(size='5')
+    
+
+from .models.heatlist_dancer import Heatlist_Dancer
+class HeatListDancerForm(Form):
+    name = forms.CharField(label="Last Name", required=False)
+    alias = forms.CharField(label="Alias Last Name", required=False)
+    comp = forms.CharField(label="Comp Name", required=False)    
+    
+    name.widget.attrs.update(size='20', placeholder='dancer-last-name')   
+    alias.widget.attrs.update(size='20', placeholder='dancer-alias-name')   
+    comp.widget.attrs.update(size='20', placeholder='comp-name')   
