@@ -52,3 +52,23 @@ def couples(request, comp_id):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'comps/couples.html', {'comp': comp, 'page_obj': page_obj, 'form': f})
+
+
+def delete_noheat_couples(request, comp_id):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')    
+    comp = get_object_or_404(Comp, pk=comp_id)
+    if comp.process_state not in [Comp.ELO_RATINGS_UPDATED, Comp.COMPLETE]:
+        print("Cannot delete comp couples until elo ratings updated")
+        return redirect ('comps:comp_detail', comp_id)
+    else:
+        couples = Comp_Couple.objects.filter(comp=comp).order_by('couple')
+        count = 0
+        for c in couples:
+            num_heats = Heat_Entry.objects.filter(heat__comp=comp, couple=c.couple).count()
+            if num_heats == 0:
+                count += 1
+                c.delete()
+        print(str(count) + " couples with no heats deleted from this comp")
+        
+        return redirect ('comps:comp_detail', comp_id)                

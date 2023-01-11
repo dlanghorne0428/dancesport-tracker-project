@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
+from comps.models.comp_couple import Comp_Couple
+from comps.models.heat_entry import Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.forms import CompForm, CompTitleForm
 
@@ -58,7 +60,17 @@ def this_year_comp(request, comp_id):
             print("Deleting " + str(len(last_year_dancers)) + " alias dancers from last year comp.")
             for d in last_year_dancers:
                 d.delete()
-                                
+                
+            # remove comp_couples with no heats from last year's comp
+            couples = Comp_Couple.objects.filter(comp=comp).order_by('couple')
+            count = 0
+            for c in couples:
+                num_heats = Heat_Entry.objects.filter(heat__comp=comp, couple=c.couple).count()
+                if num_heats == 0:
+                    count += 1
+                    c.delete()
+            print(str(count) + " couples with no heats deleted from last year's comp.")
+                    
             # create future comp with specific fields from current comp
             future_comp = Comp()
             future_comp.title = current_title

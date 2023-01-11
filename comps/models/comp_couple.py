@@ -30,3 +30,6 @@ class Comp_Couple(models.Model):
 
     def __str__(self):
         return str(self.comp) + ": " + str(self.couple) + " #" + self.shirt_number
+
+    class Meta:
+        ordering = ['comp']
