@@ -17,6 +17,7 @@ urlpatterns = [
     path('<int:comp_id>/save_scoresheets', views.save_scoresheets, name="save_scoresheets"),
     path('<int:comp_id>/dancers', views.dancers, name="dancers"),
     path('<int:comp_id>/couples', views.couples, name="couples"),
+    path('<int:comp_id>/delete_noheat_couples', views.delete_noheat_couples, name="delete_noheat_couples"),
     path('<int:comp_id>/load_dancers', views.load_dancers, name="load_dancers"),
     path('<int:comp_id>/load_heats', views.load_heats, name="load_heats"),
     path('<int:comp_id>/load_scoresheets', views.load_scoresheets, name="load_scoresheets"),
