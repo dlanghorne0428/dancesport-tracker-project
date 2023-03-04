@@ -35,6 +35,7 @@ urlpatterns = [
     path('heat/<int:heat_id>/', views.heat, name="heat"),
     path('heat/<int:heat_id>/<int:sort_mode>', views.heat, name="heat"),
     path('heat/edit/<int:heat_id>/', views.edit_heat, name="edit_heat"),
+    path('heat/<int:heat_id>/add_couple/<int:couple_id>/', views.add_couple_to_heat, name="add_couple_to_heat"),
     path('heat_entry/<int:entry_id>/', views.edit_heat_entry, name="edit_heat_entry"),
     path('clear_scoresheet_error/<int:error_id>/', views.delete_scoresheet_error, name="delete_scoresheet_error"),
     path('clear_heatlist_error/<int:error_id>/', views.delete_heatlist_error, name="delete_heatlist_error"),
