@@ -6,7 +6,7 @@ from rankings.models.dancer import Dancer
 from comps.models.comp import Comp
 from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
-from rankings.forms import CoupleForm, CoupleTypeForm
+from rankings.forms import CoupleForm, CoupleTypeForm, CoupleSelectForm
 from rankings.models import EloRating
 
 ################################################
@@ -44,14 +44,47 @@ def create_couple(request, couple_type = None, dancer_pk=None, dancer_position= 
 
 
 def all_couples(request):
+    if not request.user.is_superuser:
+        return render(request, 'rankings/permission_denied.html')
+    
     # only show add button for valid users
     show_admin_buttons = request.user.is_superuser
 
-    couples = Couple.objects.order_by("dancer_1")
+    # get the optional heat_id query parameter
+    heat_id = request.GET.get('heat_id', None)
+    if heat_id is None:
+        heat = None
+    else:
+        heat = Heat.objects.get(id=heat_id)
+    
+    if request.method == "POST":
+        f = CoupleSelectForm(request.POST)
+        if not f.is_valid():
+            return redirect ('rankings:home')
+        else:
+            search_parms = f.cleaned_data
+            
+            # first, filter based on couple_type 
+            if len(search_parms['couple_type']) > 0:
+                couples = Couple.objects.filter(couple_type=search_parms['couple_type']).order_by("dancer_1")
+            else:
+                couples = Couple.objects.order_by("dancer_1")
+                
+            # then filter on last name of either dancer in the couple
+            if len(search_parms['name']) > 0:
+                n = search_parms['name']
+                couples = couples.filter(Q(dancer_1__name_last__icontains=n) | Q(dancer_2__name_last__icontains=n))
+                
+    else:  # GET
+        # list all couples
+        f = CoupleSelectForm(request.POST)
+        couples = Couple.objects.order_by("dancer_1")
+        
+    # render a page of couples 
     paginator = Paginator(couples, 16)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'rankings/all_couples.html', {'page_obj': page_obj, 'show_admin_buttons': show_admin_buttons})
+    return render(request, 'rankings/all_couples.html', {'page_obj': page_obj, 'form': f, 'heat': heat, 'show_admin_buttons': show_admin_buttons})
 
 
 def view_couple(request, couple_pk):
