@@ -1,5 +1,6 @@
+from django import forms
 from django.db import models
-from django.forms import ModelForm, ModelChoiceField
+from django.forms import Form, ModelForm, ModelChoiceField
 from .models.dancer import Dancer
 from .models.couple import Couple
 from .models.elo_rating import EloRating
@@ -16,15 +17,17 @@ class DancerForm(ModelForm):
 
 
 class CoupleTypeForm(ModelForm):
+    # this is a simple form used to select a couple_type 
     class Meta:
         model = Couple
         fields = ['couple_type']
 
 
 class CoupleForm(ModelForm):
+    # this form is used when creating or editing a couple based on dancer names
     dancer_1 = ModelChoiceField(queryset=Dancer.objects.all())
     dancer_2 = ModelChoiceField(queryset=Dancer.objects.all())
-    # couple_type_field = models.CharField(max_length = 3, choices=Couple.COUPLE_TYPE_CHOICES)
+    
     class Meta:
         model = Couple
         fields = ['dancer_1', 'dancer_2', 'couple_type']
@@ -35,6 +38,7 @@ class CoupleForm(ModelForm):
             pass
         else:
             self.fields['couple_type'].initial = couple_type
+            # populate the choice fields of the form based on the couple_type
             if couple_type == Couple.PRO_COUPLE:
                 if dancer_position == 1:
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.PRO)
@@ -90,3 +94,10 @@ class CoupleForm(ModelForm):
                     self.fields['dancer_1'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
                     self.fields['dancer_2'].queryset = Dancer.objects.filter(dancer_type=Dancer.JUNIOR_AMATEUR)
                     self.fields['dancer_2'].initial = dancer_id
+
+
+class CoupleSelectForm(Form):
+    # this form is used to select an existing couple from the list of all couples
+    name         = forms.CharField(label="Last Name", required=False)
+    couple_type  = forms.ChoiceField(choices=[("", "-------")] + Couple.COUPLE_TYPE_CHOICES, required=False)
+    name.widget.attrs.update(size='25', placeholder='dancer-last-name')    
