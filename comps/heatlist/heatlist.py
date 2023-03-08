@@ -1,4 +1,4 @@
-
+from django.db import IntegrityError
 from rankings.models.couple import Couple
 from rankings.models.dancer import Dancer
 from rankings.couple_matching import find_couple_exact_match
