@@ -73,7 +73,20 @@ class Heatlist():
             heat_entry_obj.populate(heat, couple, code, shirt_number)
             entries_in_database = Heat_Entry.objects.filter(heat=heat, couple=couple, shirt_number=shirt_number)
             if entries_in_database.count() == 0 or heat.category == Heat.FORMATION:
-                heat_entry_obj.save()
+                saved = False
+                num_tries = 0 
+                while not saved:
+                    try:
+                        heat_entry_obj.save()
+                    except IntegrityError:
+                        print("Duplicate key for " + str(heat_entry_obj))
+                        num_tries += 1
+                        if num_tries == 10:
+                            print("Unable to add heat entry " + str(heat_entry_obj))
+                            return -1
+                    else:
+                        saved = True    
+                        
             comp_couple_in_database = Comp_Couple.objects.filter(comp=heat.comp, couple=couple)
             if comp_couple_in_database.count() == 0:
                 comp_couple_obj.populate(heat.comp, couple, shirt_number)
