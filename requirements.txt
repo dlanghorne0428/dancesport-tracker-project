@@ -37,7 +37,7 @@ pytz==2022.2.1
 redis==4.4.4
 requests==2.27.1
 six==1.16.0
-sqlparse==0.4.2
+sqlparse==0.4.4
 urllib3==1.26.12
 vine==5.0.0
 virtualenv==20.14.1
