@@ -87,7 +87,7 @@ def process_dancers_task(self, comp_data, heatlist_data):
                     num_tries += 1
                     if num_tries == 10:
                         print("Unable to add " + d.name)
-                        return -1
+                        continue # return -1
                 else:
                     saved = True
 
