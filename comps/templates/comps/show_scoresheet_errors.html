@@ -27,7 +27,7 @@
         {% for error in page_obj %}
         <tr>
           <td class="text-center">{{ error.heat.get_category_display }}</td>
-          {% if heat.extra %}
+          {% if error.heat.extra %}
             <td class="text-center">{{ error.heat.heat_number }}{{ error.heat.extra }}</td>
           {% else %}
             <td class="text-center">{{ error.heat.heat_number }}</td>

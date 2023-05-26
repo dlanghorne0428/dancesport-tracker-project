@@ -7,13 +7,13 @@ from django.shortcuts import get_object_or_404
 from .heatlist.file_based_heatlist import FileBasedHeatlist
 from .heatlist.comp_mngr_heatlist import CompMngrHeatlist
 from .heatlist.comp_organizer_heatlist import CompOrgHeatlist
-from .heatlist.ndca_prem_heatlist import NdcaPremHeatlist
+from .heatlist.dance_comp_heatlist import DanceCompHeatlist
 from .heatlist.ndca_prem_feed_heatlist import NdcaPremFeedHeatlist
 from .heatlist.o2cm_heatlist import O2cmHeatlist
 from .scoresheet.results_processor import Results_Processor
 from .scoresheet.comp_mngr_results import CompMngrResults
 from .scoresheet.comp_organizer_results import CompOrgResults
-from .scoresheet.ndca_prem_results import NdcaPremResults
+from .scoresheet.dance_comp_results import DanceCompResults
 from .scoresheet.ndca_prem_feed_results import NdcaPremFeedResults
 from .scoresheet.o2cm_results import O2cmResults
 from comps.models.comp import Comp
@@ -85,7 +85,7 @@ def process_dancers_task(self, comp_data, heatlist_data):
                 except IntegrityError:
                     print("Duplicate key for " + d.name)
                     num_tries += 1
-                    if num_tries == 10:
+                    if num_tries == 20:
                         print("Unable to add " + d.name)
                         continue # return -1
                 else:
@@ -115,8 +115,8 @@ def process_heatlist_task(self, comp_data, heatlist_data):
     else:
         if comp.url_data_format == Comp.COMP_MNGR:
             heatlist = CompMngrHeatlist()
-        elif comp.url_data_format == Comp.NDCA_PREM:
-            heatlist = NdcaPremHeatlist()
+        elif comp.url_data_format == Comp.DANCE_COMP:
+            heatlist = DanceCompHeatlist()
         elif comp.url_data_format == Comp.COMP_ORG:
             heatlist = CompOrgHeatlist()
         elif comp.url_data_format == Comp.O2CM:
@@ -216,14 +216,14 @@ def process_scoresheet_task(self, comp_data):
     elif comp.scoresheet_url:
         if comp.url_data_format == Comp.COMP_MNGR:
             scoresheet = CompMngrResults()
-        elif comp.url_data_format == Comp.NDCA_PREM:
-             scoresheet = NdcaPremResults()
+        elif comp.url_data_format == Comp.DANCE_COMP:
+            scoresheet = DanceCompResults()
         elif comp.url_data_format == Comp.NDCA_FEED:
-              scoresheet = NdcaPremFeedResults()
+            scoresheet = NdcaPremFeedResults()
         elif comp.url_data_format == Comp.O2CM:
-              scoresheet = O2cmResults()
+            scoresheet = O2cmResults()
         else: # CompOrganizer for now
-             scoresheet = CompOrgResults()
+            scoresheet = CompOrgResults()
 
         heats_to_process = Heat.objects.filter(comp=comp).order_by('time')
         num_heats = heats_to_process.count()
