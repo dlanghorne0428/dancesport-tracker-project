@@ -29,8 +29,8 @@
           <td class="text-center">{{ error.get_error_display }}</td>
           {% if error.heat %}
             <td class="text-center">{{ error.heat.get_category_display }}</td>
-            {% if heat.extra %}
-              <td class="text-center">{{ error.heat.heat_number }}{{ heat.extra }}</td>
+            {% if error.heat.extra %}
+              <td class="text-center">{{ error.heat.heat_number }}{{ error.heat.extra }}</td>
             {% else %}
               <td class="text-center">{{ error.heat.heat_number }}</td>
             {% endif %}
