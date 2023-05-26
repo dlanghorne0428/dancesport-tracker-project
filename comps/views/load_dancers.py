@@ -6,7 +6,7 @@ from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 from comps.heatlist.file_based_heatlist import FileBasedHeatlist
 from comps.heatlist.comp_mngr_heatlist import CompMngrHeatlist
 from comps.heatlist.comp_organizer_heatlist import CompOrgHeatlist
-from comps.heatlist.ndca_prem_heatlist import NdcaPremHeatlist
+from comps.heatlist.dance_comp_heatlist import DanceCompHeatlist
 from comps.heatlist.ndca_prem_feed_heatlist import NdcaPremFeedHeatlist
 from comps.heatlist.o2cm_heatlist import O2cmHeatlist
 from comps.tasks import process_dancers_task
@@ -31,8 +31,8 @@ def load_dancers(request, comp_id):
     else:
         if comp.url_data_format == Comp.COMP_MNGR:
             heatlist = CompMngrHeatlist()
-        elif comp.url_data_format == Comp.NDCA_PREM:
-            heatlist = NdcaPremHeatlist()
+        elif comp.url_data_format == Comp.DANCE_COMP:
+            heatlist = DanceCompHeatlist()
         elif comp.url_data_format == Comp.NDCA_FEED:
             heatlist = NdcaPremFeedHeatlist()
         elif comp.url_data_format == Comp.O2CM:

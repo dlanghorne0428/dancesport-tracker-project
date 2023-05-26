@@ -17,13 +17,13 @@ class Comp(models.Model):
     # the different file formats pointed to by the URLs
     COMP_MNGR = 'CM'
     COMP_ORG = 'CO'
-    NDCA_PREM = 'ND'
+    DANCE_COMP = 'DC'
     NDCA_FEED = 'NF'
     O2CM = "O2"
     DATA_FORMAT_CHOICES = [
         (COMP_MNGR, 'Comp Manager'),
         (COMP_ORG, 'Comp Organizer'),
-        (NDCA_PREM , 'NDCA Premier - Old Format'),
+        (DANCE_COMP, 'DanceComp'),
         (NDCA_FEED , 'NDCA Premier'),
         (O2CM, 'O2cm.com')
     ]
