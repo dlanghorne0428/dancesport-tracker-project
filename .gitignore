@@ -3,7 +3,7 @@
 # Edit at https://www.gitignore.io/?templates=macos,django
 
 ### Django ###
-*.log
+*.log*
 *.pot
 *.pyc
 __pycache__/
