@@ -54,7 +54,7 @@ def non_pro_heat_level(info, multi_dance=True):
         #return 15
 
 
-def calc_points(level, placement, num_competitors = 6, rounds = "F", score = 0, accum = 0):
+def calc_points(level, placement, num_competitors = 6, rounds = "F", score = 0, accum = 0, ratio = 0):
     '''Point values are awarded based on the level of the event (Open, Rising Star, Novice)
        and the number of rounds (Final only, Semi-Final, and Quarter-Final).
        Extra points are awarded for events that had prelim rounds.'''
@@ -62,54 +62,55 @@ def calc_points(level, placement, num_competitors = 6, rounds = "F", score = 0, 
     max_pts = level
     if num_competitors >= 5:
         percent_table = [100, 80, 65, 50, 40, 35, 30, 25, 25]
+        ratio = min(1.0, ratio)
         if rounds == "S":
             max_pts = level + 10
             if placement == -2: # semis
-                percent = min(25, max(1, accum))
+                percent = 25 * ratio
             else:
                 percent = percent_table[place]
         elif rounds == "Q":
             max_pts = level + 20
             if placement == -2: # semis
-                percent = min(25, max(15, accum))
+                percent = 15 + (ratio * 10.0)
             elif placement == -1: # quarters
-                percent = min(10, max(1, accum))
+                percent = 10 * ratio                
             else:
                 percent = percent_table[place]
         elif rounds == "R1":
             max_pts = level + 30
             if placement == -2: # semis
-                percent = min(25, max(20, accum))
+                percent = 20 + (ratio * 5.0)
             elif placement == -1: # quarters
-                percent = min(15, max(10, accum))
+                percent = 10 + (ratio * 5.0)
             elif placement == -10: # round 1
-                percent = min(5, max(1, accum))
+                percent = 5 * ratio 
             else:
                 percent = percent_table[place]
         elif rounds == "R21":
             max_pts = level + 40
             if placement == -2: # semis
-                percent = min(30, max(25, accum))
+                percent = 25 + (ratio * 5.0)
             elif placement == -1: # quarters
-                percent = min(20, max(15, accum))
+                percent = 15 + (ratio * 5.0)
             elif placement == -5: # round 2
-                percent = min(12, max(7, accum))
+                percent = 7 + (ratio * 5.0)
             elif placement == -10: # round 1
-                percent = min(5, max(1, accum))
+                percent = 5 * ratio 
             else:
                 percent = percent_table[place]
         elif rounds == "R321":
             max_pts = level + 50
             if placement == -2: # semis
-                percent = min(30, max(25, accum))
+                percent = 25 + (ratio * 5.0)
             elif placement == -1: # quarters
-                percent = min(23, max(19, accum))
+                percent = 19 + (ratio * 4.0)
             elif placement == -3: # third round
-                percent = min(17, max(13, accum))
+                percent = 13 + (ratio * 4.0)
             elif placement == -5: # round 2
-                percent = min(11, max(7, accum))
+                percent = 7 + (ratio * 4.0)
             elif placement == -10: # round 1
-                percent = min(5, max(1, accum))
+                percent = 5 * ratio 
             else:
                 percent = percent_table[place]
         else:

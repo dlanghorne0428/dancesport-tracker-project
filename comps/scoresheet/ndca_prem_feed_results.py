@@ -140,7 +140,7 @@ class NdcaPremFeedResults(Results_Processor):
                             if rounds == "F":
                                 rounds = "R1"
                             result_index = -10
-                            temp_result = "round 1"
+                            temp_result = "round 1"                           
                         elif r['Name'] == "Round 2":
                             if rounds == "F" or rounds == "R1":
                                 rounds = "R21"
@@ -155,6 +155,12 @@ class NdcaPremFeedResults(Results_Processor):
                             print("Unknown Round")
                             print(r)
                             xxx()
+                        max_recalls = 0
+                        for c in r['Summary']['Competitors']:
+                            if c['Recalled'] == 0:
+                                print(c)
+                                max_recalls = max(max_recalls, c['Total'])
+                        print("Max recalls for elim" + ' ' + str(max_recalls))
                         for c in r['Summary']['Competitors']:
                             if c['Recalled'] == 0:
                                 for entry in entries:
@@ -165,7 +171,8 @@ class NdcaPremFeedResults(Results_Processor):
                                             entry.result = temp_result
 
                                             # Lookup their points, and exit the loop
-                                            entry.points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
+                                            entry.points = calc_points(level, result_index, rounds=rounds, ratio = c['Total'] / max_recalls)
+                                            #print(str(c['Total']) + ' ' + str(max_recalls) + ' ' + str(entry.points))
                                             break
                                         else:
                                             res_error = Result_Error()
@@ -181,7 +188,7 @@ class NdcaPremFeedResults(Results_Processor):
                                     try:
                                         couple_names = self.get_couple_names(c['Participants'])
                                         if len(couple_names) == 2:
-                                            points = calc_points(level, result_index, rounds=rounds, accum=c['Total'])
+                                            points = calc_points(level, result_index, rounds=rounds, ratio = c['Total'] / max_recalls)
                                             self.build_late_entry(entry.heat, shirt_number=c['Bib'], result=temp_result, couple_names=couple_names, points=points)
                                         else:
                                             print("error in late entry names")

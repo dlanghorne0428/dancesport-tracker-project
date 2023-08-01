@@ -215,6 +215,7 @@ class Results_Processor():
                     looking_for_eliminations = True
                     looking_for_recall_column = False
                     count = 0
+                    max_recalls = 0
                     if rounds =="F":
                         temp_result = "Semis"
                         result_index = -2
@@ -247,11 +248,15 @@ class Results_Processor():
                         except:
                             accum = 0
                         count += 1
+                        
                     elif count == recall_column:
                         # If the data indicates the couple was recalled, we can ignore them,
                         # as we will get their results in the next round.
                         # If the couple was not recalled, we need to capture those results
                         if self.get_table_data(line) != "Recall":
+                            
+                            # check if this entrant had the most recalls of those eliminated
+                            max_recalls = max(accum, max_recalls)                            
 
                             # extract the shirt number from the scoresheet
                             #couple_names = self.get_couple_names(current_competitor)
@@ -263,11 +268,9 @@ class Results_Processor():
                                 if e.shirt_number == shirt_number:
                                     if len(e.result) == 0:
                                         # If the couple was not recalled, their result is the round
-                                        # in which they were eliminated
-                                        e.result = temp_result
-
-                                        # Lookup their points, and exit the loop
-                                        e.points = calc_points(level, result_index, rounds=rounds, accum=accum)
+                                        # in which they were eliminated, save the accumulated number of recalls 
+                                        # for later points calculations
+                                        e.result = temp_result + '-' + str(accum)
                                         break
 
                                     elif e.result == temp_result:
@@ -287,8 +290,8 @@ class Results_Processor():
                             else:
                                 # Build a structure for the late entry couple with the results
                                 couple_names = self.get_couple_names(current_competitor)
-                                points = calc_points(level, result_index, rounds=rounds, accum=accum)
-                                self.build_late_entry(e.heat, shirt_number=shirt_number, result=temp_result, couple_names=couple_names, points=points )
+                                late_result = temp_result + '-' + str(accum)
+                                self.build_late_entry(e.heat, shirt_number=shirt_number, result=temp_result, couple_names=couple_names)
 
                         # reset the count to prepare for the next line of the scoresheet
                         count = 0
@@ -299,7 +302,26 @@ class Results_Processor():
 
                 elif "</table>" in line:
                     # once we get to the end of the table, there are no more entries to process
+                    # calculate the points for those eliminated in this round, based on the max recalls
                     looking_for_eliminations = False
+                    #print('max_recalls ' + str(max_recalls))
+                    for e in entries:
+                        if e.points is None and len(e.result) > 0:
+                            dash_pos = e.result.find('-')
+                            accum = int(e.result[dash_pos+1:])
+                            e.result = e.result[:dash_pos]
+                            e.points = calc_points(level, result_index, rounds=rounds, ratio=accum/max_recalls)
+                            #print(str(e) + ' ' + e.result + ' ' + str(accum))
+                        if e.points is not None:
+                            e.save()
+                    for late_entry in self.late_entries:
+                        if late_entry.points is None:
+                            dash_pos = late_entry.result.find('-')
+                            accum = int(late_entry.result[dash_pos+1:]) 
+                            late_entry.result = late_entry.result[:dash_pos]
+                            late_entry.points = calc_points(level, result_index, rounds=rounds, ratio=accum/max_recalls)
+                            #print(str(late_entry) + ' ' + late_entry.result + ' ' + str(accum))
+                            late_entry.save()                    
 
             # When we are looking for finalists, the logic is similar to looking for eliminations
             elif looking_for_finalists:
@@ -364,7 +386,7 @@ class Results_Processor():
                             e.points = calc_points(level, int(e.result), num_competitors=self.entries_in_event, rounds=rounds)
                         if e.points is not None:
                             #print(e, e.result, e.points)
-                            e.save()
+                            e.save()                    
                     for late_entry in self.late_entries:
                         if late_entry.points is None:
                             late_entry.points = calc_points(level, int(late_entry.result), num_competitors=self.entries_in_event, rounds=rounds)
