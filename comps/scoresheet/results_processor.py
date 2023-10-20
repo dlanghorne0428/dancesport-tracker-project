@@ -291,7 +291,7 @@ class Results_Processor():
                                 # Build a structure for the late entry couple with the results
                                 couple_names = self.get_couple_names(current_competitor)
                                 late_result = temp_result + '-' + str(accum)
-                                self.build_late_entry(e.heat, shirt_number=shirt_number, result=temp_result, couple_names=couple_names)
+                                self.build_late_entry(e.heat, shirt_number=shirt_number, result=late_result, couple_names=couple_names)
 
                         # reset the count to prepare for the next line of the scoresheet
                         count = 0
