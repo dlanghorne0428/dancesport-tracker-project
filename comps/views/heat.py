@@ -16,6 +16,10 @@ def heat(request, heat_id, sort_mode=0):
 
     # get all heats that match this time of day
     parallel_heats = Heat.objects.filter(comp=heat.comp).filter(time=heat.time).order_by('heat_number', 'extra', 'info')
+    # if there are too many matches, just use the heat number
+    if parallel_heats.count() > 5:
+        heat_num = heat.heat_number
+        parallel_heats = Heat.objects.filter(comp=heat.comp).filter(heat_number=heat_num).order_by('extra', 'info')
     heat_data = list()
 
     for h in parallel_heats:
