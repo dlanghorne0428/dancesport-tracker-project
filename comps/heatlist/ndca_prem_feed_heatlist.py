@@ -132,8 +132,20 @@ class NdcaPremFeedHeatlist(Heatlist):
 
         json_record= json.loads(heat_data)
 
+        if dancer.name == "Maj, Alexia":
+            print(json_record['Result']['Entries'])
+            
         for entry in json_record['Result']['Entries']:
-            for p in entry['Participants']:
+            # find partner name
+            num_participant_records = len(entry['Participants'])
+            if num_participant_records == 0:
+                partner_name = "{No, Partner}"
+            elif num_participant_records > 1:
+                print(entry['Participants'])
+                # error case
+                partner_name = "None"
+            else:
+                p = entry['Participants'][0]
                 partner_name_list = p['Name']
                 partner_name = ""
                 if len(partner_name_list) == 0:
@@ -146,24 +158,24 @@ class NdcaPremFeedHeatlist(Heatlist):
                     else:
                         partner_name = "., " + partner_name_list[0]
 
-                partner = self.find_dancer(partner_name, format_needed=False) # for now
-                if partner is None:
-                    #print("Error parsing partner_name", partner_name_list, partner_name)
-                    in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
-                    if len(in_database) == 0:
-                        self.build_heatlist_error(comp_ref, Heatlist_Error.PARSING_ERROR, dancer_name=dancer.name)
-                elif dancer.name > partner.name:
-                    #print(dancer.name + " greater than " + partner_name + ". Skipping!")
-                    pass
-                else:
-                    #print(dancer.name + " with " + partner.name)
-                    for e in entry['Events']:
-                        shirt_number = e['Bib']
-                        heat = Heat()
-                        self.load_heat(heat, e, comp_ref)
-                        h = self.add_heat_to_database(heat, comp_ref)
-                        if h is not None:
-                            self.build_heat_entry(h, dancer, partner, shirt_number=shirt_number)
+            partner = self.find_dancer(partner_name, format_needed=False) # for now
+            if partner is None:
+                #print("Error parsing partner_name", partner_name_list, partner_name)
+                in_database = Heatlist_Error.objects.filter(comp=comp_ref).filter(dancer=dancer.name)
+                if len(in_database) == 0:
+                    self.build_heatlist_error(comp_ref, Heatlist_Error.PARSING_ERROR, dancer_name=dancer.name)
+            elif dancer.name > partner.name:
+                #print(dancer.name + " greater than " + partner_name + ". Skipping!")
+                pass
+            else:
+                #print(dancer.name + " with " + partner.name)
+                for e in entry['Events']:
+                    shirt_number = e['Bib']
+                    heat = Heat()
+                    self.load_heat(heat, e, comp_ref)
+                    h = self.add_heat_to_database(heat, comp_ref)
+                    if h is not None:
+                        self.build_heat_entry(h, dancer, partner, shirt_number=shirt_number)
 
 
 
