@@ -86,7 +86,7 @@ class NdcaPremFeedHeatlist(Heatlist):
             h.category = Heat.PRO_HEAT
         elif "Solo Single " in h.info:
             h.category = Heat.NORMAL_HEAT
-        elif "Solo " in h.info:
+        elif "Solo " in h.info and "Solo Star" not in h.info:
             h.category = Heat.SOLO
         elif "Formation " in h.info:
             h.category = Heat.FORMATION
