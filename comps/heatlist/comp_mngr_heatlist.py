@@ -206,7 +206,7 @@ class CompMngrHeatlist(Heatlist):
                             self.build_heat_entry(h, dancer, partner, shirt_number)
 
             # look for lines with solo information
-            elif "Solo " in line:
+            elif "Solo " in line and "Solo Star" not in line:
                 if partner is not None:
                     if partner.name > dancer.name:
                         # turn this line into a heat object and add it to the database
