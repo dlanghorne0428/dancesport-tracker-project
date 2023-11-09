@@ -47,11 +47,13 @@ class Heatlist():
             return None
 
 
-    def add_heat_to_database(self, heat, comp_ref):
+    def add_heat_to_database(self, heat, comp_ref, multis_only=None):
         heats_in_database = Heat.objects.filter(comp=comp_ref, category=heat.category, heat_number=heat.heat_number, info=heat.info)
         if heats_in_database.count() > 0:
             h = heats_in_database.first()
         else:
+            if multis_only is not None and heat.category != Heat.PRO_HEAT and (heat.multi_dance() == False) and (heat.dance_off == False):
+                return None
             h = heat
             h.save()   # save the heat into the database
             if h.base_value == 0 and (h.category == Heat.PRO_HEAT or h.multi_dance()):

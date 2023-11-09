@@ -137,7 +137,7 @@ class O2cmHeatlist(Heatlist):
         return h
 
 
-    def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
+    def get_heats_for_dancer(self, dancer, heat_data, comp_ref, multis_only=None):
         '''This method extracts heat information from the heat_data read in from a URL.
         The information is saved into the specified dancer object.'''
         fields = heat_data.split("<table")
@@ -165,9 +165,8 @@ class O2cmHeatlist(Heatlist):
                             heat = self.load_heat(rows[row_index], comp_ref)
                             if heat is not None:
                                 if "Solo Star" in heat.info:
-                                    h = None
-                                else:
-                                    h = self.add_heat_to_database(heat, comp_ref)
+                                    heat.category = Heat.NORMAL_HEAT
+                                h = self.add_heat_to_database(heat, comp_ref, multis_only)
                                 if h is not None:
                                     # this format doesn't store shirt numbers, use code instead
                                     self.build_heat_entry(h, dancer, partner, shirt_number=dancer.code)
@@ -234,7 +233,7 @@ class O2cmHeatlist(Heatlist):
         self.payload["event"] = self.comp_name
 
 
-    def get_next_dancer(self, index, comp_ref):
+    def get_next_dancer(self, index, comp_ref, multis_only=None):
         '''This method reads the heat information for the dancer at the given index.'''
         d = self.dancers[index]
         # build the payload.
@@ -247,7 +246,7 @@ class O2cmHeatlist(Heatlist):
         # The data is returned as text
         response =  requests.post(self.url, data = self.payload)
         #print (response.text)
-        self.get_heats_for_dancer(d, response.text, comp_ref)
+        self.get_heats_for_dancer(d, response.text, comp_ref, multis_only)
         return d.name
 
 

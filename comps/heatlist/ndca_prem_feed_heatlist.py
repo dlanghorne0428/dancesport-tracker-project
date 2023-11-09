@@ -116,7 +116,7 @@ class NdcaPremFeedHeatlist(Heatlist):
         #print(str(h.category) + ' ' + str(h.heat_number) +  ' ' + h.info)
 
 
-    def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
+    def get_heats_for_dancer(self, dancer, heat_data, comp_ref, multis_only=None):
         '''This method extracts heat information from the heat_data read in from a URL.
         The information is saved into the specified dancer object.'''
         try:
@@ -173,7 +173,7 @@ class NdcaPremFeedHeatlist(Heatlist):
                     shirt_number = e['Bib']
                     heat = Heat()
                     self.load_heat(heat, e, comp_ref)
-                    h = self.add_heat_to_database(heat, comp_ref)
+                    h = self.add_heat_to_database(heat, comp_ref, multis_only)
                     if h is not None:
                         self.build_heat_entry(h, dancer, partner, shirt_number=shirt_number)
 
@@ -223,13 +223,13 @@ class NdcaPremFeedHeatlist(Heatlist):
         self.comp_id = url[start_pos:]
 
 
-    def get_next_dancer(self, index, comp_ref):
+    def get_next_dancer(self, index, comp_ref, multis_only=None):
         '''This method reads the heat information for the dancer at the given index.'''
         d = self.dancers[index]
         if d.code != "0":
             url= "http://ndcapremier.com/feed/heatlists/?cyi=" + self.comp_id + "&id=" + d.code + "&type=attendee"
             response = requests.get(url)
-            self.get_heats_for_dancer(d, response.text, comp_ref)
+            self.get_heats_for_dancer(d, response.text, comp_ref, multis_only)
         return d.name
 
 

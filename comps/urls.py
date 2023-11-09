@@ -20,6 +20,7 @@ urlpatterns = [
     path('<int:comp_id>/delete_noheat_couples', views.delete_noheat_couples, name="delete_noheat_couples"),
     path('<int:comp_id>/load_dancers', views.load_dancers, name="load_dancers"),
     path('<int:comp_id>/load_heats', views.load_heats, name="load_heats"),
+    path('<int:comp_id>/load_heats/<int:multis_only>', views.load_heats, name="load_heats"),
     path('<int:comp_id>/load_scoresheets', views.load_scoresheets, name="load_scoresheets"),
     path('<int:comp_id>/create_heat', views.create_heat, name="create_heat"),
     path('<int:comp_id>/create_heat/?couple=<int:couple_id>', views.create_heat, name="create_heat"),

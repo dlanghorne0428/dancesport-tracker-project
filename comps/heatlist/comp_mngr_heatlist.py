@@ -159,14 +159,14 @@ class CompMngrHeatlist(Heatlist):
                     break;
 
 
-    def build_heat(self, category_str, line, comp_ref):
+    def build_heat(self, category_str, line, comp_ref, multis_only=None):
         # turn that heat info into an object and add it to the database
         heat = Heat()
         self.load_heat(heat, category_str, line, comp_ref)
-        return self.add_heat_to_database(heat, comp_ref)
+        return self.add_heat_to_database(heat, comp_ref, multis_only)
 
 
-    def get_next_dancer(self, dancer_index, comp_ref):
+    def get_next_dancer(self, dancer_index, comp_ref, multis_only=None):
         '''This method continues to parse the CompMngr heatlist file, extracting the heat
            information for the next dancer.
            The dancer_index is a counter, providing a quick way to find the dancer object
@@ -200,7 +200,7 @@ class CompMngrHeatlist(Heatlist):
             elif "Pro heat " in line:
                 if partner is not None:
                     if partner_name > dancer_name:
-                        h = self.build_heat("Pro heat", line, comp_ref)
+                        h = self.build_heat("Pro heat", line, comp_ref, multis_only)
                         if h is not None:
                             shirt_number = line.split("<td>")[2].split("</td>")[0]
                             self.build_heat_entry(h, dancer, partner, shirt_number)
@@ -210,7 +210,7 @@ class CompMngrHeatlist(Heatlist):
                 if partner is not None:
                     if partner.name > dancer.name:
                         # turn this line into a heat object and add it to the database
-                        h = self.build_heat("Solo", line, comp_ref)
+                        h = self.build_heat("Solo", line, comp_ref, multis_only)
                         if h is not None:
                             shirt_number = line.split("<td>")[2].split("</td>")[0]
                             self.build_heat_entry(h, dancer, partner, shirt_number)
@@ -220,7 +220,7 @@ class CompMngrHeatlist(Heatlist):
                 if partner is not None:
                     if partner.name > dancer.name:
                         # turn this line into a heat object and add it to the database
-                        h = self.build_heat("Formation", line, comp_ref)
+                        h = self.build_heat("Formation", line, comp_ref, multis_only)
                         if h is not None:
                             shirt_number = line.split("<td>")[2].split("</td>")[0]
                             self.build_heat_entry(h, dancer, partner, shirt_number)
@@ -230,7 +230,7 @@ class CompMngrHeatlist(Heatlist):
                 if partner is not None:
                     if partner.name > dancer.name:
                         # turn this line into a heat object and add it to the database
-                        h = self.build_heat("Heat", line, comp_ref)
+                        h = self.build_heat("Heat", line, comp_ref, multis_only)
                         if h is not None:
                             shirt_number = line.split("<td>")[2].split("</td>")[0]
                             self.build_heat_entry(h, dancer, partner, shirt_number)

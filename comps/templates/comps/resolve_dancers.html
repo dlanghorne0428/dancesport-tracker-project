@@ -51,7 +51,8 @@
           All names have been correctly formatted.
         </div>
         <div class="text-center">
-          <a class="btn btn-primary" role="button" href="{% url 'comps:load_heats' comp.id %}">Load Heats</a>
+          <a class="btn btn-primary" role="button" href="{% url 'comps:load_heats' comp.id %}">Load All Heats</a>
+          <a class="btn btn-primary" role="button" href="{% url 'comps:load_heats' comp.id 1 %}">Load Multidance Heats</a>
         </div>
       {% endif %}
     </div>
