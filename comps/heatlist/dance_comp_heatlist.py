@@ -97,7 +97,7 @@ class DanceCompHeatlist(Heatlist):
             return None
     
     
-    def get_heats_for_dancer(self, dancer, comp_ref):
+    def get_heats_for_dancer(self, dancer, comp_ref, multis_only=None):
         '''This method extracts heat information from the heat_data read in from a URL.
         The information is saved into the specified dancer object.'''
         
@@ -115,7 +115,7 @@ class DanceCompHeatlist(Heatlist):
                         shirt_number = entry['number_on_the_back']
                         heat = Heat()
                         self.load_heat(heat, entry, comp_ref)
-                        h = self.add_heat_to_database(heat, comp_ref)
+                        h = self.add_heat_to_database(heat, comp_ref, multis_only)
                         if h is not None:
                             self.build_heat_entry(h, dancer, partner, shirt_number=shirt_number)
                             #print(entry)
@@ -185,11 +185,11 @@ class DanceCompHeatlist(Heatlist):
     
         
         
-    def get_next_dancer(self, index, comp_ref):
+    def get_next_dancer(self, index, comp_ref, multis_only=None):
         '''This method reads the heat information for the dancer at the given index.'''
         d = self.dancers[index]
         if d.code != "0":
-            self.get_heats_for_dancer(d, comp_ref)
+            self.get_heats_for_dancer(d, comp_ref, multis_only)
         return d.name    
             
             #print(category + ' ' + str(heat_number) + extra + ' ' + info +  ' ' + day_of_week + ' ' + time_str)

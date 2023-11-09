@@ -98,7 +98,7 @@ def process_dancers_task(self, comp_data, heatlist_data):
     
     
 @shared_task(bind=True)
-def process_heatlist_task(self, comp_data, heatlist_data):
+def process_heatlist_task(self, comp_data, heatlist_data, multis_only=None):
     for deserialized_object in serializers.deserialize("json", comp_data):
         comp = deserialized_object.object
     heatlist_dancers = list()
@@ -129,7 +129,7 @@ def process_heatlist_task(self, comp_data, heatlist_data):
 
     progress_recorder.set_progress(0, num_dancers)
     for index in range(num_dancers):
-        the_name = heatlist.get_next_dancer(index, comp)
+        the_name = heatlist.get_next_dancer(index, comp, multis_only)
         if the_name is None:
             break
         progress_recorder.set_progress(index + 1, num_dancers, description=the_name)

@@ -110,7 +110,7 @@ class CompOrgHeatlist(Heatlist):
         h.set_dance_style()
 
 
-    def get_heats_for_dancer(self, dancer, heat_data, comp_ref):
+    def get_heats_for_dancer(self, dancer, heat_data, comp_ref, multis_only=None):
         '''This method extracts heat information from the heat_data.
            The information is saved into the specified dancer object.'''
         # all the heat information is in a series of table data cells.
@@ -152,13 +152,14 @@ class CompOrgHeatlist(Heatlist):
                         # build heat object, which takes up the next five items
                         heat = Heat()
                         self.load_heat(heat, items, item_index, comp_ref)
-                        # if "Solo Star" in heat.info:
-                        #     heat.category = None
+                        if "Solo Star" in heat.info:
+                            heat.category = Heat.NORMAL_HEAT
                         if heat.category is not None:
-                            h = self.add_heat_to_database(heat, comp_ref)
-                            start_pos = items[item_index+3].find("-numb") + len("-numb") + 2
-                            shirt_number = items[item_index+3][start_pos:]
-                            self.build_heat_entry(h, dancer, partner, shirt_number)
+                            h = self.add_heat_to_database(heat, comp_ref, multis_only)
+                            if h is not None:
+                                start_pos = items[item_index+3].find("-numb") + len("-numb") + 2
+                                shirt_number = items[item_index+3][start_pos:]
+                                self.build_heat_entry(h, dancer, partner, shirt_number)
                     else:
                         #print("Skipping: " + dancer.name + " greater than " + partner.name)
                         #print("index:" + str(item_index) + " items length: " + str(len(items)))
@@ -239,12 +240,12 @@ class CompOrgHeatlist(Heatlist):
         print(self.base_url)
 
 
-    def get_next_dancer(self, dancer_index, comp_ref):
+    def get_next_dancer(self, dancer_index, comp_ref, multis_only=None):
         '''This method reads the heat information for the dancer at the given index.'''
         d = self.dancers[dancer_index]
         url = self.base_url + "&competitor=" + d.code
         response = requests.get(url,timeout=10.0)
-        self.get_heats_for_dancer(d, response.text, comp_ref)
+        self.get_heats_for_dancer(d, response.text, comp_ref, multis_only)
         return d.name
 
 

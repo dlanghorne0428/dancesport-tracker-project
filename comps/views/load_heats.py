@@ -5,7 +5,7 @@ from comps.models.heatlist_dancer import Heatlist_Dancer
 from comps.tasks import process_heatlist_task
 
 
-def load_heats(request, comp_id):
+def load_heats(request, comp_id, multis_only=None):
     if not request.user.is_superuser:
         return render(request, 'rankings/permission_denied.html')
     comp_objects = Comp.objects.filter(pk=comp_id)
@@ -17,5 +17,5 @@ def load_heats(request, comp_id):
     comp_data = serializers.serialize("json", comp_objects)
     heatlist_dancer_data = serializers.serialize("json", heatlist_dancers)
 
-    result = process_heatlist_task.delay(comp_data, heatlist_dancer_data)
+    result = process_heatlist_task.delay(comp_data, heatlist_dancer_data, multis_only)
     return render(request, 'comps/process_heatlist.html', context={'task_id': result.task_id, 'comp': comp})
