@@ -130,6 +130,7 @@ class Results_Processor():
             unmatched_entry = Unmatched_Heat_Entry()
             unmatched_entry.populate(late_entry, dancer, partner)
             print("LATE ENTRY " + str(unmatched_entry))
+            saved = False
             while not saved:
                 try:
                     unmatched_entry.save()
