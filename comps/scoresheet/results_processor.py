@@ -130,7 +130,18 @@ class Results_Processor():
             unmatched_entry = Unmatched_Heat_Entry()
             unmatched_entry.populate(late_entry, dancer, partner)
             print("LATE ENTRY " + str(unmatched_entry))
-            unmatched_entry.save()
+            while not saved:
+                try:
+                    unmatched_entry.save()
+                except IntegrityError:
+                    print("Duplicate key for " + str(nmatched_entry))
+                    num_tries += 1
+                    if num_tries == 20:
+                        print("Unable to add " + str(nmatched_entry))
+                        continue # return -1
+                else:
+                    saved = True            
+            
 
 
     def process_response(self, entries, e):
