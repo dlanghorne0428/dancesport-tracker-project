@@ -25,7 +25,7 @@ kombu==5.3.2
 numpy==1.26.0
 packaging==21.3
 pandas==2.1.1
-Pillow==10.1.0
+Pillow==10.3.0
 pipenv==2023.10.20
 platformdirs==3.11.0
 prompt-toolkit==3.0.31
