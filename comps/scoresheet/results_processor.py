@@ -1,5 +1,6 @@
 import string
 
+from django.db import IntegrityError
 from comps.scoresheet.calc_points import calc_points
 from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
