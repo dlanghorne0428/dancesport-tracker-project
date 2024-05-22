@@ -117,7 +117,19 @@ class Results_Processor():
         if points is not None:
             late_entry.points = points
         late_entry.code = "LATE"
-        late_entry.save()
+        saved = False
+        while not saved:
+            try:
+                late_entry.save()
+            except IntegrityError:
+                print("Duplicate key for " + str(late_entry))
+                num_tries += 1
+                if num_tries == 20:
+                    print("Unable to add " + str(late_entry))
+                    continue # return -1
+            else:
+                saved = True             
+
         self.late_entries.append(late_entry)
 
         # need to create UnmatchedHeatEntry
