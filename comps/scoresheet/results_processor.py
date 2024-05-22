@@ -119,6 +119,7 @@ class Results_Processor():
             late_entry.points = points
         late_entry.code = "LATE"
         saved = False
+        num_tries = 0
         while not saved:
             try:
                 late_entry.save()
@@ -144,6 +145,7 @@ class Results_Processor():
             unmatched_entry.populate(late_entry, dancer, partner)
             print("LATE ENTRY " + str(unmatched_entry))
             saved = False
+            num_tries = 0
             while not saved:
                 try:
                     unmatched_entry.save()
