@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone, timedelta
 from django.db import models
 from comps.models.comp import Comp
 from rankings.models.couple import Couple
-from comps.scoresheet.calc_points import pro_heat_level, non_pro_heat_level
+from comps.scoresheet.calc_points import pro_heat_level, non_pro_heat_level, initial_elo_rating
 
 # the different styles of ballroom dancing. couples are ranked in each style.
 SMOOTH = "SMOO"
@@ -83,8 +83,11 @@ class Heat(models.Model):
     def set_level(self):
         if self.category == "PH":
             self.base_value = pro_heat_level(self.info)
+            self.initial_elo_value = initial_elo_rating(self.category, self.info)
         else:
             self.base_value = non_pro_heat_level(self.info, self.multi_dance())
+            if self.multi_dance():
+                self.initial_elo_value = initial_elo_rating(self.category, self.info)
 
     def remove_info_prefix(self):
         if self.info.startswith("L-"):
