@@ -225,7 +225,7 @@ def process_scoresheet_task(self, comp_data):
         else: # CompOrganizer for now
             scoresheet = CompOrgResults()
 
-        heats_to_process = Heat.objects.filter(comp=comp).order_by('time')
+        heats_to_process = Heat.objects.filter(comp=comp).order_by('initial_elo_value')
         num_heats = heats_to_process.count()
 
         index = 0
