@@ -366,7 +366,7 @@ def update_elo_ratings_for_comps(self, comp_id_list):
         # if only processing one comp, we already have the comp and heats
         if len(comp_id_list) > 1:
             comp = get_object_or_404(Comp, pk=comp_id)    
-            heats = Heat.objects.filter(comp=comp).order_by('time', 'heat_number')    
+            heats = Heat.objects.filter(comp=comp).order_by('initial_elo_value')    
     
         result = total_heats
         # for each heat in this comp
