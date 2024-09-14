@@ -37,6 +37,8 @@ class NdcaPremFeedResults(Results_Processor):
             heat_string = str(e.heat.heat_number) + e.heat.extra
         else:
             heat_string = str(e.heat.heat_number)
+            
+        print("Processing: " + heat_string + ' ' + heat.info)
 
         # save the level of the event (e.g. Open vs. Rising Star, Bronze, Silver, Gold, etc.)
         level = e.heat.base_value
@@ -73,7 +75,7 @@ class NdcaPremFeedResults(Results_Processor):
                         if r['Scoring_Method'] == "Solos":
                             continue
                         # loop through all the competitors in this heat
-                        for c in r['Summary']['Competitors']:
+                        for c in r[' +  ']['Competitors']:
                             self.entries_in_event += 1
                             for entry in entries:
                                 # find matching entry by shirt number
@@ -158,7 +160,7 @@ class NdcaPremFeedResults(Results_Processor):
                         max_recalls = 0
                         for c in r['Summary']['Competitors']:
                             if c['Recalled'] == 0:
-                                print(c)
+                                #print(c)
                                 max_recalls = max(max_recalls, c['Total'])
                         print("Max recalls for elim" + ' ' + str(max_recalls))
                         for c in r['Summary']['Competitors']:
