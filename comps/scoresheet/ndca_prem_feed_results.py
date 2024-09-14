@@ -75,7 +75,7 @@ class NdcaPremFeedResults(Results_Processor):
                         if r['Scoring_Method'] == "Solos":
                             continue
                         # loop through all the competitors in this heat
-                        for c in r[' +  ']['Competitors']:
+                        for c in r['Summary']['Competitors']:
                             self.entries_in_event += 1
                             for entry in entries:
                                 # find matching entry by shirt number
