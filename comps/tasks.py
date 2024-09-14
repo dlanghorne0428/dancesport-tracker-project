@@ -338,7 +338,7 @@ def update_elo_ratings_for_comps(self, comp_id_list):
     # determine how many heats there are to recalculate
     for comp_id in comp_id_list:
         comp = get_object_or_404(Comp, pk=comp_id)
-        heats = Heat.objects.filter(comp=comp).order_by('initial_elo_rating') 
+        heats = Heat.objects.filter(comp=comp).order_by('initial_elo_value') 
         
         # if recalculating all the ratings, reset the process state 
         if len(comp_id_list) > 1:
