@@ -393,13 +393,15 @@ def update_elo_ratings_for_comps(self, comp_id_list):
                         continue
                     else:
                         initial_rating = h.initial_elo_value   
-                        #print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
+                        print(str(h) + ' ' + str(h.time) + ' ' + h.info + ' ' + h.style +  ' ' + str(initial_rating))
                     
                     rating_list = list()
                     elo_inputs = list()
                     # for each entry
                     for e in entries:
                         # get their existing elo rating or create one with initial rating
+                        if e.couple is None:
+                            continue
                         try:
                             rating = EloRating.objects.get(couple=e.couple, style=h.style)
                             if rating.value is None:
