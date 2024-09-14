@@ -38,7 +38,7 @@ class NdcaPremFeedResults(Results_Processor):
         else:
             heat_string = str(e.heat.heat_number)
             
-        print("Processing: " + heat_string + ' ' + heat.info)
+        print("Processing: " + heat_string + ' ' + e.heat.info)
 
         # save the level of the event (e.g. Open vs. Rising Star, Bronze, Silver, Gold, etc.)
         level = e.heat.base_value
