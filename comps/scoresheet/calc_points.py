@@ -113,7 +113,7 @@ def calc_points(level, placement, num_competitors = 6, rounds = "F", score = 0, 
                 percent = 5 * ratio 
             else:
                 percent = percent_table[place]
-        elif rounds == "R321":
+        elif rounds == "R4321":
             max_pts = level + 60
             if placement == -2: # semis
                 percent = 25 + (ratio * 5.0)
