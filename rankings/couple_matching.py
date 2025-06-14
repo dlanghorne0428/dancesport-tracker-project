@@ -54,14 +54,14 @@ def find_couple_close_match(dancer, partner):
     partner_last, partner_first, partner_middle = split_name(partner.name)
     partial_matching_couples = list()
 
-    dancers = Dancer.objects.filter(name_last = dancer_last, name_first__istartswith=dancer.first[0])
+    dancers = Dancer.objects.filter(name_last = dancer_last, name_first__istartswith=dancer_first[0])
     print(dancers)
     partial_matches = find_last_name_matches(dancers, dancer.code, partner.code)
     for p in partial_matches:
         partial_matching_couples = append_to_match_list(partial_matching_couples, p)
 
     if partner_last != dancer_last:
-        partners = Dancer.objects.filter(name_last = partner_last, name_first__istartswith=partner.first[0])
+        partners = Dancer.objects.filter(name_last = partner_last, name_first__istartswith=partner_first[0])
         partial_matches = find_last_name_matches(partners, partner.code, dancer.code)
         for p in partial_matches:
             partial_matching_couples = append_to_match_list(partial_matching_couples, p)
