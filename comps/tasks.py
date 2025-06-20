@@ -101,10 +101,12 @@ def process_dancers_task(self, comp_data, heatlist_data):
 def cleanup_dancer_task(self, comp_data, heatlist_data):
     for deserialized_object in serializers.deserialize("json", comp_data):
         comp = deserialized_object.object
+    print(comp)
     heatlist_dancers = list()
     for deserialized_object in serializers.deserialize("json", heatlist_data):
         heatlist_dancers.append(deserialized_object.object)
     num_dancers = len(heatlist_dancers)
+    print("Dancer Names to Cleanup = " + num_dancers)
 
     progress_recorder = ProgressRecorder(self)    
     
