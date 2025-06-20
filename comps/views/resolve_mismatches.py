@@ -1,3 +1,4 @@
+from django.core import serializers
 from django.shortcuts import render, redirect, get_object_or_404
 from comps.models.comp import Comp
 from comps.models.comp_couple import Comp_Couple
