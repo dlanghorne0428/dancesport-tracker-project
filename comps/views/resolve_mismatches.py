@@ -6,7 +6,7 @@ from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
 from rankings.models import Dancer, Couple
-from rankings.couple_matching import find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match, resolve_unmatched_entries
+from rankings.couple_matching import find_couple_close_match, find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match, resolve_unmatched_entries
 
 
 def save_alias(unmatched_dancer, actual_dancer):
@@ -45,8 +45,10 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         dancer_match = find_dancer_exact_match(first_unmatched.dancer)
         partner_match = find_dancer_exact_match(first_unmatched.partner)
         if wider_search == 0:
+            possible_matches = find_couple_close_match(first_unmatched.dancer, first_unmatched.partner)
+        elif wider_search == 1:           
             possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
-        elif wider_search == 1:
+        elif wider_search == 2:
             possible_matches = find_couple_first_letter_match(first_unmatched.dancer, first_unmatched.partner)
         else:
             possible_matches = find_couple_first_letter_match(first_unmatched.dancer, first_unmatched.partner, dancer_only=False)
@@ -101,7 +103,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
                 return redirect('comps:resolve_mismatches', comp_id = comp_id)
 
             elif submit == "Widen Search":
-                if wider_search < 2:
+                if wider_search < 3:
                     wider_search += 1
                 return redirect('comps:resolve_mismatches', comp_id = comp_id, wider_search=wider_search)
 
