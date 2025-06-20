@@ -45,7 +45,6 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         dancer_match = find_dancer_exact_match(first_unmatched.dancer)
         partner_match = find_dancer_exact_match(first_unmatched.partner)
         if wider_search == 0:
-            print("searching for close matches for: " + str(first_unmatched.dancer) + ' and ' + str(first_unmatched.partner)) 
             possible_matches = find_couple_close_match(first_unmatched.dancer, first_unmatched.partner)
         elif wider_search == 1:           
             possible_matches = find_couple_partial_match(first_unmatched.dancer, first_unmatched.partner)
