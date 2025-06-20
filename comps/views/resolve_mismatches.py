@@ -5,6 +5,7 @@ from comps.models.heat import Heat
 from comps.models.heat_entry import Heat_Entry
 from comps.models.unmatched_heat_entry import Unmatched_Heat_Entry
 from comps.models.heatlist_dancer import Heatlist_Dancer
+from comps.tasks import cleanup_dancer_task
 from rankings.models import Dancer, Couple
 from rankings.couple_matching import find_couple_close_match, find_couple_partial_match, find_couple_first_letter_match, find_dancer_exact_match, resolve_unmatched_entries
 
@@ -25,20 +26,13 @@ def resolve_mismatches(request, comp_id, wider_search=0):
     comp = get_object_or_404(Comp, pk=comp_id)
     if unmatched_entries.count() == 0:
         # all unmatched entries resolved, delete heatlist_dancer entries without an alias from database
-        heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)
-        orig_count = heatlist_dancers.count()
-        for hld in heatlist_dancers:
-            if hld.alias is None:
-                hld.delete()
-        new_count = Heatlist_Dancer.objects.filter(comp=comp).count()
-        print("Aliases found: " + str(new_count) + ". Deleted " + str(orig_count - new_count) + " objects.")
-
-        if comp.process_state == comp.SCORESHEETS_LOADED:
-            comp.process_state = comp.RESULTS_RESOLVED
-        else:
-            comp.process_state = comp.HEAT_ENTRIES_MATCHED
-        comp.save()
-        return redirect("comps:comp_heats", comp_id)
+        heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)        
+        comp_data = serializers.serialize("json", comp_objects)
+        heatlist_dancer_data = serializers.serialize("json", heatlist_dancers)
+    
+        result = cleanup_dancer_task.delay(comp_data, heatlist_dancer_data)
+        return render(request, 'comps/cleanup_dancers.html', context={'task_id': result.task_id, 'comp': comp})
+        
     else:
         first_unmatched = unmatched_entries.first()
         similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)

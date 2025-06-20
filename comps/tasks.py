@@ -98,6 +98,37 @@ def process_dancers_task(self, comp_data, heatlist_data):
     
     
 @shared_task(bind=True)
+def cleanup_dancer_task(self, comp_data, heatlist_data):
+    for deserialized_object in serializers.deserialize("json", comp_data):
+        comp = deserialized_object.object
+    heatlist_dancers = list()
+    for deserialized_object in serializers.deserialize("json", heatlist_data):
+        heatlist_dancers.append(deserialized_object.object)
+    num_dancers = len(heatlist_dancers)
+
+    progress_recorder = ProgressRecorder(self)    
+    
+    print("Attempting to cleanup " + str(num_dancers) + ' dancers')
+    progress_recorder.set_progress(0, num_dancers)
+    dancers_in_comp = Heatlist_Dancer.objects.filter(comp=comp)
+
+    for index in range(num_dancers):  
+        d = heatlist_dancers[index]
+        progress_recorder.set_progress(index + 1, num_dancers, description=d.name)
+        if d.alias is None:      
+            d.delete()
+
+    result = num_dancers
+    
+    if comp.process_state == comp.SCORESHEETS_LOADED:
+        comp.process_state = comp.RESULTS_RESOLVED
+    else:
+        comp.process_state = comp.HEAT_ENTRIES_MATCHED
+    comp.save()    comp.save()     
+    return result
+
+
+@shared_task(bind=True)
 def process_heatlist_task(self, comp_data, heatlist_data, multis_only=None):
     for deserialized_object in serializers.deserialize("json", comp_data):
         comp = deserialized_object.object
