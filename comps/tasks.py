@@ -124,7 +124,7 @@ def cleanup_dancer_task(self, comp_data, heatlist_data):
         comp.process_state = comp.RESULTS_RESOLVED
     else:
         comp.process_state = comp.HEAT_ENTRIES_MATCHED
-    comp.save()    comp.save()     
+    comp.save()      
     return result
 
 
