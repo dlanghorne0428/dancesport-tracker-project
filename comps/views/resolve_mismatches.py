@@ -30,11 +30,10 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         # all unmatched entries resolved, delete heatlist_dancer entries without an alias from database
         comp_objects = Comp.objects.filter(pk=comp_id)
         print(comp_objects)
-        if len(comp_objects) == 1:
-            comp=comp_objects[0] 
         comp_data = serializers.serialize("json", comp_objects)
-        
-        heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)        
+        print("Filtering heat list dancers")
+        heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)     
+        print("Serializing heat list dancers")
         heatlist_dancer_data = serializers.serialize("json", heatlist_dancers)
         print("Dancer Names to Cleanup = " + len(heatlist_dancers))
     
