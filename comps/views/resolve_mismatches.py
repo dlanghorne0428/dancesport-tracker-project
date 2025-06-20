@@ -33,11 +33,12 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         comp_data = serializers.serialize("json", comp_objects)
         print("Filtering heat list dancers")
         heatlist_dancers = Heatlist_Dancer.objects.filter(comp=comp)     
-        print("Serializing heat list dancers")
+        print("Serializing heat list dancers: " + len(heatlist_dancers))
         heatlist_dancer_data = serializers.serialize("json", heatlist_dancers)
         print("Dancer Names to Cleanup = " + len(heatlist_dancers))
     
         result = cleanup_dancer_task.delay(comp_data, heatlist_dancer_data)
+        print(result)
         return render(request, 'comps/cleanup_dancers.html', context={'task_id': result.task_id, 'comp': comp})
         
     else:
