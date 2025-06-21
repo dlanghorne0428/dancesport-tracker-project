@@ -46,6 +46,7 @@ def resolve_mismatches(request, comp_id, wider_search=0):
         similar_unmatched = Unmatched_Heat_Entry.objects.filter(dancer=first_unmatched.dancer, partner=first_unmatched.partner)
         dancer_match = find_dancer_exact_match(first_unmatched.dancer)
         partner_match = find_dancer_exact_match(first_unmatched.partner)
+        print("Finding matches for: " + str(first_unmatched.dancer) + " and " + str(first_unmatched.partner))
         if wider_search == 0:
             possible_matches = find_couple_close_match(first_unmatched.dancer, first_unmatched.partner)
         elif wider_search == 1:           
