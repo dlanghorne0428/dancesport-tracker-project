@@ -13,7 +13,7 @@ class CompFilter(django_filters.FilterSet):
 class HeatFilter(django_filters.FilterSet):
 
     info = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'size':16, 'placeholder':'keyword'}))
-    heat_number = django_filters.NumberFilter(widget=forms.TextInput(attrs={'size': 5}))
+    heat_number = django_filters.NumberFilter(lookup_expr='gte', widget=forms.TextInput(attrs={'size': 5}))
     style = django_filters.ChoiceFilter(choices=DANCE_STYLE_CHOICES, empty_label="All Styles") 
     category = django_filters.ChoiceFilter(choices=Heat.CATEGORY_CHOICES, empty_label="ALL")
 
