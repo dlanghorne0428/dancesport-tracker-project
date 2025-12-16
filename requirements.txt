@@ -18,7 +18,7 @@ dj3-cloudinary-storage==0.0.6
 Django==4.2.22
 django-filter==23.3
 django-heroku==0.3.1
-filelock==3.12.4
+filelock==3.20.1
 gunicorn==23.0.0
 idna==3.7
 kombu==5.3.2
